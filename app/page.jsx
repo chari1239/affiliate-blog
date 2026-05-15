@@ -1,101 +1,103 @@
 import Link from "next/link";
-import { ProductCard } from "@/components/product-card";
+import Image from "next/image";
 import { products } from "@/lib/products";
 
-const featured = [
-  {
-    title: "Small upgrades that look intentional",
-    copy: "We focus on practical kitchen additions that improve daily routines and still feel giftable."
-  },
-  {
-    title: "Clear disclosures and real use cases",
-    copy: "Each recommendation is paired with context so the site reads like a legitimate buyer guide, not a link dump."
-  },
-  {
-    title: "Built to grow into member features",
-    copy: "Guest saved items are already supported locally, with account-backed lists reserved for the next phase."
-  }
-];
-
 export default function HomePage() {
-  const picks = products.slice(0, 3);
+  const product = products[0];
 
   return (
     <main className="hero-wrap">
       <section className="hero">
         <div>
-          <div className="eyebrow">Home & kitchen picks for calmer routines</div>
-          <h1>Useful Amazon-friendly finds for a warmer, better-organized home.</h1>
+          <div className="eyebrow">Nihon Diaries Guide</div>
+          <h1>What Indians should think about before buying kitchen appliances for Japan.</h1>
           <p>
-            Warm Shelf Home curates practical kitchen tools, hosting staples, and everyday upgrades.
-            The site is designed as a clean editorial storefront with clear disclosures and room to
-            grow into admin-managed content later.
+            Nihon Diaries keeps things simple for now. This page focuses on one common relocation
+            question: what is worth buying before moving from India to Japan if you still want to
+            cook the way you do at home.
           </p>
+          <div className="quick-list">
+            <span>Check voltage before you buy</span>
+            <span>Prefer Indian mixer jars over generic blenders</span>
+            <span>Keep the buying flow simple</span>
+          </div>
           <div className="hero-actions">
-            <Link href="/products" className="btn">
-              Explore picks
+            <Link href={`/products/${product.slug}`} className="btn">
+              See the suggested product
             </Link>
-            <Link href="/about" className="btn-secondary">
-              Why this site exists
+            <Link href={product.affiliateLink} className="btn-secondary" target="_blank" rel="noreferrer">
+              View on Amazon
             </Link>
           </div>
         </div>
         <div className="hero-aside">
-          <div className="highlight-card">
-            <p className="highlight-value">6 curated starter products</p>
-            <p className="section-copy">
-              Enough seeded content to review, demo, and submit for an initial Amazon Associates
-              application.
-            </p>
-          </div>
-          <div className="highlight-card">
-            <p className="highlight-value">Guest saves included</p>
-            <p className="section-copy">
-              Visitors can save items now without login. Account sync can plug into Supabase in the
-              next build.
-            </p>
-          </div>
+          <article className="product-spotlight">
+            <Link href={product.affiliateLink} target="_blank" rel="noreferrer" className="spotlight-image">
+              <Image src={product.image} alt={product.title} width={1200} height={1200} priority />
+            </Link>
+            <div className="spotlight-body">
+              <span className="pill">{product.category}</span>
+              <h2>{product.title}</h2>
+              <p className="section-copy">
+                A familiar appliance for chutneys, masalas, and batter prep, with a direct link so
+                readers can check details quickly.
+              </p>
+              <div className="spotlight-links">
+                <Link href={product.affiliateLink} target="_blank" rel="noreferrer" className="inline-link">
+                  Open Amazon listing
+                </Link>
+                <Link href={`/products/${product.slug}`} className="inline-link">
+                  Read the full note
+                </Link>
+              </div>
+            </div>
+          </article>
         </div>
       </section>
 
-      <section className="section">
+      <section className="section" id="guide">
         <div className="section-heading">
           <div>
-            <h2>Featured picks</h2>
+            <h2>Why this matters</h2>
             <p className="section-copy">
-              Sample editorial cards that can later be swapped for real Amazon products and tagged
-              affiliate links.
-            </p>
-          </div>
-          <Link href="/products" className="btn-secondary">
-            View all picks
-          </Link>
-        </div>
-        <div className="product-grid">
-          {picks.map((product) => (
-            <ProductCard key={product.slug} product={product} />
-          ))}
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="section-heading">
-          <div>
-            <h2>What makes v1 submission-ready</h2>
-            <p className="section-copy">
-              The first release prioritizes legitimacy, clarity, and deployability over app
-              features.
+              A simple blog-style note for Indians setting up daily life in Japan.
             </p>
           </div>
         </div>
-        <div className="feature-grid">
-          {featured.map((item) => (
-            <article key={item.title} className="content-card">
-              <h3>{item.title}</h3>
-              <p className="card-copy">{item.copy}</p>
-            </article>
-          ))}
-        </div>
+        <article className="content-card">
+          <p className="card-copy">
+            One of the easiest mistakes after moving is assuming a regular blender can replace a
+            proper Indian mixer grinder. In many homes, it cannot. Chutneys, dry masalas, ginger
+            garlic paste, and dosa-idli batter all benefit from the kind of jar and blade setup
+            people are already used to in India.
+          </p>
+          <p className="card-copy">
+            Japan also introduces a second issue: power compatibility. A product can look perfect
+            for Indian cooking and still be a poor fit if the voltage and usage notes do not match
+            your destination. That is why this site is keeping the recommendation narrow and
+            practical instead of pretending every imported appliance will work the same way abroad.
+          </p>
+          <p className="card-copy">
+            For now, the one product featured here is the Preethi Eco Plus MG-138 110V model. It
+            is not presented as a guaranteed Japan-ready appliance. It is presented as a useful
+            item to research carefully before you buy.
+          </p>
+          <div className="inline-product-card">
+            <div>
+              <p className="inline-product-label">Suggested product</p>
+              <h3>{product.title}</h3>
+              <p className="card-copy">{product.summary}</p>
+            </div>
+            <div className="hero-actions">
+              <Link href={`/products/${product.slug}`} className="btn">
+                Read the product note
+              </Link>
+              <Link href={product.affiliateLink} className="btn-secondary" target="_blank" rel="noreferrer">
+                Open Amazon link
+              </Link>
+            </div>
+          </div>
+        </article>
       </section>
     </main>
   );

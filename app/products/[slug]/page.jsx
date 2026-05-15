@@ -1,15 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SaveButton } from "@/components/save-button";
 import { getProduct, products } from "@/lib/products";
 
 export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }));
 }
 
-export function generateMetadata({ params }) {
-  const product = getProduct(params.slug);
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const product = getProduct(slug);
 
   if (!product) {
     return { title: "Product not found" };
@@ -21,8 +21,9 @@ export function generateMetadata({ params }) {
   };
 }
 
-export default function ProductDetailPage({ params }) {
-  const product = getProduct(params.slug);
+export default async function ProductDetailPage({ params }) {
+  const { slug } = await params;
+  const product = getProduct(slug);
 
   if (!product) {
     notFound();
@@ -42,13 +43,12 @@ export default function ProductDetailPage({ params }) {
           <p className="detail-copy">{product.summary}</p>
           <div className="price-line">
             <span>{product.priceNote}</span>
-            <strong>Editorial sample pick</strong>
+            <strong>Suggested product</strong>
           </div>
           <div className="cta-row">
             <Link href={product.affiliateLink} className="btn" target="_blank" rel="noreferrer">
               View on Amazon
             </Link>
-            <SaveButton slug={product.slug} />
           </div>
           <div className="detail-section">
             <h2>Why it made the list</h2>
@@ -58,6 +58,16 @@ export default function ProductDetailPage({ params }) {
               ))}
             </ul>
           </div>
+          {product.considerations?.length ? (
+            <div className="detail-section">
+              <h2>Before you buy</h2>
+              <ul className="detail-list">
+                {product.considerations.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
           <div className="detail-section">
             <h2>Best for</h2>
             <p className="detail-copy">{product.bestFor}</p>
