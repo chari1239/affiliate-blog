@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { site } from "@/lib/site";
 
 const links = [
@@ -8,29 +11,39 @@ const links = [
 ];
 
 export function SiteHeader() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <header className="site-header">
-      <div>
-        <Link href="/" className="brand-mark">
-          {site.name}
-        </Link>
-        <div className="brand-subtitle">Notes for Indians starting life in Japan</div>
-        <div className="social-links">
-          <Link href={site.instagram} target="_blank" rel="noreferrer">
-            Instagram
-          </Link>
-          <Link href={site.youtube} target="_blank" rel="noreferrer">
-            YouTube
-          </Link>
+      <div className="site-header-inner">
+        <div className="brand-block">
+          <div className="brand-row">
+            <Link href="/" className="brand-mark" onClick={() => setMenuOpen(false)}>
+              {site.name}
+            </Link>
+          </div>
+          <div className="brand-subtitle">Notes for Indians starting life in Japan</div>
         </div>
+        <button
+          type="button"
+          className="nav-toggle"
+          aria-expanded={menuOpen}
+          aria-controls="primary-nav"
+          aria-label="Toggle navigation"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+        <nav id="primary-nav" className={`nav-links ${menuOpen ? "is-open" : ""}`} aria-label="Primary">
+          {links.map((link) => (
+            <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}>
+              {link.label}
+            </Link>
+          ))}
+        </nav>
       </div>
-      <nav className="nav-links" aria-label="Primary">
-        {links.map((link) => (
-          <Link key={link.href} href={link.href}>
-            {link.label}
-          </Link>
-        ))}
-      </nav>
     </header>
   );
 }
