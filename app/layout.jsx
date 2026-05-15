@@ -18,8 +18,8 @@ export default function RootLayout({ children }) {
       <body>
         <div className="page-shell">
           <SiteHeader />
-          <DisclosureBanner />
           {children}
+          <DisclosureBanner />
           <SiteFooter />
         </div>
       </body>

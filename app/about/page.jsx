@@ -6,34 +6,35 @@ export default function AboutPage() {
   return (
     <main className="page-frame">
       <header className="page-header">
-        <div className="eyebrow">About Warm Shelf Home</div>
-        <h1 className="page-title">A small editorial site for useful home upgrades.</h1>
+        <div className="eyebrow">About Nihon Diaries</div>
+        <h1 className="page-title">A small blog for Indians planning life in Japan.</h1>
         <p className="page-intro">
-          Warm Shelf Home is structured as a niche recommendation site focused on practical home and
-          kitchen products. The goal is to publish honest shortlists, basic buyer guidance, and
-          giftable finds while keeping affiliate relationships clearly disclosed.
+          Nihon Diaries is a simple editorial site built around practical relocation notes. The
+          current focus is everyday buying guidance for Indians who want to set up a workable
+          kitchen after moving to Japan.
         </p>
       </header>
       <section className="content-grid">
         <article className="content-card">
           <h3>What the site publishes</h3>
           <p className="card-copy">
-            Starter content includes curated product cards, short recommendation notes, and trust
-            pages that explain how the site works.
+            The current version publishes a blog-style relocation topic, a kitchen product note,
+            and trust pages that explain how the site handles affiliate links and basic visitor
+            information.
           </p>
         </article>
         <article className="content-card">
           <h3>How recommendations are framed</h3>
           <p className="card-copy">
-            Each product is presented with a use case, practical highlights, and an audience fit so
-            the site reads like a useful guide rather than a sparse list of outbound links.
+            Product suggestions are presented with context, limitations, and buying cautions so the
+            page reads like a useful note rather than a bare outbound link.
           </p>
         </article>
         <article className="content-card">
-          <h3>What comes next</h3>
+          <h3>What may come next</h3>
           <p className="card-copy">
-            Future versions will add admin login for product management and optional user accounts
-            for reviewing saved products across devices.
+            Future updates may add more relocation topics, more product notes, and better editorial
+            organization while keeping the site lightweight.
           </p>
         </article>
       </section>

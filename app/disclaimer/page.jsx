@@ -17,9 +17,8 @@ export default function DisclaimerPage() {
         <article className="policy-card">
           <h2>Affiliate disclosure</h2>
           <p className="policy-copy">
-            Warm Shelf Home participates in affiliate programs, including the Amazon Associates
-            Program. This means the site may earn a commission from qualifying purchases made through
-            certain links.
+            Nihon Diaries participates in affiliate programs, including Amazon Associates. This
+            means the site may earn from qualifying purchases made through certain links.
           </p>
         </article>
         <article className="policy-card">
@@ -31,11 +30,10 @@ export default function DisclaimerPage() {
           </p>
         </article>
         <article className="policy-card">
-          <h2>Starter-content note</h2>
+          <h2>Content note</h2>
           <p className="policy-copy">
-            This first version uses seeded sample content so the site can be deployed and reviewed.
-            Replace placeholder copy, pricing notes, and sample links with real product information
-            before scaling live affiliate campaigns.
+            The current version is intentionally small and focused. Product notes should still be
+            reviewed and updated as listing details, pricing, and compatibility information change.
           </p>
         </article>
       </section>

@@ -1,22 +1,14 @@
-# Warm Shelf Home
+# Nihon Diaries
 
-Warm Shelf Home is a starter affiliate-marketing website built for an initial Amazon Associates submission. It uses `Next.js` and ships as a deployable public site with seeded home-and-kitchen product content, trust pages, clear affiliate disclosure, and a guest saved-items experience that works without login.
+Nihon Diaries is a small `Next.js` affiliate blog focused on practical notes for Indians moving to Japan. The current version is intentionally narrow: one main blog-style homepage, one suggested product page, clear Amazon disclosure, and simple trust pages.
 
-## What v1 includes
+## Current scope
 
-- Public home page with niche positioning and editorial framing
-- Product listing and product detail pages backed by static sample data
-- Global Amazon Associate disclosure plus disclaimer and privacy pages
-- About and contact pages to support site legitimacy for review
-- Guest saved-products flow using browser local storage
-- Documentation for the planned phase 2 admin and user-account features
-
-## Planned next phase
-
-- Supabase authentication for admin login
-- Admin dashboard for adding, updating, and removing products and affiliate links
-- Optional user login to sync saved products across devices
-- Replace seeded sample content with real product records and real associate links
+- Blog-style home page about buying kitchen appliances before moving to Japan
+- One suggested product: `Preethi Eco Plus MG-138 110V Mixer Grinder`
+- Product detail page with the Amazon affiliate link and compatibility notes
+- Real product image stored locally in `public/preethi_mixer.jpg`
+- Basic trust pages: about, contact, privacy policy, and disclaimer
 
 ## Local development
 
@@ -34,18 +26,15 @@ npm run dev
 
 3. Open `http://localhost:3000`
 
-## Deploy
+## Build
 
-The default deployment target is Vercel.
+```bash
+npm run build
+```
 
-1. Push the repository to GitHub.
-2. Import the project into Vercel.
-3. Use the default `Next.js` build settings.
-4. After deployment, replace placeholder contact details and sample catalog content.
+## Content notes
 
-## Notes before submission
-
-- Replace the placeholder email address in `lib/site.js`.
-- Review policy language for your real legal/privacy requirements.
-- Replace sample products and generic Amazon home links with actual Associate-tagged destination links once approved to do so.
-- If you add analytics or a live form handler, update the privacy policy accordingly.
+- Replace the placeholder email in `lib/site.js` before public launch.
+- Re-check the product listing details and compatibility notes before promoting the page.
+- Keep the affiliate disclosure visible anywhere Amazon links are shared or embedded.
+- If you add analytics, a live contact backend, or more affiliate posts, update the privacy and disclaimer pages in the same change.

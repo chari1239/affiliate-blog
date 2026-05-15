@@ -13,8 +13,14 @@ export function SiteFooter() {
           </p>
         </div>
         <div className="footer-links">
-          <Link href="/products">Suggested Product</Link>
+          <Link href="/products">Kitchen Pick</Link>
           <Link href="/disclaimer">Disclaimer</Link>
+          <Link href={site.instagram} target="_blank" rel="noreferrer">
+            Instagram
+          </Link>
+          <Link href={site.youtube} target="_blank" rel="noreferrer">
+            YouTube
+          </Link>
         </div>
         <div className="footer-copy">
           As an Amazon Associate I earn from qualifying purchases.

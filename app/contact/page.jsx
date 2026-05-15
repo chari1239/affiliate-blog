@@ -11,9 +11,8 @@ export default function ContactPage() {
         <div className="eyebrow">Contact</div>
         <h1 className="page-title">Contact the site owner.</h1>
         <p className="page-intro">
-          Amazon review teams and site visitors should be able to see that the website has a real
-          contact path. This starter page provides that structure now, even before a backend form
-          handler is added.
+          Visitors should be able to see that Nihon Diaries has a visible contact path, even while
+          the site is still a small static affiliate blog.
         </p>
       </header>
       <section className="contact-grid">
@@ -33,12 +32,12 @@ export default function ContactPage() {
               <textarea className="textarea" placeholder="How can we help?" />
             </label>
             <button type="submit" className="btn-secondary">
-              Form handler coming next
+              Contact form not live yet
             </button>
           </form>
           <p className="form-note">
-            This form is intentionally presentational in v1. Add a form service or server action in
-            a later phase before treating it as a live inbox.
+            This form is presentational only right now. Add a form backend or external form service
+            before treating it as a real inbox.
           </p>
         </article>
         <article className="contact-card">

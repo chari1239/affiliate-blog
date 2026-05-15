@@ -9,17 +9,16 @@ export default function PrivacyPolicyPage() {
         <div className="eyebrow">Privacy Policy</div>
         <h1 className="page-title">How this site handles visitor data.</h1>
         <p className="page-intro">
-          This policy is intentionally straightforward for the starter site. Review and adapt it to
-          your legal and operational requirements before public production use.
+          This policy is intentionally straightforward for the current small site. Review and adapt
+          it to your legal and operational requirements before public production use.
         </p>
       </header>
       <section className="policy-stack">
         <article className="policy-card">
           <h2>Information collected</h2>
           <p className="policy-copy">
-            Warm Shelf Home may collect basic analytics, referral data, and information you choose
-            to submit through future contact tools. In the current starter version, guest saved
-            items are stored locally in the browser.
+            Nihon Diaries may collect basic analytics, referral data, and information you choose to
+            submit through future contact tools.
           </p>
         </article>
         <article className="policy-card">
@@ -30,10 +29,10 @@ export default function PrivacyPolicyPage() {
           </p>
         </article>
         <article className="policy-card">
-          <h2>Cookies and local storage</h2>
+          <h2>Cookies and browser storage</h2>
           <p className="policy-copy">
-            The starter site uses browser local storage for guest saved products. Future versions may
-            add cookies or authentication storage for signed-in users.
+            The site may use cookies, browser storage, or similar tools later if analytics,
+            embedded services, or new interactive features are added.
           </p>
         </article>
       </section>

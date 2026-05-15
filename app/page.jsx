@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { products } from "@/lib/products";
+import { site } from "@/lib/site";
 
 export default function HomePage() {
   const product = products[0];
@@ -12,9 +13,9 @@ export default function HomePage() {
           <div className="eyebrow">Nihon Diaries Guide</div>
           <h1>What Indians should think about before buying kitchen appliances for Japan.</h1>
           <p>
-            Nihon Diaries keeps things simple for now. This page focuses on one common relocation
-            question: what is worth buying before moving from India to Japan if you still want to
-            cook the way you do at home.
+            Nihon Diaries focuses on practical relocation questions for Indians moving to Japan.
+            This page looks at what is worth buying before the move if you still want to cook the
+            way you do at home.
           </p>
           <div className="quick-list">
             <span>Check voltage before you buy</span>
@@ -23,10 +24,19 @@ export default function HomePage() {
           </div>
           <div className="hero-actions">
             <Link href={`/products/${product.slug}`} className="btn">
-              See the suggested product
+              See the kitchen pick
             </Link>
             <Link href={product.affiliateLink} className="btn-secondary" target="_blank" rel="noreferrer">
               View on Amazon
+            </Link>
+          </div>
+          <div className="follow-strip">
+            <span>Follow Nihon Diaries:</span>
+            <Link href={site.instagram} target="_blank" rel="noreferrer">
+              Instagram
+            </Link>
+            <Link href={site.youtube} target="_blank" rel="noreferrer">
+              YouTube
             </Link>
           </div>
         </div>
@@ -39,8 +49,8 @@ export default function HomePage() {
               <span className="pill">{product.category}</span>
               <h2>{product.title}</h2>
               <p className="section-copy">
-                A familiar appliance for chutneys, masalas, and batter prep, with a direct link so
-                readers can check details quickly.
+                A familiar appliance for chutneys, masalas, and batter prep, with a quick path to
+                the listing and the product note.
               </p>
               <div className="spotlight-links">
                 <Link href={product.affiliateLink} target="_blank" rel="noreferrer" className="inline-link">
@@ -78,13 +88,13 @@ export default function HomePage() {
             practical instead of pretending every imported appliance will work the same way abroad.
           </p>
           <p className="card-copy">
-            For now, the one product featured here is the Preethi Eco Plus MG-138 110V model. It
-            is not presented as a guaranteed Japan-ready appliance. It is presented as a useful
-            item to research carefully before you buy.
+            The featured kitchen pick here is the Preethi Eco Plus MG-138 110V model. It is not
+            presented as a guaranteed Japan-ready appliance. It is presented as a useful item to
+            research carefully before you buy.
           </p>
           <div className="inline-product-card">
             <div>
-              <p className="inline-product-label">Suggested product</p>
+              <p className="inline-product-label">Kitchen pick</p>
               <h3>{product.title}</h3>
               <p className="card-copy">{product.summary}</p>
             </div>
