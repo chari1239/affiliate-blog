@@ -5,12 +5,20 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "sanity": "powershell -NoProfile -Command \"$envFile='.env.local'; if (Test-Path $envFile) { Get-Content $envFile | ForEach-Object { if ($_ -match '^(?!#)\\s*([^=]+)=(.*)$') { [System.Environment]::SetEnvironmentVariable($matches[1], $matches[2], 'Process') } } }; sanity dev\"",
+    "sanity:deploy": "powershell -NoProfile -Command \"$envFile='.env.local'; if (Test-Path $envFile) { Get-Content $envFile | ForEach-Object { if ($_ -match '^(?!#)\\s*([^=]+)=(.*)$') { [System.Environment]::SetEnvironmentVariable($matches[1], $matches[2], 'Process') } } }; sanity deploy\"",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@portabletext/react": "^6.2.0",
+    "@sanity/image-url": "^2.1.1",
+    "groq": "^5.25.1",
     "next": "^16.0.0",
+    "next-sanity": "^12.4.5",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "sanity": "^5.25.1",
+    "styled-components": "^6.4.1"
   }
 }

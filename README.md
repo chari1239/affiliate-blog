@@ -38,3 +38,21 @@ npm run build
 - Re-check the product listing details and compatibility notes before promoting the page.
 - Keep the affiliate disclosure visible anywhere Amazon links are shared or embedded.
 - If you add analytics, a live contact backend, or more affiliate posts, update the privacy and disclaimer pages in the same change.
+
+## Planned CMS rollout
+
+Sanity starter files and the phased rollout plan live here:
+
+- `docs/sanity-rollout.md`
+- `sanity/README.md`
+- `sanity/schemaTypes/`
+- `sanity/lib/queries.js`
+
+Recommended first step: manage editorial articles in Sanity while keeping products static in `lib/products.js` until product editing needs justify a second migration.
+
+## Sanity setup
+
+1. Copy `.env.example` to `.env.local`.
+2. Set `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET`.
+3. Run `npm run sanity` to start the Sanity editor locally.
+4. Publish `article` documents and they will flow into `/articles`.

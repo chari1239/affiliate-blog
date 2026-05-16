@@ -40,6 +40,7 @@ export function SiteFooter() {
           </p>
         </div>
         <div className="footer-links">
+          <Link href="/articles">Articles</Link>
           <Link href="/products">Kitchen Pick</Link>
           <Link href="/disclaimer">Disclaimer</Link>
         </div>

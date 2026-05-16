@@ -198,20 +198,49 @@ img {
   line-height: 1.7;
 }
 
-.quick-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-  margin-top: 1rem;
+.quick-list-shell {
+  margin-top: 1.25rem;
+  padding: 1rem 1.1rem;
+  border-left: 4px solid rgba(191, 79, 36, 0.5);
+  border-radius: 18px;
+  background: rgba(255, 251, 246, 0.62);
 }
 
-.quick-list span {
-  padding: 0.55rem 0.8rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(31, 23, 19, 0.08);
+.quick-list-title {
+  margin: 0 0 0.7rem;
+  color: var(--accent-dark);
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.quick-list {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quick-list li {
+  position: relative;
+  padding: 0 0 0 1.6rem;
   color: var(--ink);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.quick-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), #d77a4b);
+  box-shadow: 0 0 0 4px rgba(191, 79, 36, 0.1);
 }
 
 .hero-actions,
@@ -298,15 +327,38 @@ img {
   margin: 0.75rem 0 0.4rem;
 }
 
-.inline-link {
-  color: var(--accent-dark);
-  font-weight: 700;
-}
-
 .spotlight-links {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.spotlight-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  background: var(--accent);
+  color: #fff7f2;
+  border: 1px solid transparent;
+  box-shadow: 0 12px 24px rgba(191, 91, 44, 0.2);
+  font-weight: 700;
+  text-align: center;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.spotlight-action:hover {
+  transform: translateY(-2px);
+}
+
+.spotlight-action-secondary {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--accent-dark);
+  border-color: rgba(191, 79, 36, 0.16);
+  box-shadow: none;
 }
 
 .highlight-card,
@@ -490,6 +542,101 @@ img {
   line-height: 1.7;
 }
 
+.article-shell {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.article-header {
+  padding-bottom: 0.75rem;
+}
+
+.article-card {
+  display: grid;
+  align-content: start;
+}
+
+.article-card-image,
+.article-hero-image {
+  display: block;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #fff7f2;
+}
+
+.article-card-image {
+  margin-bottom: 1rem;
+}
+
+.article-card-image img,
+.article-hero-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.article-hero-image {
+  box-shadow: var(--shadow);
+}
+
+.article-meta,
+.article-meta-row {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.article-meta {
+  margin: 0 0 0.75rem;
+}
+
+.article-meta-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.article-disclosure {
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: rgba(255, 243, 233, 0.72);
+  border: 1px solid rgba(241, 207, 184, 0.9);
+  color: rgba(111, 67, 38, 0.96);
+  line-height: 1.65;
+}
+
+.article-body {
+  padding: 1.35rem;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.article-body > :first-child {
+  margin-top: 0;
+}
+
+.article-body > :last-child {
+  margin-bottom: 0;
+}
+
+.article-body p,
+.article-body li {
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.article-body h2,
+.article-body h3 {
+  margin-top: 1.4rem;
+  margin-bottom: 0.7rem;
+  font-size: clamp(1.4rem, 2vw, 1.9rem);
+}
+
+.article-related-card {
+  margin-top: 0;
+}
+
 .detail-section {
   margin-top: 1.4rem;
 }
@@ -655,7 +802,8 @@ img {
   .saved-toolbar,
   .section-heading,
   .card-meta,
-  .price-line {
+  .price-line,
+  .article-meta-row {
     align-items: start;
     flex-direction: column;
   }
@@ -688,16 +836,20 @@ img {
     width: 100%;
   }
 
-  .quick-list {
-    flex-direction: column;
-  }
-
   .highlight-value {
     font-size: 1.8rem;
   }
 
+  .quick-list-shell {
+    padding: 0.95rem 0.9rem;
+  }
+
   .spotlight-links {
     flex-direction: column;
+  }
+
+  .spotlight-action {
+    width: 100%;
   }
 
   .follow-strip {

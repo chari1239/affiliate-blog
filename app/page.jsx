@@ -17,10 +17,13 @@ export default function HomePage() {
             This page looks at what is worth buying before the move if you still want to cook the
             way you do at home.
           </p>
-          <div className="quick-list">
-            <span>Check voltage before you buy</span>
-            <span>Prefer Indian mixer jars over generic blenders</span>
-            <span>Keep the buying flow simple</span>
+          <div className="quick-list-shell">
+            <p className="quick-list-title">Before you buy</p>
+            <ul className="quick-list" aria-label="Key buying checks">
+              <li>Check voltage before you buy</li>
+              <li>Prefer Indian mixer jars over generic blenders</li>
+              <li>Keep the buying flow simple</li>
+            </ul>
           </div>
           <div className="hero-actions">
             <Link href={`/products/${product.slug}`} className="btn">
@@ -53,10 +56,10 @@ export default function HomePage() {
                 the listing and the product note.
               </p>
               <div className="spotlight-links">
-                <Link href={product.affiliateLink} target="_blank" rel="noreferrer" className="inline-link">
+                <Link href={product.affiliateLink} target="_blank" rel="noreferrer" className="spotlight-action">
                   Open Amazon listing
                 </Link>
-                <Link href={`/products/${product.slug}`} className="inline-link">
+                <Link href={`/products/${product.slug}`} className="spotlight-action spotlight-action-secondary">
                   Read the full note
                 </Link>
               </div>
