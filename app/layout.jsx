@@ -1,7 +1,5 @@
 import "./globals.css";
-import { DisclosureBanner } from "@/components/disclosure-banner";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
+import { SiteShell } from "@/components/site-shell";
 import { site } from "@/lib/site";
 
 export const metadata = {
@@ -16,12 +14,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <div className="page-shell">
-          <SiteHeader />
-          {children}
-          <DisclosureBanner />
-          <SiteFooter />
-        </div>
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );
