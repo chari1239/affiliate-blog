@@ -4,6 +4,8 @@ import { getArticles } from "@/lib/sanity/fetchers";
 import { isSanityConfigured } from "@/lib/sanity/env";
 import { urlForImage } from "@/lib/sanity/image";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Articles",
   description: "Editorial guides and relocation notes published through Sanity."
