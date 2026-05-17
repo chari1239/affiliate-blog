@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
           <h2>Information collected</h2>
           <p className="policy-copy">
             Nihon Diaries may collect basic analytics, referral data, and information you choose to
-            submit through future contact tools.
+            submit through the contact form.
           </p>
         </article>
         <article className="policy-card">

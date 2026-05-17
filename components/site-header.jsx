@@ -1,18 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { site } from "@/lib/site";
 
 const links = [
   { href: "/", label: "Home" },
   { href: "/articles", label: "Articles" },
-  { href: "/products", label: "Kitchen Pick" },
+  { href: "/products", label: "Products" },
+  { href: "/contact", label: "Contact" },
   { href: "/disclaimer", label: "Disclosure" }
 ];
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <header className="site-header">
@@ -22,8 +25,9 @@ export function SiteHeader() {
             <Link href="/" className="brand-mark" onClick={() => setMenuOpen(false)}>
               {site.name}
             </Link>
+            <span className="brand-badge">Japan journal</span>
           </div>
-          <div className="brand-subtitle">Notes for Indians starting life in Japan</div>
+          <div className="brand-subtitle">Stories, daily life, and ideas from Japan</div>
         </div>
         <button
           type="button"
@@ -39,7 +43,12 @@ export function SiteHeader() {
         </button>
         <nav id="primary-nav" className={`nav-links ${menuOpen ? "is-open" : ""}`} aria-label="Primary">
           {links.map((link) => (
-            <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}>
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`nav-link ${pathname === link.href ? "is-active" : ""}`}
+              onClick={() => setMenuOpen(false)}
+            >
               {link.label}
             </Link>
           ))}

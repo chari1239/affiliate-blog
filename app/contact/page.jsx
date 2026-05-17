@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { site } from "@/lib/site";
+import { ContactForm } from "@/app/contact/contact-form";
 
 export const metadata = {
   title: "Contact"
@@ -9,48 +11,34 @@ export default function ContactPage() {
     <main className="page-frame">
       <header className="page-header">
         <div className="eyebrow">Contact</div>
-        <h1 className="page-title">Contact the site owner.</h1>
+        <h1 className="page-title">Get in touch with Nihon Diaries.</h1>
         <p className="page-intro">
-          Visitors should be able to see that Nihon Diaries has a visible contact path, even while
-          the site is still a small static affiliate blog.
+          Questions about life in Japan, collaboration, or article suggestions can go here. The
+          form opens Gmail compose, with a mail app fallback.
         </p>
       </header>
       <section className="contact-grid">
         <article className="contact-card">
           <h3>Send a message</h3>
-          <form className="contact-form">
-            <label className="label">
-              Name
-              <input className="input" type="text" placeholder="Your name" />
-            </label>
-            <label className="label">
-              Email
-              <input className="input" type="email" placeholder="you@example.com" />
-            </label>
-            <label className="label">
-              Message
-              <textarea className="textarea" placeholder="How can we help?" />
-            </label>
-            <button type="submit" className="btn-secondary">
-              Contact form not live yet
-            </button>
-          </form>
+          <ContactForm />
           <p className="form-note">
-            This form is presentational only right now. Add a form backend or external form service
-            before treating it as a real inbox.
+            No backend is required. The form pre-fills a message and opens Gmail or your email app.
           </p>
         </article>
         <article className="contact-card">
           <h3>Direct email</h3>
           <p className="card-copy">
-            For partnership, support, or policy questions, use:
+            For direct contact, use:
           </p>
           <p>
             <strong>{site.email}</strong>
           </p>
           <p className="card-copy">
-            Replace this placeholder address with a real monitored inbox before public launch.
+            Replace this placeholder address with a monitored inbox before a real public launch.
           </p>
+          <Link href={`mailto:${site.email}`} className="btn-secondary">
+            Open email app
+          </Link>
         </article>
       </section>
     </main>

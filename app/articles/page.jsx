@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Articles",
-  description: "Editorial guides and relocation notes published through Sanity."
+  description: "Stories, practical guides, and daily life notes about Japan published through Sanity."
 };
 
 function formatDate(dateString) {
@@ -29,11 +29,11 @@ export default async function ArticlesPage() {
   return (
     <main className="page-frame">
       <header className="page-header">
-        <div className="eyebrow">Editorial Guides</div>
-        <h1 className="page-title">Practical buying notes for Indians moving to Japan.</h1>
+        <div className="eyebrow">Editorial Journal</div>
+        <h1 className="page-title">Stories, guides, and small observations from Japan.</h1>
         <p className="page-intro">
-          This section is ready for Sanity-backed article publishing, with space for longer guides,
-          relocation notes, and product-linked editorial content.
+          Read longer pieces about daily life, work, neighborhoods, food, and the useful details
+          that help Japan feel less abstract and more lived-in.
         </p>
       </header>
 
@@ -41,20 +41,20 @@ export default async function ArticlesPage() {
         <section className="policy-card">
           <h2>Sanity is installed but not configured yet.</h2>
           <p className="policy-copy">
-            Add <code>NEXT_PUBLIC_SANITY_PROJECT_ID</code> and <code>NEXT_PUBLIC_SANITY_DATASET</code>
-            {" "}to start publishing article content here.
+            Add <code>NEXT_PUBLIC_SANITY_PROJECT_ID</code> and <code>NEXT_PUBLIC_SANITY_DATASET</code>{" "}
+            to start publishing article content here.
           </p>
         </section>
       ) : null}
 
       {isSanityConfigured && !articles.length ? (
-        <section className="policy-card">
-          <h2>No articles published yet.</h2>
-          <p className="policy-copy">
-            Create your first <code>article</code> document in Sanity Studio and it will appear
-            here automatically.
-          </p>
-        </section>
+          <section className="policy-card">
+            <h2>No articles published yet.</h2>
+            <p className="policy-copy">
+              Create your first <code>article</code> document in Sanity Studio and it will appear
+              here automatically.
+            </p>
+          </section>
       ) : null}
 
       {!!articles.length ? (
