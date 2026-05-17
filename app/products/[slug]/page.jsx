@@ -42,7 +42,9 @@ export default async function ProductDetailPage({ params }) {
           <h1>{product.title}</h1>
           <p className="detail-copy">{product.summary}</p>
           <div className="price-line">
-            <span>{product.priceNote}</span>
+            <Link href={product.affiliateLink} target="_blank" rel="noreferrer" className="price-link">
+              {product.priceNote}
+            </Link>
             <strong>Suggested product</strong>
           </div>
           <div className="cta-row">

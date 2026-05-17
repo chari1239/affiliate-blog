@@ -7,7 +7,10 @@ export const metadata = {
     default: site.name,
     template: `%s | ${site.name}`
   },
-  description: site.description
+  description: site.description,
+  icons: {
+    icon: "/logo.png"
+  }
 };
 
 export default function RootLayout({ children }) {

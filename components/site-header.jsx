@@ -23,7 +23,8 @@ export function SiteHeader() {
         <div className="brand-block">
           <div className="brand-row">
             <Link href="/" className="brand-mark" onClick={() => setMenuOpen(false)}>
-              {site.name}
+              <img src="/logo.png" alt={site.name} className="logo-image" />
+              <span className="brand-text">{site.name}</span>
             </Link>
             <span className="brand-badge">Japan journal</span>
           </div>

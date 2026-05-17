@@ -97,8 +97,37 @@ img {
 }
 
 .brand-mark {
-  font-size: 1.55rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  transition: all 160ms ease;
+}
+
+.brand-mark:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.logo-image {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.brand-text {
+  font-family: "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: 1.35rem;
   font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  line-height: 1.2;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--accent-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .brand-badge {
@@ -617,6 +646,30 @@ img {
 
 .price-line strong {
   font-size: 1.05rem;
+}
+
+.price-link,
+.card-meta a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 0.95rem;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  box-shadow: 0 4px 12px rgba(191, 91, 44, 0.15);
+}
+
+.price-link:hover,
+.card-meta a:hover {
+  background: var(--accent);
+  color: #fff7f2;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(191, 91, 44, 0.25);
 }
 
 .page-frame {

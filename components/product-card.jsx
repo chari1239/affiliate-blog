@@ -14,7 +14,9 @@ export function ProductCard({ product }) {
         <h3>{product.title}</h3>
         <p className="card-copy">{product.summary}</p>
         <div className="card-meta">
-          <span>{product.priceNote}</span>
+          <Link href={product.affiliateLink} target="_blank" rel="noreferrer" className="price-link">
+            {product.priceNote}
+          </Link>
           <Link href={`/products/${product.slug}`}>See details</Link>
         </div>
       </div>
