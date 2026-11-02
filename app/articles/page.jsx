@@ -8,7 +8,11 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Articles",
-  description: "Stories, practical guides, and daily life notes about Japan published through Sanity."
+  description:
+    "Learn Japanese step by step, read move-to-Japan guides for Indians, and explore everyday stories from Japan — articles from Nihon Diaries.",
+  alternates: {
+    canonical: "/articles"
+  }
 };
 
 function formatDate(dateString) {
