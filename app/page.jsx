@@ -2,6 +2,21 @@ import Link from "next/link";
 import { site } from "@/lib/site";
 import { getArticles } from "@/lib/sanity/fetchers";
 
+export const metadata = {
+  title: {
+    absolute: "Nihon Diaries — Learn Japanese & Life in Japan, Through an Indian Lens"
+  },
+  description: site.description,
+  alternates: {
+    canonical: "/"
+  },
+  openGraph: {
+    title: "Nihon Diaries — Learn Japanese & Life in Japan, Through an Indian Lens",
+    description: site.description,
+    url: site.url
+  }
+};
+
 const focusAreas = [
   {
     title: "Daily life",
