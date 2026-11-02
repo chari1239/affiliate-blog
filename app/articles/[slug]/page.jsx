@@ -6,6 +6,7 @@ import { getArticle } from "@/lib/sanity/fetchers";
 import { isSanityConfigured } from "@/lib/sanity/env";
 import { urlForImage } from "@/lib/sanity/image";
 import { getProduct } from "@/lib/products";
+import { site } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -19,9 +20,33 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  const title = article.seoTitle || article.title;
+  const description = article.seoDescription || article.excerpt;
+  const coverUrl = article.coverImage
+    ? urlForImage(article.coverImage).width(1200).height(630).fit("crop").url()
+    : `${site.url}/og-default.jpg`;
+
   return {
-    title: article.seoTitle || article.title,
-    description: article.seoDescription || article.excerpt
+    title,
+    description,
+    alternates: {
+      canonical: `/articles/${article.slug}`
+    },
+    openGraph: {
+      type: "article",
+      title,
+      description,
+      url: `${site.url}/articles/${article.slug}`,
+      images: [{ url: coverUrl, width: 1200, height: 630, alt: article.coverImage?.alt || article.title }],
+      publishedTime: article.publishedAt || undefined,
+      authors: article.author?.name ? [article.author.name] : undefined
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [coverUrl]
+    }
   };
 }
 
@@ -69,8 +94,43 @@ export default async function ArticleDetailPage({ params }) {
     ? getProduct(article.featuredProductSlug)
     : null;
 
+  const articleUrl = `${site.url}/articles/${article.slug}`;
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "@id": `${articleUrl}#article`,
+        headline: article.title,
+        description: article.seoDescription || article.excerpt,
+        image: article.coverImage
+          ? urlForImage(article.coverImage).width(1200).height(630).fit("crop").url()
+          : `${site.url}/og-default.jpg`,
+        datePublished: article.publishedAt || undefined,
+        author: article.author?.name
+          ? { "@type": "Person", name: article.author.name }
+          : undefined,
+        publisher: { "@id": `${site.url}/#organization` },
+        mainEntityOfPage: articleUrl,
+        inLanguage: "en"
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+          { "@type": "ListItem", position: 2, name: "Articles", item: `${site.url}/articles` },
+          { "@type": "ListItem", position: 3, name: article.title, item: articleUrl }
+        ]
+      }
+    ]
+  };
+
   return (
     <main className="page-frame">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <article className="article-shell">
         <header className="page-header article-header">
           <div className="pill-row">
