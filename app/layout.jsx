@@ -41,6 +41,10 @@ export const metadata = {
   },
   icons: {
     icon: "/logo.png"
+  },
+  other: {
+    // Google AdSense site-ownership verification (publisher ca-pub-7229881020426401)
+    "google-adsense-account": "ca-pub-7229881020426401"
   }
 };
 
@@ -78,6 +82,15 @@ export default function RootLayout({ children }) {
         {/* Vercel Web Analytics (script integration; data flows once Web
             Analytics is enabled for the project in the Vercel dashboard) */}
         <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
+        {/* Google AdSense loader (manual ad units are placed separately;    
+                    no ads render until the site is approved) */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7229881020426401"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+      />
+        
         <SiteShell>{children}</SiteShell>
       </body>
     </html>
