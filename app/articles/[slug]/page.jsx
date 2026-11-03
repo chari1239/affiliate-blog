@@ -7,6 +7,8 @@ import { isSanityConfigured } from "@/lib/sanity/env";
 import { urlForImage } from "@/lib/sanity/image";
 import { getProduct } from "@/lib/products";
 import { site } from "@/lib/site";
+import { quizzes } from "@/lib/quiz-data";
+import ReadingQuiz from "@/components/reading-quiz";
 
 export const dynamic = "force-dynamic";
 
@@ -169,6 +171,12 @@ export default async function ArticleDetailPage({ params }) {
         <section className="article-body">
           <PortableText value={article.body || []} />
         </section>
+
+        {quizzes[article.slug] ? (
+      <section className="article-quiz">
+            <ReadingQuiz quiz={quizzes[article.slug]} />
+      </section>
+      ) : null}
 
         {featuredProduct ? (
           <section className="inline-product-card article-related-card">
