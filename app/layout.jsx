@@ -1,3 +1,4 @@
+import Script from "next/script";
 import "./globals.css";
 import { SiteShell } from "@/components/site-shell";
 import { site } from "@/lib/site";
@@ -74,6 +75,9 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
+        {/* Vercel Web Analytics (script integration; data flows once Web
+            Analytics is enabled for the project in the Vercel dashboard) */}
+        <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
         <SiteShell>{children}</SiteShell>
       </body>
     </html>
