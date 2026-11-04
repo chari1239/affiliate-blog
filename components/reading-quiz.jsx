@@ -150,7 +150,7 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
 
       {showAll ? (
         <div className="quiz-answers">
-          <h3>Answers & explanations</h3>
+          <h3>Answers &amp; explanations</h3>
           <ul>
             {quiz.items.map((item) => (
               <li key={item.word}>
