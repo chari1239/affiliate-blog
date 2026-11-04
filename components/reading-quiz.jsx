@@ -1,31 +1,70 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+
+// Fire-and-forget anonymous counting (per quiz, keyed by article slug).
+// The /api/quiz-event route turns these into counters; failures are
+// swallowed so counting can never disturb the reader.
+function sendQuizEvent(slug, payload) {
+  if (!slug) return;
+  try {
+    fetch("/api/quiz-event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug, ...payload }),
+      keepalive: true
+    }).catch(() => {});
+  } catch {}
+}
 
 // Interactive reading quiz: the reader types the romaji reading for each
 // kana word and checks it. Meanings and memory hooks stay hidden until the
 // reader answers correctly, asks for the answer on a card, or opens the
 // full answers panel at the end.
-export default function ReadingQuiz({ quiz }) {
+export default function ReadingQuiz({ quiz, quizSlug }) {
   const [values, setValues] = useState({});
   const [states, setStates] = useState({});
   const [showAll, setShowAll] = useState(false);
+  const startedRef = useRef(false);
+  const finishedRef = useRef(false);
 
   const total = quiz.items.length;
   const score = quiz.items.filter((_, i) => states[i] === "correct").length;
   const attempted = quiz.items.filter((_, i) => states[i]).length;
 
+  // A quiz counts as finished once every word is resolved — answered
+  // correctly or revealed. Fires at most once per page view.
+  function maybeFinish(nextStates) {
+    if (finishedRef.current) return;
+    const resolved = quiz.items.every(
+      (_, i) => nextStates[i] === "correct" || nextStates[i] === "revealed"
+    );
+    if (!resolved) return;
+    finishedRef.current = true;
+    const finalScore = quiz.items.filter(
+      (_, i) => nextStates[i] === "correct"
+    ).length;
+    sendQuizEvent(quizSlug, { type: "finish", score: finalScore });
+  }
+
   function check(i) {
     const v = (values[i] || "").trim().toLowerCase();
     if (!v) return;
-    setStates((s) => ({
-      ...s,
-      [i]: v === quiz.items[i].reading ? "correct" : "wrong"
-    }));
+    const isCorrect = v === quiz.items[i].reading;
+    if (!startedRef.current) {
+      startedRef.current = true;
+      sendQuizEvent(quizSlug, { type: "start" });
+    }
+    sendQuizEvent(quizSlug, { type: "check", correct: isCorrect });
+    const nextStates = { ...states, [i]: isCorrect ? "correct" : "wrong" };
+    setStates(nextStates);
+    maybeFinish(nextStates);
   }
 
   function reveal(i) {
-    setStates((s) => ({ ...s, [i]: "revealed" }));
+    const nextStates = { ...states, [i]: "revealed" };
+    setStates(nextStates);
+    maybeFinish(nextStates);
   }
 
   return (

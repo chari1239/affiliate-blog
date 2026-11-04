@@ -174,7 +174,7 @@ export default async function ArticleDetailPage({ params }) {
 
         {quizzes[article.slug] ? (
       <section className="article-quiz">
-            <ReadingQuiz quiz={quizzes[article.slug]} />
+            <ReadingQuiz quiz={quizzes[article.slug]} quizSlug={article.slug} />
       </section>
       ) : null}
 
