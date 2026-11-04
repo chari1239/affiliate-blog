@@ -25,6 +25,56 @@ export async function POST(request) {
     return done();
   }
 
+  // Temporary diagnostic probe: POST {"probe": true} reports whether the
+  // write token is present in this deployment and what Sanity answers to
+  // a harmless createIfNotExists for a throwaway "probe" document. Remove
+  // once the counters are verified working.
+  if (body && body.probe === true) {
+    const probeToken = process.env.SANITY_API_WRITE_TOKEN || "";
+    let sanityStatus = null;
+    let sanityBody = "";
+    if (probeToken) {
+      try {
+        const res = await fetch(
+          `https://${PROJECT_ID}.api.sanity.io/v${API_VERSION}/data/mutate/${DATASET}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${probeToken}`
+            },
+            body: JSON.stringify({
+              mutations: [
+                {
+                  createIfNotExists: {
+                    _id: "quizStats.probe",
+                    _type: "quizStats",
+                    slug: "probe",
+                    starts: 0,
+                    checks: 0,
+                    correctChecks: 0,
+                    finishes: 0,
+                    scoreSum: 0,
+                    fullScores: 0
+                  }
+                }
+              ]
+            })
+          }
+        );
+        sanityStatus = res.status;
+        sanityBody = (await res.text()).slice(0, 300);
+      } catch (e) {
+        sanityBody = String(e).slice(0, 300);
+      }
+    }
+    return Response.json({
+      tokenPresent: probeToken.length > 0,
+      tokenLength: probeToken.length,
+      sanityStatus,
+      sanityBody
+    });
+  }
   const { slug, type, correct, score } = body || {};
   // Only count quizzes we actually ship (whitelist from quiz-data).
   if (!slug || !quizzes[slug]) return done();
