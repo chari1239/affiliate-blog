@@ -792,7 +792,7 @@ img {
 .article-body p,
 .article-body li {
   color: var(--muted);
-  line-height: 1.8;
+  line-height: 1.65;
 }
 
 .article-body h2,
@@ -1039,7 +1039,7 @@ img {
 /* ---- Interactive reading quiz (components/reading-quiz.jsx) ---- */
 
 .article-quiz {
-  margin-top: 2.5rem;
+  margin-top: 0.25rem;
 }
 
 .quiz {
@@ -1053,12 +1053,13 @@ img {
 .quiz-title {
   margin: 0 0 0.5rem;
   font-size: 1.55rem;
-  line-height: 1.25;
+  line-height: 1.25rem;
 }
 
 .quiz-intro {
   margin: 0 0 1.25rem;
   color: var(--muted);
+    line-height: 1.65;
 }
 
 .quiz-cards {
@@ -1187,4 +1188,16 @@ img {
   margin: 1rem 0 0;
   color: var(--accent-dark);
   font-weight: 600;
+}
+
+/* Quiz pages: flatten the intro card so the page reads as one clean flow */
+.article-shell:has(.article-quiz) .article-body {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0.25rem 1.25rem 0;
+}
+
+.article-shell:has(.article-quiz) .quiz {
+  padding: 1.25rem;
 }
