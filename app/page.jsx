@@ -4,14 +4,14 @@ import { getArticles } from "@/lib/sanity/fetchers";
 
 export const metadata = {
   title: {
-    absolute: "Nihon Diaries — Learn Japanese & Life in Japan, Through an Indian Lens"
+    absolute: "Nihon Diaries by Hari — Learn Japanese & Life in Japan, Through an Indian Lens"
   },
   description: site.description,
   alternates: {
     canonical: "/"
   },
   openGraph: {
-    title: "Nihon Diaries — Learn Japanese & Life in Japan, Through an Indian Lens",
+    title: "Nihon Diaries by Hari — Learn Japanese & Life in Japan, Through an Indian Lens",
     description: site.description,
     url: site.url
   }
@@ -60,7 +60,7 @@ export default async function HomePage() {
     <main className="hero-wrap">
       <section className="hero home-hero">
         <div className="home-hero-copy">
-          <div className="eyebrow">Nihon Diaries</div>
+          <div className="eyebrow">Nihon Diaries by Hari</div>
           <h1>Japan, through an Indian lens.</h1>
           <p>
             {site.name} is a living journal about Japan from an Indian perspective - stories,
