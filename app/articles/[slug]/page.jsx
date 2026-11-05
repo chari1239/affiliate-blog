@@ -96,8 +96,14 @@ export default async function ArticleDetailPage({ params }) {
     ? getProduct(article.featuredProductSlug)
     : null;
 
+    const disclosureSection = article.affiliateDisclosure ? (
+              <section className="article-disclosure">
+                          <strong>Affiliate disclosure:</strong> {article.affiliateDisclosure}
+              </section>
+        ) : null;
+
   const articleUrl = `${site.url}/articles/${article.slug}`;
-  const structuredData = {
+    const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
       {
@@ -162,11 +168,7 @@ export default async function ArticleDetailPage({ params }) {
           </div>
         ) : null}
 
-        {article.affiliateDisclosure ? (
-          <section className="article-disclosure">
-            <strong>Affiliate disclosure:</strong> {article.affiliateDisclosure}
-          </section>
-        ) : null}
+        {quizzes[article.slug] ? null : disclosureSection}
 
         <section className="article-body">
           <PortableText value={article.body || []} />
@@ -177,6 +179,8 @@ export default async function ArticleDetailPage({ params }) {
             <ReadingQuiz quiz={quizzes[article.slug]} quizSlug={article.slug} />
       </section>
       ) : null}
+
+        {quizzes[article.slug] ? disclosureSection : null}
 
         {featuredProduct ? (
           <section className="inline-product-card article-related-card">
