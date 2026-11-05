@@ -25,7 +25,7 @@ export const metadata = {
         url: "/og-default.jpg",
         width: 1200,
         height: 630,
-        alt: "Nihon Diaries — Learn Japanese and life in Japan, through an Indian lens"
+        alt: "Nihon Diaries by Hari — Learn Japanese and life in Japan, through an Indian lens"
       }
     ]
   },

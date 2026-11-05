@@ -47,7 +47,7 @@ export function SiteFooter() {
         <div>
           <strong>{site.name}</strong>
           <p className="footer-copy">
-            Nihon Diaries publishes stories, practical guides, and small observations about Japan
+            Nihon Diaries by Hari publishes stories, practical guides, and small observations about Japan
             from an Indian perspective. Some pages include affiliate links.
           </p>
         </div>
