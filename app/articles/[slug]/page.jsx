@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import { notFound } from "next/navigation";
-import { getArticle } from "@/lib/sanity/fetchers";
+import { getArticle, getArticleNeighbours } from "@/lib/sanity/fetchers";
 import { isSanityConfigured } from "@/lib/sanity/env";
 import { urlForImage } from "@/lib/sanity/image";
 import { getProduct } from "@/lib/products";
@@ -95,6 +95,12 @@ export default async function ArticleDetailPage({ params }) {
   const featuredProduct = article.featuredProductSlug
     ? getProduct(article.featuredProductSlug)
     : null;
+
+  const { prev: prevArticle, next: nextArticle } = await getArticleNeighbours({
+    slug: article.slug,
+    publishedAt: article.publishedAt,
+    categorySlug: article.categories?.[0]?.slug || null
+  });
 
     const disclosureSection = article.affiliateDisclosure ? (
               <section className="article-disclosure">
@@ -206,6 +212,33 @@ export default async function ArticleDetailPage({ params }) {
               </Link>
             </div>
           </section>
+        ) : null}
+
+        {prevArticle || nextArticle ? (
+          <nav className="article-nav" aria-label="More articles">
+            {prevArticle ? (
+              <Link
+                href={`/articles/${prevArticle.slug}`}
+                className="article-nav-card article-nav-prev"
+              >
+                <span className="article-nav-label">← Previous article</span>
+                <span className="article-nav-title">{prevArticle.title}</span>
+              </Link>
+            ) : (
+              <span className="article-nav-spacer" aria-hidden="true" />
+            )}
+            {nextArticle ? (
+              <Link
+                href={`/articles/${nextArticle.slug}`}
+                className="article-nav-card article-nav-next"
+              >
+                <span className="article-nav-label">Next article →</span>
+                <span className="article-nav-title">{nextArticle.title}</span>
+              </Link>
+            ) : (
+              <span className="article-nav-spacer" aria-hidden="true" />
+            )}
+          </nav>
         ) : null}
       </article>
     </main>
