@@ -102,6 +102,13 @@ export default async function ArticleDetailPage({ params }) {
               </section>
         ) : null;
 
+  const quiz = quizzes[article.slug];
+  const quizSection = quiz ? (
+      <section className="article-quiz">
+            <ReadingQuiz quiz={quiz} quizSlug={article.slug} />
+      </section>
+      ) : null;
+
   const articleUrl = `${site.url}/articles/${article.slug}`;
     const structuredData = {
     "@context": "https://schema.org",
@@ -168,19 +175,17 @@ export default async function ArticleDetailPage({ params }) {
           </div>
         ) : null}
 
-        {quizzes[article.slug] ? null : disclosureSection}
+        {quiz ? null : disclosureSection}
+
+        {quiz?.lead ? quizSection : null}
 
         <section className="article-body">
           <PortableText value={article.body || []} />
         </section>
 
-        {quizzes[article.slug] ? (
-      <section className="article-quiz">
-            <ReadingQuiz quiz={quizzes[article.slug]} quizSlug={article.slug} />
-      </section>
-      ) : null}
+        {quiz?.lead ? null : quizSection}
 
-        {quizzes[article.slug] ? disclosureSection : null}
+        {quiz ? disclosureSection : null}
 
         {featuredProduct ? (
           <section className="inline-product-card article-related-card">
