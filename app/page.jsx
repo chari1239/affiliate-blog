@@ -55,6 +55,11 @@ const readerPrompts = [
 export default async function HomePage() {
   const articles = await getArticles();
   const featuredArticles = articles.slice(0, 3);
+  const learnJapaneseArticles = articles
+    .filter((article) =>
+      (article.categories || []).some((category) => category.slug === "learn-japanese")
+    )
+    .slice(0, 3);
 
   return (
     <main className="hero-wrap">
@@ -108,6 +113,61 @@ export default async function HomePage() {
             </div>
           </article>
         </aside>
+      </section>
+
+      <section className="section">
+        <div className="section-heading">
+          <div>
+            <div className="eyebrow">Learn Japanese</div>
+            <h2>Learn Japanese from Zero 🇯🇵</h2>
+          </div>
+          <p className="section-copy section-intro">
+            Free beginner lessons from the very first hiragana — learn each row step by step, then
+            test yourself with interactive reading quizzes. A new lesson every day at 9 PM Japan
+            time.
+          </p>
+        </div>
+
+        <div className="hero-actions">
+          <Link href="/articles/the-5-japanese-vowels-hiragana-lesson-1" className="btn">
+            Start with Lesson 1 — The 5 Vowels
+          </Link>
+          <Link
+            href="https://www.youtube.com/playlist?list=PLbmlPFOPmgK4"
+            className="btn-secondary"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Watch the lessons on YouTube
+          </Link>
+          <Link href="/articles" className="btn-secondary">
+            Browse all articles
+          </Link>
+        </div>
+
+        {learnJapaneseArticles.length ? (
+          <div className="content-grid learn-japanese-grid">
+            {learnJapaneseArticles.map((article) => (
+              <article key={article._id} className="content-card landing-article-card">
+                <div className="pill-row">
+                  {(article.categories || []).map((category) => (
+                    <span key={category.slug || category.title} className="pill">
+                      {category.title}
+                    </span>
+                  ))}
+                </div>
+                <h3>{article.title}</h3>
+                <p className="card-copy">{article.excerpt}</p>
+                <Link
+                  href={`/articles/${article.slug}`}
+                  className="spotlight-action spotlight-action-secondary"
+                >
+                  Read article
+                </Link>
+              </article>
+            ))}
+          </div>
+        ) : null}
       </section>
 
       <section className="section">

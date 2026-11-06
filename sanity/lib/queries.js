@@ -19,6 +19,34 @@ export const articlesListQuery = `
   }
 `;
 
+export const articlePrevInCategoryQuery = `
+  *[_type == "article" && slug.current != $slug && publishedAt < $publishedAt && references(*[_type == "category" && slug.current == $categorySlug]._id)] | order(publishedAt desc) [0] {
+    title,
+    "slug": slug.current
+  }
+`;
+
+export const articleNextInCategoryQuery = `
+  *[_type == "article" && slug.current != $slug && publishedAt > $publishedAt && references(*[_type == "category" && slug.current == $categorySlug]._id)] | order(publishedAt asc) [0] {
+    title,
+    "slug": slug.current
+  }
+`;
+
+export const articlePrevGlobalQuery = `
+  *[_type == "article" && slug.current != $slug && publishedAt < $publishedAt] | order(publishedAt desc) [0] {
+    title,
+    "slug": slug.current
+  }
+`;
+
+export const articleNextGlobalQuery = `
+  *[_type == "article" && slug.current != $slug && publishedAt > $publishedAt] | order(publishedAt asc) [0] {
+    title,
+    "slug": slug.current
+  }
+`;
+
 export const articleBySlugQuery = `
   *[_type == "article" && slug.current == $slug][0] {
     _id,

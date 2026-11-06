@@ -806,6 +806,59 @@ img {
   margin-top: 0;
 }
 
+.article-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.article-nav-card {
+  display: grid;
+  gap: 0.35rem;
+  align-content: start;
+  padding: 1.2rem;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.article-nav-next {
+  text-align: right;
+}
+
+.article-nav-label {
+  color: var(--accent-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.article-nav-title {
+  font-family: "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: 1.15rem;
+  line-height: 1.35;
+}
+
+.learn-japanese-grid {
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .article-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .article-nav-next {
+    text-align: left;
+  }
+
+  .article-nav-spacer {
+    display: none;
+  }
+}
+
 .detail-section {
   margin-top: 1.4rem;
 }
