@@ -29,6 +29,12 @@ const focusAreas = [
   {
     title: "Hidden gems",
     copy: "Neighborhoods, shops, cafés, and places worth knowing beyond the obvious tourist list."
+  },
+  {
+    title: "Learn Japanese",
+    copy: "Free beginner lessons from the very first hiragana — step-by-step rows and interactive reading quizzes, a new lesson every day.",
+    href: "/articles/the-5-japanese-vowels-hiragana-lesson-1",
+    action: "Start with Lesson 1 →"
   }
 ];
 
@@ -54,11 +60,16 @@ const readerPrompts = [
 
 export default async function HomePage() {
   const articles = await getArticles();
-  const featuredArticles = articles.slice(0, 3);
   const learnJapaneseArticles = articles
     .filter((article) =>
       (article.categories || []).some((category) => category.slug === "learn-japanese")
     )
+    .slice(0, 3);
+  // Latest articles must not repeat the cards already shown above in the
+  // Learn Japanese section — show the next newest articles instead.
+  const learnJapaneseSlugs = new Set(learnJapaneseArticles.map((article) => article.slug));
+  const featuredArticles = articles
+    .filter((article) => !learnJapaneseSlugs.has(article.slug))
     .slice(0, 3);
 
   return (
@@ -72,14 +83,6 @@ export default async function HomePage() {
             hidden gems, daily life, jobs, food, housing, and the little decisions that shape how
             a place actually feels to live in.
           </p>
-          <div className="topic-grid" aria-label="Topics covered">
-            {focusAreas.map((item) => (
-              <article key={item.title} className="topic-tile">
-                <p className="inline-product-label">{item.title}</p>
-                <p>{item.copy}</p>
-              </article>
-            ))}
-          </div>
           <div className="hero-actions">
             <Link href="/articles" className="btn">
               Explore articles
@@ -182,13 +185,21 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="feature-grid">
-          {focusAreas.map((area) => (
-            <article key={area.title} className="highlight-card">
-              <p className="inline-product-label">{area.title}</p>
-              <p className="card-copy">{area.copy}</p>
-            </article>
-          ))}
+        <div className="feature-grid feature-grid-four">
+          {focusAreas.map((area) =>
+            area.href ? (
+              <Link key={area.title} href={area.href} className="highlight-card feature-card-link">
+                <p className="inline-product-label">{area.title}</p>
+                <p className="card-copy">{area.copy}</p>
+                <span className="feature-card-action">{area.action}</span>
+              </Link>
+            ) : (
+              <article key={area.title} className="highlight-card">
+                <p className="inline-product-label">{area.title}</p>
+                <p className="card-copy">{area.copy}</p>
+              </article>
+            )
+          )}
         </div>
       </section>
 
