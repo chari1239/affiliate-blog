@@ -366,27 +366,6 @@ img {
   align-content: start;
 }
 
-.topic-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.8rem;
-  margin-top: 1.35rem;
-}
-
-.topic-tile {
-  padding: 1rem;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.56);
-  border: 1px solid rgba(31, 23, 19, 0.08);
-}
-
-.topic-tile p:last-child {
-  margin: 0;
-  color: var(--muted);
-  line-height: 1.6;
-  font-size: 0.95rem;
-}
-
 .story-list {
   display: grid;
   gap: 0.7rem;
@@ -562,6 +541,26 @@ img {
 
 .product-grid {
   align-items: stretch;
+}
+
+/* Four pillars in "What we cover" (Daily life / Work and money / Hidden gems / Learn Japanese) */
+.feature-grid-four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.feature-card-link {
+  display: block;
+}
+
+.feature-card-link:hover {
+  transform: translateY(-2px);
+}
+
+.feature-card-action {
+  display: block;
+  margin-top: 0.6rem;
+  color: var(--accent-dark);
+  font-weight: 700;
 }
 
 .card,
@@ -973,6 +972,10 @@ img {
     grid-template-columns: 1fr;
   }
 
+  .feature-grid-four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .hero {
     padding: 1.5rem;
   }
@@ -1079,7 +1082,7 @@ img {
     width: 100%;
   }
 
-  .topic-grid {
+  .feature-grid-four {
     grid-template-columns: 1fr;
   }
 
