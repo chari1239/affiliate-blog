@@ -6,6 +6,8 @@ export const quizStatsType = {
   // (one per quiz article, keyed by slug). Every field is read-only so
   // the numbers can be viewed in the Studio but never edited by hand.
   // Average score of finished runs = scoreSum / finishes.
+  // checksByQuestion counts answer checks per question (Q1 first), so
+  // a drop-off shows up as the counts shrinking along the list.
   fields: [
     {
       name: "slug",
@@ -47,6 +49,19 @@ export const quizStatsType = {
       name: "fullScores",
       title: "Perfect-score finishes",
       type: "number",
+      readOnly: true
+    },
+    {
+      name: "hints",
+      title: "Hint uses",
+      type: "number",
+      readOnly: true
+    },
+    {
+      name: "checksByQuestion",
+      title: "Checks per question (Q1 first)",
+      type: "array",
+      of: [{ type: "number" }],
       readOnly: true
     },
     {

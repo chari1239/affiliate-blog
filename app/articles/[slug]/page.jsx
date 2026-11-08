@@ -110,7 +110,7 @@ export default async function ArticleDetailPage({ params }) {
 
   const quiz = quizzes[article.slug];
   const quizSection = quiz ? (
-      <section className="article-quiz">
+      <section className="article-quiz" id="quiz">
             <ReadingQuiz quiz={quiz} quizSlug={article.slug} />
       </section>
       ) : null;
@@ -179,6 +179,14 @@ export default async function ArticleDetailPage({ params }) {
               priority
             />
           </div>
+        ) : null}
+
+        {quiz && !quiz.lead ? (
+          <p className="quiz-jump-wrap">
+            <a className="quiz-jump" href="#quiz">
+              ⚡ Jump straight to the practice quiz — {quiz.items.length} words ↓
+            </a>
+          </p>
         ) : null}
 
         {quiz ? null : disclosureSection}

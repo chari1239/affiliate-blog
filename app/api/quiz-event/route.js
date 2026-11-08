@@ -1,10 +1,12 @@
 import { quizzes } from "@/lib/quiz-data";
 
 // Anonymous per-quiz counters. The quiz component posts small events here
-// (start / check / finish); this route increments counters in Sanity, one
-// document per quiz: _id "quizStats.<article-slug>" with starts, checks,
-// correctChecks, finishes, scoreSum and fullScores. Because the document
-// is keyed by the article slug, every quiz article gets its own separate
+// (start / check / hint / finish); this route increments counters in
+// Sanity, one document per quiz: _id "quizStats.<article-slug>" with
+// starts, checks, correctChecks, finishes, scoreSum, fullScores and
+// hints, plus checksByQuestion — an array counting checks per question
+// index, so we can see where readers drop off. Because the document is
+// keyed by the article slug, every quiz article gets its own separate
 // counters automatically. No visitor data is collected — counts only.
 //
 // Writes need SANITY_API_WRITE_TOKEN in the environment (a Sanity API
@@ -25,7 +27,7 @@ export async function POST(request) {
     return done();
   }
 
-  const { slug, type, correct, score } = body || {};
+  const { slug, type, correct, score, index } = body || {};
   // Only count quizzes we actually ship (whitelist from quiz-data).
   if (!slug || !quizzes[slug]) return done();
 
@@ -34,11 +36,16 @@ export async function POST(request) {
 
   const total = quizzes[slug].items.length;
   const inc = {};
+  const idx =
+    Number.isInteger(index) && index >= 0 && index < total ? index : null;
+
   if (type === "start") {
     inc.starts = 1;
   } else if (type === "check") {
     inc.checks = 1;
     if (correct) inc.correctChecks = 1;
+  } else if (type === "hint") {
+    inc.hints = 1;
   } else if (type === "finish") {
     const s = Math.max(0, Math.min(total, Number(score) || 0));
     inc.finishes = 1;
@@ -49,6 +56,33 @@ export async function POST(request) {
   }
 
   const id = `quizStats.${slug}`;
+  const set = { updatedAt: new Date().toISOString() };
+
+  // Drop-off tracking: on a check, bump this question's slot in
+  // checksByQuestion (read-modify-write; quiz traffic is a few plays a
+  // day, so a lost race is acceptable — and any failure here is
+  // swallowed like every other counting error).
+  if (type === "check" && idx !== null) {
+    try {
+      const query = encodeURIComponent(
+        `*[_id == "${id}"][0].checksByQuestion`
+      );
+      const res = await fetch(
+        `https://${PROJECT_ID}.api.sanity.io/v${API_VERSION}/data/query/${DATASET}?query=${query}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const json = await res.json();
+      const arr = Array.isArray(json && json.result) ? json.result : [];
+      const next = Array.from({ length: total }, (_, i) =>
+        typeof arr[i] === "number" ? arr[i] : 0
+      );
+      next[idx] += 1;
+      set.checksByQuestion = next;
+    } catch {
+      // Counting must never surface an error to the reader.
+    }
+  }
+
   const mutations = [
     {
       createIfNotExists: {
@@ -60,13 +94,15 @@ export async function POST(request) {
         correctChecks: 0,
         finishes: 0,
         scoreSum: 0,
-        fullScores: 0
+        fullScores: 0,
+        hints: 0,
+        checksByQuestion: []
       }
     },
     {
       patch: {
         id,
-        set: { updatedAt: new Date().toISOString() },
+        set,
         inc
       }
     }
