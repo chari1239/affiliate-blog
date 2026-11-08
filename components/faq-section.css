@@ -1,0 +1,48 @@
+/* Article FAQ block — one bordered panel in the same card language as
+   the comments panel and the place directory, so the section heading
+   never floats borderless above boxed cards. Mobile-first, built on
+   the site's design tokens. Imported by components/faq-section.jsx. */
+
+.faq {
+  margin-top: 40px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(1rem, 4vw, 1.35rem);
+}
+
+.faq-title {
+  margin: 0 0 14px;
+  color: var(--ink);
+  font-size: 1.35rem;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent-soft);
+}
+
+.faq-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.faq-item {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px 16px;
+}
+
+.faq-question {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.02rem;
+  line-height: 1.45;
+}
+
+.faq-answer {
+  margin: 6px 0 0;
+  color: var(--ink);
+  line-height: 1.65;
+}
