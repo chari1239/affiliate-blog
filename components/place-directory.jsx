@@ -18,6 +18,80 @@ import "./place-directory.css";
 // elementary / junior-high / international. While a level is active only
 // schools of that level are shown; the search text still applies on top.
 
+
+// Button icons are inline SVGs drawn in the current text colour, so every
+// icon is exactly the same size and sits on the same baseline. The old
+// emoji icons (phone, globe, pin, link) rendered at a different size on
+// every phone — on Android the phone emoji in particular dwarfed its
+// label, which is what made the Call button look mismatched.
+function PhoneIcon() {
+  return (
+    <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
+  );
+}
+
+function GlobeIcon() {
+  return (
+    <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  );
+}
+
+function PinIcon() {
+  return (
+    <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  );
+}
+
+function ShareIcon() {
+  return (
+    <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="18" cy="5" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="19" r="3" />
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+    </svg>
+  );
+}
+
+function ClockIcon() {
+  return (
+    <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  );
+}
+
+function PencilIcon() {
+  return (
+    <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+    </svg>
+  );
+}
+
+// The Website button shows the place's own favicon (via Google's favicon
+// service) instead of a generic globe emoji; if the stored URL cannot be
+// parsed, the caller falls back to the drawn globe icon.
+function websiteFavicon(website) {
+  try {
+    const host = new URL(website).hostname;
+    return host ? `https://www.google.com/s2/favicons?domain=${host}&sz=32` : null;
+  } catch {
+    return null;
+  }
+}
+
 function telHref(phone) {
   const digits = String(phone || "").replace(/[^0-9]/g, "");
   if (!digits) return null;
@@ -98,11 +172,15 @@ function PlaceCard({ entry, onSuggest }) {
       </h4>
       {entry.note ? <p className="place-note">{entry.note}</p> : null}
       {entry.address ? <p className="place-address">{entry.address}</p> : null}
-      {entry.hours ? <p className="place-hours">🕐 {entry.hours}</p> : null}
+      {entry.hours ? (
+        <p className="place-hours">
+          <ClockIcon /> {entry.hours}
+        </p>
+      ) : null}
       <div className="place-actions">
         {tel ? (
           <a className="place-btn place-btn-call" href={tel}>
-            📞 Call
+            <PhoneIcon /> Call
           </a>
         ) : null}
         {entry.website ? (
@@ -112,12 +190,24 @@ function PlaceCard({ entry, onSuggest }) {
             target="_blank"
             rel="noreferrer"
           >
-            🌐 Website
+            {websiteFavicon(entry.website) ? (
+              <img
+                className="btn-favicon"
+                src={websiteFavicon(entry.website)}
+                alt=""
+                width="16"
+                height="16"
+                loading="lazy"
+              />
+            ) : (
+              <GlobeIcon />
+            )}{" "}
+            Website
           </a>
         ) : null}
         {entry.map ? (
           <a className="place-btn" href={entry.map} target="_blank" rel="noreferrer">
-            📍 Map
+            <PinIcon /> Map
           </a>
         ) : null}
         <button
@@ -125,7 +215,7 @@ function PlaceCard({ entry, onSuggest }) {
           className="place-btn place-btn-share"
           onClick={() => shareText(entry.name, placeShareText(entry))}
         >
-          🔗 Share
+          <ShareIcon /> Share
         </button>
         {onSuggest ? (
           <button
@@ -133,7 +223,7 @@ function PlaceCard({ entry, onSuggest }) {
             className="place-btn-fix"
             onClick={() => onSuggest(entry.name)}
           >
-            ✎ Suggest a fix
+            <PencilIcon /> Suggest a fix
           </button>
         ) : null}
       </div>
@@ -273,7 +363,7 @@ export default function PlaceDirectory({ directory, articleSlug }) {
         <h2 className="directory-title">{directory.title}</h2>
         <div className="directory-head-actions">
           <button type="button" className="place-btn place-btn-guide" onClick={shareGuide}>
-            🔗 Share this guide
+            <ShareIcon /> Share this guide
           </button>
           {articleSlug ? (
             <button
@@ -282,7 +372,7 @@ export default function PlaceDirectory({ directory, articleSlug }) {
               onClick={() => setSuggestOpen((open) => !open)}
               aria-expanded={suggestOpen}
             >
-              ✎ Suggest an update
+              <PencilIcon /> Suggest an update
             </button>
           ) : null}
         </div>

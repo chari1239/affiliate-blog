@@ -12,6 +12,7 @@ import ReadingQuiz from "@/components/reading-quiz";
 import { directories } from "@/lib/directory-data";
 import PlaceDirectory from "@/components/place-directory";
 import Comments from "@/components/comments";
+import BackToTop from "@/components/back-to-top";
 
 export const dynamic = "force-dynamic";
 
@@ -267,6 +268,7 @@ export default async function ArticleDetailPage({ params }) {
           <Comments slug={article.slug} comments={comments} />
         </section>
       </article>
+      <BackToTop />
     </main>
   );
 }

@@ -801,7 +801,16 @@ img {
 .article-body p,
 .article-body li {
   color: var(--muted);
-  line-height: 1.65;
+  line-height: 1.8;
+}
+
+.article-body > p {
+  margin-bottom: 1.1em;
+}
+
+.article-body > p:first-of-type {
+  font-size: 1.07rem;
+  line-height: 1.75;
 }
 
 .article-body h2,

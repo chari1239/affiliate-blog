@@ -52,11 +52,14 @@
 }
 
 .place-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 16px;
+  padding: 18px;
   scroll-margin-top: 150px;
   min-width: 0;
 }
@@ -64,7 +67,7 @@
 .place-name {
   margin: 0;
   color: var(--ink);
-  font-size: 1.08rem;
+  font-size: 1.12rem;
   line-height: 1.35;
 }
 
@@ -89,23 +92,42 @@
 }
 
 .place-hours {
-  margin: 6px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
   color: var(--muted);
   line-height: 1.55;
   font-size: 0.95rem;
 }
 
+.place-hours .btn-icon {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+}
+
 .place-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
-  margin-top: 14px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+/* The footer divider needs breathing room above it even in a short card
+   where margin-top: auto would otherwise collapse to nothing. */
+.place-card > :nth-last-child(2) {
+  margin-bottom: 14px;
 }
 
 .place-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 7px;
   min-height: 44px;
   padding: 10px 16px;
   border: 1px solid var(--line);
@@ -136,6 +158,21 @@
   border-color: var(--accent);
   color: #fff;
   white-space: nowrap;
+}
+
+/* One icon size for every button, drawn or favicon, so icons and labels
+   always match — the fix for the oversized emoji phone icon. */
+.place-btn .btn-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.place-btn .btn-favicon {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex: 0 0 auto;
 }
 
 /* Search + category filter bar — sticks under the site header so the
@@ -305,6 +342,13 @@
 
 .place-btn-fix:hover {
   color: var(--accent-dark);
+}
+
+.place-btn-fix .btn-icon {
+  width: 13px;
+  height: 13px;
+  vertical-align: -2px;
+  margin-right: 4px;
 }
 
 .suggest-form {
