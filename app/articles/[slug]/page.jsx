@@ -198,8 +198,6 @@ export default async function ArticleDetailPage({ params }) {
           </p>
         ) : null}
 
-        {quiz ? null : disclosureSection}
-
         {quiz?.lead ? quizSection : null}
 
         <section className="article-body">
@@ -210,7 +208,7 @@ export default async function ArticleDetailPage({ params }) {
 
         {directorySection}
 
-        {quiz ? disclosureSection : null}
+        {disclosureSection}
 
         {featuredProduct ? (
           <section className="inline-product-card article-related-card">
