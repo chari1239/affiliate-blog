@@ -198,6 +198,29 @@
   color: #fff;
 }
 
+/* School level sub-filters: a quieter second row under the category
+   chips, shown only while All or Schools & nursery is active. */
+
+.directory-chips-levels {
+  margin-top: 8px;
+}
+
+.filter-chip-level {
+  min-height: 30px;
+  padding: 5px 11px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 0.82rem;
+}
+
+.filter-chip-level-active {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+  color: var(--accent-dark);
+  font-weight: 600;
+}
+
 .directory-filter-meta {
   display: flex;
   align-items: center;
