@@ -166,10 +166,10 @@ function PlaceCard({ entry, onSuggest }) {
 
   return (
     <article className="place-card" id={anchorId(entry.name)}>
-      <h4 className="place-name">
+      <h3 className="place-name">
         {entry.name}
         {entry.jp ? <span className="place-jp">{entry.jp}</span> : null}
-      </h4>
+      </h3>
       {entry.note ? <p className="place-note">{entry.note}</p> : null}
       {entry.address ? <p className="place-address">{entry.address}</p> : null}
       {entry.hours ? (
@@ -518,7 +518,7 @@ export default function PlaceDirectory({ directory, articleSlug }) {
       ) : (
         visible.map((section) => (
           <section className="directory-section" key={section.title}>
-            <h3 className="directory-section-title">{section.title}</h3>
+            <h2 className="directory-section-title">{section.title}</h2>
             <div className="directory-grid">
               {section.entries.map((entry) => (
                 <PlaceCard

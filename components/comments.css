@@ -3,6 +3,15 @@
 
 .comments {
   margin-top: 40px;
+  /* One bordered panel for the whole comments block — title, comment
+     cards and the form — in the same card language as the article
+     body card and the place directory panel, so the section heading
+     no longer floats borderless above boxed cards. */
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(1rem, 4vw, 1.35rem);
 }
 
 .comments-title {

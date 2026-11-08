@@ -4,6 +4,17 @@
 .place-directory {
   margin-top: 8px;
   min-width: 0;
+  /* The whole directory — header, filter bar and every section — sits
+     in ONE card, in the same card language as the article body card
+     and the reading quiz block, so no heading or control floats
+     borderless next to boxed neighbours. The filter bar keeps its own
+     card inside this one and stays sticky: its parent is still this
+     full-height directory, so it sticks for the whole directory. */
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(1rem, 4vw, 1.35rem);
 }
 
 .directory-head {
@@ -60,13 +71,18 @@
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 18px;
-  scroll-margin-top: 150px;
+  scroll-margin-top: 264px;
   min-width: 0;
 }
 
 .place-name {
   margin: 0;
   color: var(--ink);
+  /* An <h3> for the heading hierarchy (h1 title > h2 sections > h3
+     places); the font guards keep the plain sans look it had as an
+     <h4>, since globals.css styles h1-h3 in the serif display face. */
+  font-family: inherit;
+  letter-spacing: normal;
   font-size: 1.12rem;
   line-height: 1.35;
 }
@@ -239,7 +255,7 @@
 
 .filter-chip {
   flex: 0 0 auto;
-  min-height: 32px;
+  min-height: 40px;
   padding: 6px 12px;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -266,7 +282,7 @@
 }
 
 .filter-chip-level {
-  min-height: 28px;
+  min-height: 40px;
   padding: 4px 10px;
   background: transparent;
   color: var(--muted);
@@ -295,7 +311,10 @@
 }
 
 .filter-clear {
-  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 4px 12px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--accent-soft);
@@ -328,7 +347,10 @@
 
 .place-btn-fix {
   align-self: center;
-  padding: 6px 4px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 6px;
   border: none;
   background: none;
   color: var(--muted);

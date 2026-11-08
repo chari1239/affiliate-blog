@@ -56,6 +56,88 @@ export async function generateMetadata({ params }) {
   };
 }
 
+// Portable Text turns a line break inside a single block into a <br/>.
+// An article whose body was written as one block with line breaks (the
+// Ojima guide's intro is one) would then render as one long paragraph
+// whose parts are separated only by line breaks — no paragraph gap,
+// hard to read. Split "normal" blocks at line breaks so every part
+// becomes a real <p> with the standard paragraph gap. Blocks without a
+// line break render exactly as before. This is a rendering fix only;
+// the stored article content is never changed.
+function splitAtLineBreaks(children) {
+  const nodes = Array.isArray(children) ? children : [children];
+  if (!nodes.some((node) => node?.type === "br")) {
+    return null;
+  }
+  const groups = [[]];
+  for (const node of nodes) {
+    if (node?.type === "br") {
+      groups.push([]);
+    } else {
+      groups[groups.length - 1].push(node);
+    }
+  }
+  const paragraphs = groups.filter((group) =>
+    group.some((node) => typeof node !== "string" || node.trim() !== "")
+  );
+  return paragraphs.length ? paragraphs : null;
+}
+
+const portableTextComponents = {
+  block: {
+    normal: ({ children }) => {
+      const paragraphs = splitAtLineBreaks(children);
+      if (!paragraphs) {
+        return <p>{children}</p>;
+      }
+      return paragraphs.map((group, index) => <p key={index}>{group}</p>);
+    }
+  }
+};
+
+// Schema.org type per directory section, for the ItemList below.
+const DIRECTORY_ITEM_TYPES = {
+  "Clinics & hospitals": "MedicalOrganization",
+  "Dentists": "Dentist",
+  "Pharmacies": "Pharmacy",
+  "Schools & nursery": "School",
+  "Restaurants": "Restaurant",
+  "Groceries & Indian stores": "GroceryStore",
+  "Banks & ATMs": "BankOrCreditUnion"
+};
+
+// An ItemList of every place in a directory, built from the same data
+// module that renders the place cards, so the structured data can
+// never drift from what the page shows.
+function buildDirectoryItemList(directory, articleUrl) {
+  let position = 0;
+  const itemListElement = [];
+  for (const section of directory.sections || []) {
+    const itemType = DIRECTORY_ITEM_TYPES[section.title] || "LocalBusiness";
+    for (const entry of section.entries || []) {
+      position += 1;
+      itemListElement.push({
+        "@type": "ListItem",
+        position,
+        item: {
+          "@type": itemType,
+          name: entry.name,
+          ...(entry.address ? { address: entry.address } : {}),
+          ...(entry.phone ? { telephone: entry.phone } : {}),
+          ...(entry.website ? { url: entry.website } : {})
+        }
+      });
+    }
+  }
+  return {
+    "@type": "ItemList",
+    "@id": `${articleUrl}#directory`,
+    name: directory.title,
+    numberOfItems: itemListElement.length,
+    itemListElement
+  };
+}
+
 function formatDate(dateString) {
   if (!dateString) {
     return null;
@@ -131,6 +213,9 @@ export default async function ArticleDetailPage({ params }) {
       ) : null;
 
   const articleUrl = `${site.url}/articles/${article.slug}`;
+  const directoryItemList = directory
+    ? buildDirectoryItemList(directory, articleUrl)
+    : null;
     const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -157,7 +242,8 @@ export default async function ArticleDetailPage({ params }) {
           { "@type": "ListItem", position: 2, name: "Articles", item: `${site.url}/articles` },
           { "@type": "ListItem", position: 3, name: article.title, item: articleUrl }
         ]
-      }
+      },
+      ...(directoryItemList ? [directoryItemList] : [])
     ]
   };
 
@@ -207,7 +293,7 @@ export default async function ArticleDetailPage({ params }) {
         {quiz?.lead ? quizSection : null}
 
         <section className="article-body">
-          <PortableText value={article.body || []} />
+          <PortableText value={article.body || []} components={portableTextComponents} />
         </section>
 
         {quiz?.lead ? null : quizSection}
