@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./place-directory.css";
 
 // Interactive place directory: each place is a card with Call / Website /
@@ -87,7 +87,7 @@ function entrySearchText(sectionTitle, entry) {
   return base + keywords;
 }
 
-function PlaceCard({ entry }) {
+function PlaceCard({ entry, onSuggest }) {
   const tel = telHref(entry.phone);
 
   return (
@@ -127,6 +127,15 @@ function PlaceCard({ entry }) {
         >
           🔗 Share
         </button>
+        {onSuggest ? (
+          <button
+            type="button"
+            className="place-btn-fix"
+            onClick={() => onSuggest(entry.name)}
+          >
+            ✎ Suggest a fix
+          </button>
+        ) : null}
       </div>
     </article>
   );
@@ -143,10 +152,74 @@ const SCHOOL_LEVELS = [
   { value: "international", label: "International" },
 ];
 
-export default function PlaceDirectory({ directory }) {
+export default function PlaceDirectory({ directory, articleSlug }) {
   const [query, setQuery] = useState("");
   const [activeSection, setActiveSection] = useState("All");
   const [activeLevel, setActiveLevel] = useState("All");
+
+  // Suggest-an-update: an inline form (top of the directory) that posts
+  // to /api/suggestion. Suggestions are private — they land in the
+  // Studio as a to-do list, never on the page. A card's "Suggest a fix"
+  // opens this same form with the place name pre-filled.
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  const [suggestPlace, setSuggestPlace] = useState("");
+  const [suggestName, setSuggestName] = useState("");
+  const [suggestMessage, setSuggestMessage] = useState("");
+  const [suggestWebsite, setSuggestWebsite] = useState("");
+  const [suggestStatus, setSuggestStatus] = useState("idle"); // idle | sending | sent | error
+  const suggestFormRef = useRef(null);
+  const scrollToSuggestRef = useRef(false);
+
+  useEffect(() => {
+    if (suggestOpen && scrollToSuggestRef.current && suggestFormRef.current) {
+      scrollToSuggestRef.current = false;
+      suggestFormRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [suggestOpen]);
+
+  const openSuggestForPlace = (placeName) => {
+    setSuggestPlace(placeName || "");
+    setSuggestStatus("idle");
+    scrollToSuggestRef.current = true;
+    setSuggestOpen(true);
+  };
+
+  const submitSuggestion = async (event) => {
+    event.preventDefault();
+    const placeName = suggestPlace.trim();
+    const message = suggestMessage.trim();
+    const name = suggestName.trim();
+    if (!placeName || placeName.length > 120 || !message || message.length > 1000 || name.length > 60) {
+      setSuggestStatus("error");
+      return;
+    }
+    setSuggestStatus("sending");
+    try {
+      const res = await fetch("/api/suggestion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slug: articleSlug,
+          placeName,
+          name,
+          message,
+          website: suggestWebsite
+        })
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.ok) {
+        setSuggestStatus("error");
+        return;
+      }
+      setSuggestPlace("");
+      setSuggestName("");
+      setSuggestMessage("");
+      setSuggestWebsite("");
+      setSuggestStatus("sent");
+    } catch {
+      setSuggestStatus("error");
+    }
+  };
 
   const sections = useMemo(() => directory?.sections || [], [directory]);
 
@@ -198,15 +271,98 @@ export default function PlaceDirectory({ directory }) {
     <div className="place-directory">
       <div className="directory-head">
         <h2 className="directory-title">{directory.title}</h2>
-        <button type="button" className="place-btn place-btn-guide" onClick={shareGuide}>
-          🔗 Share this guide
-        </button>
+        <div className="directory-head-actions">
+          <button type="button" className="place-btn place-btn-guide" onClick={shareGuide}>
+            🔗 Share this guide
+          </button>
+          {articleSlug ? (
+            <button
+              type="button"
+              className="place-btn"
+              onClick={() => setSuggestOpen((open) => !open)}
+              aria-expanded={suggestOpen}
+            >
+              ✎ Suggest an update
+            </button>
+          ) : null}
+        </div>
       </div>
       <p className="directory-intro">
         Tap <strong>Call</strong> to phone a place straight from your mobile,{" "}
         <strong>Map</strong> for directions, or <strong>Share</strong> to send
         one place to family on WhatsApp.
       </p>
+
+      {articleSlug && suggestOpen ? (
+        <form className="suggest-form" onSubmit={submitSuggestion} ref={suggestFormRef}>
+          <label className="suggest-field">
+            <span className="suggest-label">Place name</span>
+            <input
+              type="text"
+              className="suggest-input"
+              value={suggestPlace}
+              onChange={(event) => setSuggestPlace(event.target.value)}
+              maxLength={120}
+              required
+              placeholder="Which place is this about?"
+            />
+          </label>
+          <label className="suggest-field">
+            <span className="suggest-label">What should change?</span>
+            <textarea
+              className="suggest-textarea"
+              value={suggestMessage}
+              onChange={(event) => setSuggestMessage(event.target.value)}
+              maxLength={1000}
+              rows={3}
+              required
+              placeholder="A place moved, closed, changed its hours — or one we should add…"
+            />
+          </label>
+          <label className="suggest-field">
+            <span className="suggest-label">Name (optional)</span>
+            <input
+              type="text"
+              className="suggest-input"
+              value={suggestName}
+              onChange={(event) => setSuggestName(event.target.value)}
+              maxLength={60}
+              autoComplete="off"
+            />
+          </label>
+          {/* Honeypot — hidden from readers, filled only by bots. */}
+          <input
+            type="text"
+            name="website"
+            className="hp-field"
+            value={suggestWebsite}
+            onChange={(event) => setSuggestWebsite(event.target.value)}
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+          />
+          <button
+            type="submit"
+            className="place-btn place-btn-call"
+            disabled={suggestStatus === "sending"}
+          >
+            {suggestStatus === "sending" ? "Sending…" : "Send suggestion"}
+          </button>
+          <p className="suggest-note">
+            Suggestions go to the site owner — they're not posted publicly.
+          </p>
+          {suggestStatus === "sent" ? (
+            <p className="suggest-status suggest-status-ok" role="status">
+              Thanks! We'll check and update the guide.
+            </p>
+          ) : null}
+          {suggestStatus === "error" ? (
+            <p className="suggest-status suggest-status-error" role="alert">
+              Sorry — that didn't go through. Please check the form and try again.
+            </p>
+          ) : null}
+        </form>
+      ) : null}
 
       <div className="directory-filters">
         <input
@@ -275,7 +431,11 @@ export default function PlaceDirectory({ directory }) {
             <h3 className="directory-section-title">{section.title}</h3>
             <div className="directory-grid">
               {section.entries.map((entry) => (
-                <PlaceCard key={entry.name} entry={entry} />
+                <PlaceCard
+                  key={entry.name}
+                  entry={entry}
+                  onSuggest={articleSlug ? openSuggestForPlace : null}
+                />
               ))}
             </div>
           </section>
