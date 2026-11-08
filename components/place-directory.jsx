@@ -58,8 +58,11 @@ async function shareText(title, text, url) {
 // searches land even when the exact word is not in the entry: dentists
 // also answer to "dental"/"teeth", schools to "kids"/"children", and
 // kindergartens to the common misspellings "kindergarden"/"kindery".
-// Specialties written in a note (e.g. "orthopedics") are included via the
-// note itself, so "orthopedic" matches as a substring.
+// Restaurants and grocery stores get their trade words too — note that
+// "grocery" is not a substring of the section title "Groceries", so the
+// keyword is what makes that search land. Specialties and diets written
+// in a note (e.g. "orthopedics", "pure veg") are included via the note
+// itself, so they match as substrings.
 function entrySearchText(sectionTitle, entry) {
   const base = [sectionTitle, entry.name, entry.jp, entry.note, entry.address]
     .filter(Boolean)
@@ -68,6 +71,12 @@ function entrySearchText(sectionTitle, entry) {
   let keywords = "";
   if (sectionTitle === "Dentists") {
     keywords += " dental teeth";
+  }
+  if (sectionTitle === "Restaurants") {
+    keywords += " restaurant food indian vegetarian curry";
+  }
+  if (sectionTitle === "Groceries & Indian stores") {
+    keywords += " grocery store indian spices food shopping";
   }
   if (sectionTitle === "Schools & nursery") {
     keywords += " school kids children";

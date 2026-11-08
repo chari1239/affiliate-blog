@@ -56,7 +56,7 @@
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 16px;
-  scroll-margin-top: 84px;
+  scroll-margin-top: 150px;
 }
 
 .place-name {
@@ -144,8 +144,10 @@
   top: 70px;
   z-index: 5;
   margin-top: 16px;
-  padding: 12px;
-  background: var(--surface);
+  padding: 8px;
+  /* --surface is 95% translucent, which let scrolled cards ghost
+     through the sticky bar; --surface-strong is the solid version. */
+  background: var(--surface-strong);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -153,14 +155,14 @@
 
 .directory-search {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 14px;
+  min-height: 40px;
+  padding: 8px 12px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: var(--surface-strong);
+  background: #fff;
   color: var(--ink);
   font: inherit;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 .directory-search::placeholder {
@@ -172,23 +174,37 @@
   outline-offset: 1px;
 }
 
+/* Chip rows stay on ONE line and scroll sideways, on mobile and
+   desktop alike — wrapping is what made the sticky bar five rows
+   tall on phones. */
+
 .directory-chips {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin-top: 8px;
+  padding-bottom: 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.directory-chips::-webkit-scrollbar {
+  display: none;
 }
 
 .filter-chip {
-  min-height: 38px;
-  padding: 8px 14px;
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 6px 12px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: var(--surface-strong);
+  background: #fff;
   color: var(--ink);
   font: inherit;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -202,16 +218,16 @@
    chips, shown only while All or Schools & nursery is active. */
 
 .directory-chips-levels {
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .filter-chip-level {
-  min-height: 30px;
-  padding: 5px 11px;
+  min-height: 28px;
+  padding: 4px 10px;
   background: transparent;
   color: var(--muted);
   font-weight: 500;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
 }
 
 .filter-chip-level-active {
@@ -225,12 +241,12 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 10px;
+  margin-top: 6px;
 }
 
 .directory-count {
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 600;
 }
 
