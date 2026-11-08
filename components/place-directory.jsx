@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import "./place-directory.css";
 
 // Interactive place directory: each place is a card with Call / Website /
@@ -7,6 +8,10 @@ import "./place-directory.css";
 // exists inside the tel: link — so the guide can be shared freely and
 // stays one-tap friendly on mobile. Sharing uses the Web Share API where
 // available and falls back to a WhatsApp share link.
+//
+// A search box + category chips at the top filter the cards live. The
+// search text for an entry is built only from its section, name, Japanese
+// name, note and address (plus a few type keywords) — never the phone.
 
 function telHref(phone) {
   const digits = String(phone || "").replace(/[^0-9]/g, "");
@@ -42,6 +47,30 @@ async function shareText(title, text, url) {
   }
   const waText = url ? `${text}\n${url}` : text;
   window.open(`https://wa.me/?text=${encodeURIComponent(waText)}`, "_blank", "noopener");
+}
+
+// Lower-cased text an entry can be found by. Type keywords make common
+// searches land even when the exact word is not in the entry: dentists
+// also answer to "dental"/"teeth", schools to "kids"/"children", and
+// kindergartens to the common misspellings "kindergarden"/"kindery".
+// Specialties written in a note (e.g. "orthopedics") are included via the
+// note itself, so "orthopedic" matches as a substring.
+function entrySearchText(sectionTitle, entry) {
+  const base = [sectionTitle, entry.name, entry.jp, entry.note, entry.address]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  let keywords = "";
+  if (sectionTitle === "Dentists") {
+    keywords += " dental teeth";
+  }
+  if (sectionTitle === "Schools & nursery") {
+    keywords += " school kids children";
+    if (base.includes("kindergarten")) {
+      keywords += " kindergarten kindergarden kindery";
+    }
+  }
+  return base + keywords;
 }
 
 function PlaceCard({ entry }) {
@@ -90,7 +119,35 @@ function PlaceCard({ entry }) {
 }
 
 export default function PlaceDirectory({ directory }) {
+  const [query, setQuery] = useState("");
+  const [activeSection, setActiveSection] = useState("All");
+
+  const sections = useMemo(() => directory?.sections || [], [directory]);
+
+  const visible = useMemo(() => {
+    const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
+    return sections
+      .filter((section) => activeSection === "All" || section.title === activeSection)
+      .map((section) => ({
+        ...section,
+        entries: section.entries.filter((entry) => {
+          if (!tokens.length) return true;
+          const text = entrySearchText(section.title, entry);
+          return tokens.every((token) => text.includes(token));
+        }),
+      }))
+      .filter((section) => section.entries.length > 0);
+  }, [sections, query, activeSection]);
+
   if (!directory?.sections?.length) return null;
+
+  const totalShown = visible.reduce((sum, section) => sum + section.entries.length, 0);
+  const isFiltering = query.trim() !== "" || activeSection !== "All";
+
+  const clearFilters = () => {
+    setQuery("");
+    setActiveSection("All");
+  };
 
   const shareGuide = () => {
     const url = typeof window !== "undefined" ? window.location.href : "";
@@ -112,16 +169,57 @@ export default function PlaceDirectory({ directory }) {
         <strong>Map</strong> for directions, or <strong>Share</strong> to send
         one place to family on WhatsApp.
       </p>
-      {directory.sections.map((section) => (
-        <section className="directory-section" key={section.title}>
-          <h3 className="directory-section-title">{section.title}</h3>
-          <div className="directory-grid">
-            {section.entries.map((entry) => (
-              <PlaceCard key={entry.name} entry={entry} />
-            ))}
-          </div>
-        </section>
-      ))}
+
+      <div className="directory-filters">
+        <input
+          type="search"
+          className="directory-search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search places — try 'dentist', 'orthopedic', 'kindergarten'…"
+          aria-label="Search places"
+        />
+        <div className="directory-chips" role="group" aria-label="Filter by category">
+          {["All", ...sections.map((section) => section.title)].map((title) => (
+            <button
+              key={title}
+              type="button"
+              className={
+                title === activeSection ? "filter-chip filter-chip-active" : "filter-chip"
+              }
+              onClick={() => setActiveSection(title)}
+              aria-pressed={title === activeSection}
+            >
+              {title}
+            </button>
+          ))}
+        </div>
+        <div className="directory-filter-meta">
+          <span className="directory-count" aria-live="polite">
+            {totalShown} {totalShown === 1 ? "place" : "places"}
+          </span>
+          {isFiltering ? (
+            <button type="button" className="filter-clear" onClick={clearFilters}>
+              Clear ✕
+            </button>
+          ) : null}
+        </div>
+      </div>
+
+      {totalShown === 0 ? (
+        <p className="directory-empty">No places match — try another word.</p>
+      ) : (
+        visible.map((section) => (
+          <section className="directory-section" key={section.title}>
+            <h3 className="directory-section-title">{section.title}</h3>
+            <div className="directory-grid">
+              {section.entries.map((entry) => (
+                <PlaceCard key={entry.name} entry={entry} />
+              ))}
+            </div>
+          </section>
+        ))
+      )}
     </div>
   );
 }
