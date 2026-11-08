@@ -176,6 +176,27 @@ export default async function HomePage() {
       <section className="section">
         <div className="section-heading">
           <div>
+            <div className="eyebrow">Moving to Japan</div>
+            <h2>Living in Ojima, Tokyo 🏠</h2>
+          </div>
+          <p className="section-copy section-intro">
+            New to the neighbourhood? Our community directory for Ojima — the Koto-ku area
+            where many Indian families in Tokyo settle — gathers 75+ local places on one
+            page: schools, clinics, hospitals, the post office, banks and everyday
+            services, each with tap-to-call, a map and one-tap sharing.
+          </p>
+        </div>
+
+        <div className="hero-actions">
+          <Link href="/articles/living-in-ojima-tokyo-guide" className="btn">
+            Open the Ojima guide
+          </Link>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-heading">
+          <div>
             <div className="eyebrow">What we cover</div>
             <h2>From the everyday to the memorable.</h2>
           </div>

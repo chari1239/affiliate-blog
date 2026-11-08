@@ -12,6 +12,11 @@ import "./place-directory.css";
 // A search box + category chips at the top filter the cards live. The
 // search text for an entry is built only from its section, name, Japanese
 // name, note and address (plus a few type keywords) — never the phone.
+//
+// Within the schools section, a second, quieter chip row filters by school
+// level (the "level" field in the data): nursery / kindergarten /
+// elementary / junior-high / international. While a level is active only
+// schools of that level are shown; the search text still applies on top.
 
 function telHref(phone) {
   const digits = String(phone || "").replace(/[^0-9]/g, "");
@@ -118,35 +123,59 @@ function PlaceCard({ entry }) {
   );
 }
 
+const SCHOOLS_SECTION = "Schools & nursery";
+
+const SCHOOL_LEVELS = [
+  { value: "All", label: "All levels" },
+  { value: "nursery", label: "Nursery" },
+  { value: "kindergarten", label: "Kindergarten" },
+  { value: "elementary", label: "Elementary" },
+  { value: "junior-high", label: "Junior high" },
+  { value: "international", label: "International" },
+];
+
 export default function PlaceDirectory({ directory }) {
   const [query, setQuery] = useState("");
   const [activeSection, setActiveSection] = useState("All");
+  const [activeLevel, setActiveLevel] = useState("All");
 
   const sections = useMemo(() => directory?.sections || [], [directory]);
 
   const visible = useMemo(() => {
     const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const levelActive = activeLevel !== "All";
     return sections
       .filter((section) => activeSection === "All" || section.title === activeSection)
+      .filter((section) => !levelActive || section.title === SCHOOLS_SECTION)
       .map((section) => ({
         ...section,
         entries: section.entries.filter((entry) => {
+          if (levelActive && entry.level !== activeLevel) return false;
           if (!tokens.length) return true;
           const text = entrySearchText(section.title, entry);
           return tokens.every((token) => text.includes(token));
         }),
       }))
       .filter((section) => section.entries.length > 0);
-  }, [sections, query, activeSection]);
+  }, [sections, query, activeSection, activeLevel]);
 
   if (!directory?.sections?.length) return null;
 
   const totalShown = visible.reduce((sum, section) => sum + section.entries.length, 0);
-  const isFiltering = query.trim() !== "" || activeSection !== "All";
+  const isFiltering =
+    query.trim() !== "" || activeSection !== "All" || activeLevel !== "All";
 
   const clearFilters = () => {
     setQuery("");
     setActiveSection("All");
+    setActiveLevel("All");
+  };
+
+  const pickSection = (title) => {
+    setActiveSection(title);
+    // The level row only exists for All / Schools & nursery; leaving it
+    // active under another category would hide everything, so reset it.
+    if (title !== "All" && title !== SCHOOLS_SECTION) setActiveLevel("All");
   };
 
   const shareGuide = () => {
@@ -187,13 +216,36 @@ export default function PlaceDirectory({ directory }) {
               className={
                 title === activeSection ? "filter-chip filter-chip-active" : "filter-chip"
               }
-              onClick={() => setActiveSection(title)}
+              onClick={() => pickSection(title)}
               aria-pressed={title === activeSection}
             >
               {title}
             </button>
           ))}
         </div>
+        {activeSection === "All" || activeSection === SCHOOLS_SECTION ? (
+          <div
+            className="directory-chips directory-chips-levels"
+            role="group"
+            aria-label="Filter schools by level"
+          >
+            {SCHOOL_LEVELS.map((level) => (
+              <button
+                key={level.value}
+                type="button"
+                className={
+                  level.value === activeLevel
+                    ? "filter-chip filter-chip-level filter-chip-level-active"
+                    : "filter-chip filter-chip-level"
+                }
+                onClick={() => setActiveLevel(level.value)}
+                aria-pressed={level.value === activeLevel}
+              >
+                {level.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
         <div className="directory-filter-meta">
           <span className="directory-count" aria-live="polite">
             {totalShown} {totalShown === 1 ? "place" : "places"}
