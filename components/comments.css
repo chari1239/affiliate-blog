@@ -1,0 +1,170 @@
+/* Article comments — anonymous + approval-based. Mobile-first, built
+   on the site's design tokens. Imported by components/comments.jsx. */
+
+.comments {
+  margin-top: 40px;
+}
+
+.comments-title {
+  margin: 0 0 14px;
+  color: var(--ink);
+  font-size: 1.35rem;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent-soft);
+}
+
+.comments-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.comment-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px 16px;
+}
+
+.comment-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 0;
+}
+
+.comment-name {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.comment-date {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.comment-text {
+  margin: 6px 0 0;
+  color: var(--ink);
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.comments-empty {
+  margin: 0;
+  padding: 18px 16px;
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+  line-height: 1.6;
+  text-align: center;
+}
+
+.comment-form {
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.comment-field {
+  display: block;
+  margin-top: 12px;
+}
+
+.comment-field:first-child {
+  margin-top: 0;
+}
+
+.comment-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.comment-input,
+.comment-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.comment-textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.comment-input::placeholder,
+.comment-textarea::placeholder {
+  color: var(--muted);
+}
+
+.comment-input:focus,
+.comment-textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.comment-submit {
+  margin-top: 14px;
+  min-height: 44px;
+  padding: 10px 20px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.comment-submit:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.comment-note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.comment-status {
+  margin: 10px 0 0;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.comment-status-ok {
+  color: var(--accent-dark);
+}
+
+.comment-status-error {
+  color: #a02318;
+}
+
+/* Honeypot field: off-screen for humans, tempting for bots. */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
