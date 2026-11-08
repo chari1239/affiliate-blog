@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import { notFound } from "next/navigation";
-import { getArticle, getArticleNeighbours } from "@/lib/sanity/fetchers";
+import { getArticle, getArticleNeighbours, getApprovedComments } from "@/lib/sanity/fetchers";
 import { isSanityConfigured } from "@/lib/sanity/env";
 import { urlForImage } from "@/lib/sanity/image";
 import { getProduct } from "@/lib/products";
@@ -11,6 +11,7 @@ import { quizzes } from "@/lib/quiz-data";
 import ReadingQuiz from "@/components/reading-quiz";
 import { directories } from "@/lib/directory-data";
 import PlaceDirectory from "@/components/place-directory";
+import Comments from "@/components/comments";
 
 export const dynamic = "force-dynamic";
 
@@ -104,6 +105,10 @@ export default async function ArticleDetailPage({ params }) {
     categorySlug: article.categories?.[0]?.slug || null
   });
 
+  // Approved comments only — the fetcher's query filters on
+  // approved == true, so pending comments never reach this page.
+  const comments = await getApprovedComments(article.slug);
+
     const disclosureSection = article.affiliateDisclosure ? (
               <section className="article-disclosure">
                           <strong>Affiliate disclosure:</strong> {article.affiliateDisclosure}
@@ -120,7 +125,7 @@ export default async function ArticleDetailPage({ params }) {
   const directory = directories[article.slug];
   const directorySection = directory ? (
       <section className="article-directory" id="directory">
-            <PlaceDirectory directory={directory} />
+            <PlaceDirectory directory={directory} articleSlug={article.slug} />
       </section>
       ) : null;
 
@@ -259,6 +264,10 @@ export default async function ArticleDetailPage({ params }) {
             )}
           </nav>
         ) : null}
+
+        <section className="article-comments">
+          <Comments slug={article.slug} comments={comments} />
+        </section>
       </article>
     </main>
   );

@@ -272,3 +272,126 @@
   line-height: 1.6;
   text-align: center;
 }
+
+/* Suggest an update — head actions, the inline form, and the small
+   per-card "Suggest a fix" text button. */
+
+.directory-head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.place-btn-fix {
+  align-self: center;
+  padding: 6px 4px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.place-btn-fix:hover {
+  color: var(--accent-dark);
+}
+
+.suggest-form {
+  margin-top: 14px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  scroll-margin-top: 84px;
+}
+
+.suggest-field {
+  display: block;
+  margin-top: 12px;
+}
+
+.suggest-field:first-child {
+  margin-top: 0;
+}
+
+.suggest-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.suggest-input,
+.suggest-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.suggest-textarea {
+  resize: vertical;
+  min-height: 76px;
+}
+
+.suggest-input::placeholder,
+.suggest-textarea::placeholder {
+  color: var(--muted);
+}
+
+.suggest-input:focus,
+.suggest-textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.suggest-form .place-btn {
+  margin-top: 14px;
+}
+
+.suggest-form .place-btn:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.suggest-note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.suggest-status {
+  margin: 10px 0 0;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.suggest-status-ok {
+  color: var(--accent-dark);
+}
+
+.suggest-status-error {
+  color: #a02318;
+}
+
+/* Honeypot field: off-screen for humans, tempting for bots. */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
