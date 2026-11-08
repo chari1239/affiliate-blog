@@ -712,7 +712,17 @@ img {
 
 .article-shell {
   display: grid;
+  /* minmax(0, 1fr), not a bare implicit auto column: an auto track is
+     sized by the widest item's max-content, and a grid item's default
+     min-width:auto passes its min-content up — so one rigid, wide
+     descendant (e.g. a nowrap chip row in the Ojima directory) blows
+     the whole article out past the viewport on mobile. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.25rem;
+}
+
+.article-shell > * {
+  min-width: 0;
 }
 
 .article-header {

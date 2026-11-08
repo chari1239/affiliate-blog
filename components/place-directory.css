@@ -3,6 +3,7 @@
 
 .place-directory {
   margin-top: 8px;
+  min-width: 0;
 }
 
 .directory-head {
@@ -40,13 +41,13 @@
 
 .directory-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
 }
 
 @media (min-width: 720px) {
   .directory-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -57,6 +58,7 @@
   box-shadow: var(--shadow);
   padding: 16px;
   scroll-margin-top: 150px;
+  min-width: 0;
 }
 
 .place-name {
@@ -151,6 +153,8 @@
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .directory-search {
@@ -181,6 +185,9 @@
 .directory-chips {
   display: flex;
   flex-wrap: nowrap;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   gap: 6px;
   margin-top: 8px;
   padding-bottom: 4px;
