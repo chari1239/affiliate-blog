@@ -1044,7 +1044,8 @@ img {
   .detail-panel,
   .policy-card,
   .content-card,
-  .contact-card {
+  .contact-card,
+  .article-body {
     padding: 1rem;
   }
 

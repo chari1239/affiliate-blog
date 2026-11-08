@@ -1,0 +1,29 @@
+# Nihon Diaries by Hari
+
+> Nihon Diaries by Hari is a website by Hari, an Indian living in Tokyo, Japan. It has three parts: a free "Learn Japanese from Zero" lesson series for complete beginners (hiragana first, working towards JLPT N4), guides for moving to and living in Japan, and articles about daily life in Japan.
+
+Site: https://nihon-diaries.vercel.app
+All articles: https://nihon-diaries.vercel.app/articles
+
+## Learn Japanese from Zero
+
+A step-by-step series for people who have never read Japanese. Each lesson teaches five hiragana letters, with a memory shortcut for each letter and practice words built only from letters taught so far. The reading quizzes likewise use only letters already taught; the newest quiz is always at https://nihon-diaries.vercel.app/quiz
+
+- Lesson 0 — Japanese Has 3 Writing Systems: A Beginner's Guide: https://nihon-diaries.vercel.app/articles/japanese-has-3-writing-systems-a-beginner-s-guide
+- Lesson 1 — The 5 Japanese Vowels (あ い う え お): https://nihon-diaries.vercel.app/articles/the-5-japanese-vowels-hiragana-lesson-1
+- Lesson 2 — Learn the K-Row (か き く け こ): https://nihon-diaries.vercel.app/articles/learn-the-k-row-hiragana-lesson-2
+- Lesson 3 — Learn the S-Row (さ し す せ そ): https://nihon-diaries.vercel.app/articles/learn-the-s-row-hiragana-lesson-3
+- Lesson 4 — Learn the T-Row (た ち つ て と): https://nihon-diaries.vercel.app/articles/learn-the-t-row-hiragana-lesson-4
+- Vocabulary Set 2 — reading quiz (vowels and K-row): https://nihon-diaries.vercel.app/articles/can-you-read-these-5-japanese-words-vocabulary-set-2
+- Vocabulary Set 3 — reading quiz (vowels, K-row and S-row): https://nihon-diaries.vercel.app/articles/can-you-read-these-5-japanese-words-vocabulary-set-3
+- Vocabulary Set 4 — reading quiz (vowels, K-row, S-row and T-row): https://nihon-diaries.vercel.app/articles/can-you-read-these-5-japanese-words-vocabulary-set-4
+- The Full Test — 15 words from the vowels, K-row and S-row: https://nihon-diaries.vercel.app/articles/full-test-15-words-vowels-k-s
+
+## Moving to Japan
+
+- Living in Ojima, Tokyo: Schools, Clinics, Post Office, Banks & Everyday Essentials: https://nihon-diaries.vercel.app/articles/living-in-ojima-tokyo-guide
+  A community directory of 127 places around Ojima in Koto-ku, Tokyo, an area where many Indian families live. Sections: Clinics & hospitals (15 places), Dentists (2), Pharmacies (3), Schools & nursery (29), Restaurants (31), Groceries & Indian stores (15), Post office, ward office & official help (7), Banks & ATMs (1), Utilities & home help (18), Parks, library & community (6). Each place lists its address; most also list opening hours and a website, and phone contact is via a tap-to-call button on the page (numbers are not printed). The page has a search box and category filters, and readers can suggest updates and comment anonymously (comments are shown after review).
+
+## More articles
+
+- The Most Used Words in Japan — common Japanese words and phrases heard in daily life: https://nihon-diaries.vercel.app/articles/the-most-used-words-in-japan
