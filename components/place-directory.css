@@ -1,0 +1,137 @@
+/* Place directory (Ojima guide) — mobile-first cards built on the site's
+   existing design tokens. Imported by components/place-directory.jsx. */
+
+.place-directory {
+  margin-top: 8px;
+}
+
+.directory-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.directory-title {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.35rem, 4.5vw, 1.8rem);
+  line-height: 1.25;
+}
+
+.directory-intro {
+  margin: 10px 0 4px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.directory-section {
+  margin-top: 28px;
+}
+
+.directory-section-title {
+  margin: 0 0 14px;
+  color: var(--ink);
+  font-size: 1.2rem;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent-soft);
+}
+
+.directory-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 720px) {
+  .directory-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.place-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  scroll-margin-top: 84px;
+}
+
+.place-name {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.08rem;
+  line-height: 1.35;
+}
+
+.place-jp {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.place-note {
+  margin: 8px 0 0;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.place-address {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.place-hours {
+  margin: 6px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 0.95rem;
+}
+
+.place-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.place-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-strong);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.place-btn-call {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.place-btn-share {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+  color: var(--accent-dark);
+}
+
+.place-btn-guide {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  white-space: nowrap;
+}

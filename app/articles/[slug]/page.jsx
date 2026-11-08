@@ -9,6 +9,8 @@ import { getProduct } from "@/lib/products";
 import { site } from "@/lib/site";
 import { quizzes } from "@/lib/quiz-data";
 import ReadingQuiz from "@/components/reading-quiz";
+import { directories } from "@/lib/directory-data";
+import PlaceDirectory from "@/components/place-directory";
 
 export const dynamic = "force-dynamic";
 
@@ -115,6 +117,13 @@ export default async function ArticleDetailPage({ params }) {
       </section>
       ) : null;
 
+  const directory = directories[article.slug];
+  const directorySection = directory ? (
+      <section className="article-directory" id="directory">
+            <PlaceDirectory directory={directory} />
+      </section>
+      ) : null;
+
   const articleUrl = `${site.url}/articles/${article.slug}`;
     const structuredData = {
     "@context": "https://schema.org",
@@ -198,6 +207,8 @@ export default async function ArticleDetailPage({ params }) {
         </section>
 
         {quiz?.lead ? null : quizSection}
+
+        {directorySection}
 
         {quiz ? disclosureSection : null}
 
