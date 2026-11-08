@@ -12,6 +12,8 @@ import ReadingQuiz from "@/components/reading-quiz";
 import { directories } from "@/lib/directory-data";
 import PlaceDirectory from "@/components/place-directory";
 import Comments from "@/components/comments";
+import { faqs } from "@/lib/faq-data";
+import FaqSection from "@/components/faq-section";
 import BackToTop from "@/components/back-to-top";
 
 export const dynamic = "force-dynamic";
@@ -138,6 +140,24 @@ function buildDirectoryItemList(directory, articleUrl) {
   };
 }
 
+// FAQPage structured data built from the same lib/faq-data.js module
+// that renders the visible FAQ block, so the schema can never drift
+// from what the page shows.
+function buildFaqPage(faqItems, articleUrl) {
+  return {
+    "@type": "FAQPage",
+    "@id": `${articleUrl}#faq`,
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer
+      }
+    }))
+  };
+}
+
 function formatDate(dateString) {
   if (!dateString) {
     return null;
@@ -212,10 +232,14 @@ export default async function ArticleDetailPage({ params }) {
       </section>
       ) : null;
 
+  const faqItems = faqs[article.slug] || null;
+  const faqSection = faqItems ? <FaqSection items={faqItems} /> : null;
+
   const articleUrl = `${site.url}/articles/${article.slug}`;
   const directoryItemList = directory
     ? buildDirectoryItemList(directory, articleUrl)
     : null;
+  const faqPage = faqItems ? buildFaqPage(faqItems, articleUrl) : null;
     const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -243,7 +267,8 @@ export default async function ArticleDetailPage({ params }) {
           { "@type": "ListItem", position: 3, name: article.title, item: articleUrl }
         ]
       },
-      ...(directoryItemList ? [directoryItemList] : [])
+      ...(directoryItemList ? [directoryItemList] : []),
+      ...(faqPage ? [faqPage] : [])
     ]
   };
 
@@ -301,6 +326,8 @@ export default async function ArticleDetailPage({ params }) {
         {directorySection}
 
         {disclosureSection}
+
+        {faqSection}
 
         {featuredProduct ? (
           <section className="inline-product-card article-related-card">
