@@ -1,15 +1,16 @@
 import Link from "next/link";
 import "./guide-intro.css";
 
-// Two-layer guide intro for guide articles, rendered in place of the
-// PortableText body: an always-visible one-line summary strip, with
-// the fuller intro paragraphs behind a native <details> disclosure
-// ("More about this guide", closed by default) so the directory
-// itself stays close to the top of the page. The content comes from
+// Guide intro for guide articles, rendered in place of the
+// PortableText body: an always-visible one-line summary strip, then
+// each fuller intro paragraph behind its OWN native <details>
+// disclosure (summary = the paragraph's heading, closed by default)
+// so the directory itself stays close to the top of the page and a
+// reader opens only the section they want. The content comes from
 // lib/guide-intro-data.js, keyed by article slug; the article page
-// renders this only when the slug has an entry. The disclosure is a
-// plain HTML element — accessible and needing no JavaScript state.
-// A `promo` entry, when present, renders after the disclosure as a
+// renders this only when the slug has an entry. The disclosures are
+// plain HTML elements — accessible and needing no JavaScript state.
+// A `promo` entry, when present, renders after the disclosures as a
 // standalone highlighted box that is always visible.
 export default function GuideIntro({ intro }) {
   if (!intro?.lead) {
@@ -21,10 +22,10 @@ export default function GuideIntro({ intro }) {
       <div className="guide-intro-strip">
         <p className="guide-intro-strip-text">{intro.lead}</p>
       </div>
-      {intro.more?.length ? (
-        <details className="guide-intro-more">
+      {intro.more?.map((item) => (
+        <details className="guide-intro-more" key={item.heading}>
           <summary className="guide-intro-summary">
-            <span>More about this guide</span>
+            <span>{item.heading}</span>
             <svg
               className="guide-intro-chevron"
               viewBox="0 0 24 24"
@@ -39,24 +40,19 @@ export default function GuideIntro({ intro }) {
             </svg>
           </summary>
           <div className="guide-intro-more-body">
-            {intro.more.map((item) => (
-              <div className="guide-intro-more-item" key={item.heading}>
-                <h2 className="guide-intro-heading">{item.heading}</h2>
-                <p className="guide-intro-text">
-                  {item.text}
-                  {item.link ? (
-                    <>
-                      {" "}
-                      <Link href={item.link.href}>{item.link.label}</Link>
-                      {item.suffix || null}
-                    </>
-                  ) : null}
-                </p>
-              </div>
-            ))}
+            <p className="guide-intro-text">
+              {item.text}
+              {item.link ? (
+                <>
+                  {" "}
+                  <Link href={item.link.href}>{item.link.label}</Link>
+                  {item.suffix || null}
+                </>
+              ) : null}
+            </p>
           </div>
         </details>
-      ) : null}
+      ))}
       {intro.promo ? (
         <div className="guide-intro-promo">
           <h2 className="guide-intro-heading">{intro.promo.heading}</h2>

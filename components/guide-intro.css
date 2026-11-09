@@ -1,8 +1,9 @@
-/* Guide intro — two layers in the same boxed card language as the
-   place directory and the FAQ panel: an always-visible summary strip,
-   and the fuller intro paragraphs behind a collapsed "More about this
-   guide" disclosure, so the intro never pushes the directory far down
-   the page. Imported by components/guide-intro.jsx. */
+/* Guide intro — in the same boxed card language as the place
+   directory and the FAQ panel: an always-visible summary strip,
+   then each fuller intro paragraph in its own collapsed disclosure
+   box (one per section, closed by default), so the intro never
+   pushes the directory far down the page. Imported by
+   components/guide-intro.jsx. */
 
 .guide-intro {
   display: grid;
@@ -24,7 +25,7 @@
   line-height: 1.7;
 }
 
-/* The disclosure panel: the summary is a quiet tappable row with a
+/* Each disclosure panel: the summary is a quiet tappable row with a
    chevron that rotates when open; the native marker is hidden so the
    row looks the same in every browser. */
 
@@ -66,10 +67,6 @@
 .guide-intro-more-body {
   padding: 2px 18px 16px;
   border-top: 1px solid var(--line);
-}
-
-.guide-intro-more-item + .guide-intro-more-item {
-  margin-top: 14px;
 }
 
 .guide-intro-heading {
