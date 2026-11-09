@@ -17,6 +17,8 @@ import FaqSection from "@/components/faq-section";
 import BackToTop from "@/components/back-to-top";
 import { videos } from "@/lib/video-data";
 import VideoEmbed from "@/components/video-embed";
+import { guideIntros } from "@/lib/guide-intro-data";
+import GuideIntro from "@/components/guide-intro";
 
 export const dynamic = "force-dynamic";
 
@@ -242,6 +244,18 @@ export default async function ArticleDetailPage({ params }) {
   const faqItems = faqs[article.slug] || null;
   const faqSection = faqItems ? <FaqSection items={faqItems} /> : null;
 
+  // Articles with guide-intro boxes render them in place of the
+  // PortableText body: for those articles the Sanity body is exactly
+  // the intro copy the boxes carry, so rendering both would print the
+  // same words twice. The stored body is left untouched in Sanity.
+  const bodySection = guideIntros[article.slug] ? (
+    <GuideIntro boxes={guideIntros[article.slug]} />
+  ) : (
+    <section className="article-body">
+      <PortableText value={article.body || []} components={portableTextComponents} />
+    </section>
+  );
+
   const articleUrl = `${site.url}/articles/${article.slug}`;
   const directoryItemList = directory
     ? buildDirectoryItemList(directory, articleUrl)
@@ -326,9 +340,7 @@ export default async function ArticleDetailPage({ params }) {
 
         {quiz?.lead ? quizSection : null}
 
-        <section className="article-body">
-          <PortableText value={article.body || []} components={portableTextComponents} />
-        </section>
+        {bodySection}
 
         {quiz?.lead ? null : quizSection}
 
