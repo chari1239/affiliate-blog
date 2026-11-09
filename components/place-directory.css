@@ -43,11 +43,42 @@
 }
 
 .directory-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0 0 14px;
   color: var(--ink);
   font-size: 1.2rem;
   padding-bottom: 8px;
   border-bottom: 2px solid var(--accent-soft);
+}
+
+/* Category icon badge: one per section, repeated at the top of every
+   card in that section and beside the section heading, so the kind of
+   place is visible before a word is read. The icon itself uses the
+   cat-icon class so it sizes independently of the 16px button icons. */
+
+.place-badge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+
+.place-badge .cat-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.place-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .directory-grid {
@@ -101,10 +132,23 @@
   line-height: 1.6;
 }
 
+/* Address and hours lines both carry a small leading icon (pin /
+   clock) in the muted text colour, aligned with the first text line. */
+
 .place-address {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
   margin: 8px 0 0;
   color: var(--muted);
   line-height: 1.55;
+}
+
+.place-address .btn-icon {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin-top: 4px;
 }
 
 .place-hours {

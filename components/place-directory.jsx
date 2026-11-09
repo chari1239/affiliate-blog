@@ -80,6 +80,242 @@ function PencilIcon() {
   );
 }
 
+// Category icons: one drawn icon per directory section, shown in a small
+// badge at the top of every card in that section and next to the section
+// heading, so a reader can tell at a glance whether a card is a clinic, a
+// school, a restaurant and so on. They follow the button icons' rules —
+// inline SVG, currentColor stroke — but use their own "cat-icon" class so
+// the badge can size them independently of the 16px button icons. Like
+// the button icons they are drawn, never emoji (PR #33 replaced emojis
+// with SVGs: emoji render at a different size on every phone).
+function CrossIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z" />
+    </svg>
+  );
+}
+
+function ToothIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 5.6C10.5 4 8.6 3.5 6.9 4 4.7 4.5 3.4 6.5 3.5 8.7c.1 1.8.7 3.1 1.1 4.8.4 1.7.7 4.4 1.3 6.2.3 1 1.7 1.1 2.1.1.7-1.5.9-4.3 3-4.3s2.3 2.8 3 4.3c.4 1 1.8.9 2.1-.1.6-1.8.9-4.5 1.3-6.2.4-1.7 1-3 1.1-4.8.1-2.2-1.2-4.2-3.4-4.7-1.7-.5-3.6 0-5.1 1.6z" />
+    </svg>
+  );
+}
+
+function PillIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
+      <path d="m8.5 8.5 7 7" />
+    </svg>
+  );
+}
+
+function GradCapIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M21.42 10.92a1 1 0 0 0 0-1.84l-8.59-3.91a2 2 0 0 0-1.66 0L2.58 9.08a1 1 0 0 0 0 1.84l8.59 3.91a2 2 0 0 0 1.66 0z" />
+      <path d="M22 10v6" />
+      <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5" />
+    </svg>
+  );
+}
+
+function UtensilsIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+      <path d="M7 2v20" />
+      <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+    </svg>
+  );
+}
+
+function BagIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+      <path d="M3 6h18" />
+      <path d="M16 10a4 4 0 0 1-8 0" />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+    </svg>
+  );
+}
+
+function BankIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="3" x2="21" y1="22" y2="22" />
+      <line x1="6" x2="6" y1="18" y2="11" />
+      <line x1="10" x2="10" y1="18" y2="11" />
+      <line x1="14" x2="14" y1="18" y2="11" />
+      <line x1="18" x2="18" y1="18" y2="11" />
+      <polygon points="12 2 20 7 4 7" />
+    </svg>
+  );
+}
+
+function ShieldIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  );
+}
+
+function BuildingIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" />
+      <path d="M2 22h20" />
+      <path d="M9 6h1" />
+      <path d="M14 6h1" />
+      <path d="M9 10h1" />
+      <path d="M14 10h1" />
+      <path d="M9 14h1" />
+      <path d="M14 14h1" />
+      <path d="M10 22v-3h4v3" />
+    </svg>
+  );
+}
+
+function TrainIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="4" y="3" width="16" height="13" rx="2" />
+      <path d="M4 10h16" />
+      <circle cx="8.5" cy="13.5" r="0.5" />
+      <circle cx="15.5" cy="13.5" r="0.5" />
+      <path d="m8 20 1.5-4" />
+      <path d="m16 20-1.5-4" />
+    </svg>
+  );
+}
+
+function ScissorsIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="6" cy="6" r="3" />
+      <circle cx="6" cy="18" r="3" />
+      <line x1="20" y1="4" x2="8.12" y2="15.88" />
+      <line x1="14.47" y1="14.48" x2="20" y2="20" />
+      <line x1="8.12" y1="8.12" x2="12" y2="12" />
+    </svg>
+  );
+}
+
+function DropletIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+    </svg>
+  );
+}
+
+function WrenchIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+    </svg>
+  );
+}
+
+function TreeIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 2.5 8 7.5h2.6L6.5 13H10v2H6.5L12 21.5 17.5 15H14v-2h3.5L13.4 7.5H16z" />
+    </svg>
+  );
+}
+
+function HomeIcon() {
+  return (
+    <svg className="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <polyline points="9 22 9 12 15 12 15 22" />
+    </svg>
+  );
+}
+
+// Pick a section's icon by keyword in its title (case-insensitive).
+// Order matters: specific trades first (a dentist is not a clinic, a
+// pharmacy is not a clinic either), and "post office" is matched before
+// the office/government words because the combined section title
+// "Post office, ward office & official help" leads with the post
+// office. Anything unmatched gets the map pin.
+function sectionIconComponent(title) {
+  const t = String(title || "").toLowerCase();
+  if (t.includes("dentist") || t.includes("dental")) return ToothIcon;
+  if (t.includes("pharmac") || t.includes("drug")) return PillIcon;
+  if (
+    t.includes("clinic") ||
+    t.includes("hospital") ||
+    t.includes("health") ||
+    t.includes("medical")
+  )
+    return CrossIcon;
+  if (
+    t.includes("school") ||
+    t.includes("nursery") ||
+    t.includes("kindergarten") ||
+    t.includes("education") ||
+    t.includes("kids")
+  )
+    return GradCapIcon;
+  if (t.includes("restaurant") || t.includes("food") || t.includes("dining"))
+    return UtensilsIcon;
+  if (
+    t.includes("grocer") ||
+    t.includes("store") ||
+    t.includes("shop") ||
+    t.includes("market")
+  )
+    return BagIcon;
+  if (t.includes("post") || t.includes("mail")) return MailIcon;
+  if (t.includes("bank") || t.includes("atm") || t.includes("money"))
+    return BankIcon;
+  if (t.includes("police") || t.includes("safety")) return ShieldIcon;
+  if (
+    t.includes("ward office") ||
+    t.includes("government") ||
+    t.includes("official") ||
+    t.includes("office")
+  )
+    return BuildingIcon;
+  if (t.includes("station") || t.includes("transport") || t.includes("train"))
+    return TrainIcon;
+  if (t.includes("salon") || t.includes("barber") || t.includes("beauty"))
+    return ScissorsIcon;
+  if (t.includes("laundry") || t.includes("clean")) return DropletIcon;
+  if (
+    t.includes("park") ||
+    t.includes("library") ||
+    t.includes("community") ||
+    t.includes("play")
+  )
+    return TreeIcon;
+  if (
+    t.includes("utilit") ||
+    t.includes("repair") ||
+    t.includes("service") ||
+    t.includes("home help")
+  )
+    return WrenchIcon;
+  if (t.includes("home") || t.includes("housing") || t.includes("real estate"))
+    return HomeIcon;
+  return PinIcon;
+}
+
 // The Website button shows the place's own favicon (via Google's favicon
 // service) instead of a generic globe emoji; if the stored URL cannot be
 // parsed, the caller falls back to the drawn globe icon.
@@ -161,17 +397,28 @@ function entrySearchText(sectionTitle, entry) {
   return base + keywords;
 }
 
-function PlaceCard({ entry, onSuggest }) {
+function PlaceCard({ entry, onSuggest, SectionIcon }) {
   const tel = telHref(entry.phone);
 
   return (
     <article className="place-card" id={anchorId(entry.name)}>
-      <h3 className="place-name">
-        {entry.name}
-        {entry.jp ? <span className="place-jp">{entry.jp}</span> : null}
-      </h3>
+      <div className="place-head">
+        {SectionIcon ? (
+          <span className="place-badge" aria-hidden="true">
+            <SectionIcon />
+          </span>
+        ) : null}
+        <h3 className="place-name">
+          {entry.name}
+          {entry.jp ? <span className="place-jp">{entry.jp}</span> : null}
+        </h3>
+      </div>
       {entry.note ? <p className="place-note">{entry.note}</p> : null}
-      {entry.address ? <p className="place-address">{entry.address}</p> : null}
+      {entry.address ? (
+        <p className="place-address">
+          <PinIcon /> {entry.address}
+        </p>
+      ) : null}
       {entry.hours ? (
         <p className="place-hours">
           <ClockIcon /> {entry.hours}
@@ -516,20 +763,29 @@ export default function PlaceDirectory({ directory, articleSlug }) {
       {totalShown === 0 ? (
         <p className="directory-empty">No places match — try another word.</p>
       ) : (
-        visible.map((section) => (
-          <section className="directory-section" key={section.title}>
-            <h2 className="directory-section-title">{section.title}</h2>
-            <div className="directory-grid">
-              {section.entries.map((entry) => (
-                <PlaceCard
-                  key={entry.name}
-                  entry={entry}
-                  onSuggest={articleSlug ? openSuggestForPlace : null}
-                />
-              ))}
-            </div>
-          </section>
-        ))
+        visible.map((section) => {
+          const SectionIcon = sectionIconComponent(section.title);
+          return (
+            <section className="directory-section" key={section.title}>
+              <h2 className="directory-section-title">
+                <span className="place-badge" aria-hidden="true">
+                  <SectionIcon />
+                </span>
+                {section.title}
+              </h2>
+              <div className="directory-grid">
+                {section.entries.map((entry) => (
+                  <PlaceCard
+                    key={entry.name}
+                    entry={entry}
+                    onSuggest={articleSlug ? openSuggestForPlace : null}
+                    SectionIcon={SectionIcon}
+                  />
+                ))}
+              </div>
+            </section>
+          );
+        })
       )}
     </div>
   );
