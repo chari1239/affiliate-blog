@@ -9,6 +9,8 @@ import "./guide-intro.css";
 // lib/guide-intro-data.js, keyed by article slug; the article page
 // renders this only when the slug has an entry. The disclosure is a
 // plain HTML element — accessible and needing no JavaScript state.
+// A `promo` entry, when present, renders after the disclosure as a
+// standalone highlighted box that is always visible.
 export default function GuideIntro({ intro }) {
   if (!intro?.lead) {
     return null;
@@ -54,6 +56,15 @@ export default function GuideIntro({ intro }) {
             ))}
           </div>
         </details>
+      ) : null}
+      {intro.promo ? (
+        <div className="guide-intro-promo">
+          <h2 className="guide-intro-heading">{intro.promo.heading}</h2>
+          <p className="guide-intro-text">{intro.promo.line}</p>
+          <p className="guide-intro-text">
+            <Link href={intro.promo.link.href}>{intro.promo.link.label}</Link>
+          </p>
+        </div>
       ) : null}
     </section>
   );

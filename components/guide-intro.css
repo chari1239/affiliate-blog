@@ -92,3 +92,23 @@
   font-weight: 600;
   text-decoration: underline;
 }
+
+/* The promo box: the same boxed panel, lifted with the accent tint
+   so it reads as a gentle highlight rather than another info panel.
+   It sits after the disclosure and is always visible. */
+
+.guide-intro-promo {
+  background: var(--accent-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+}
+
+.guide-intro-promo .guide-intro-heading {
+  border-bottom-color: var(--surface-strong);
+}
+
+.guide-intro-promo .guide-intro-text + .guide-intro-text {
+  margin-top: 4px;
+}
