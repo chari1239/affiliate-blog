@@ -17,6 +17,14 @@
   padding: clamp(1rem, 4vw, 1.35rem);
 }
 
+/* The back-to-top button on the Ojima article scrolls to this
+   container (not the sticky filter bar inside it — a stuck bar is
+   always "in view", so scrolling to it goes nowhere). The margin
+   clears the site header, matching the filter bar's own offset. */
+#place-directory {
+  scroll-margin-top: 84px;
+}
+
 .directory-head {
   display: flex;
   flex-wrap: wrap;
