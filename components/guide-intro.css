@@ -1,0 +1,52 @@
+/* Guide intro boxes — three short panels in the same boxed card
+   language as the place directory and the FAQ panel, replacing the
+   long intro paragraph wall on guide articles. Mobile-first: stacked
+   in one column, then a responsive grid as the viewport widens.
+   Imported by components/guide-intro.jsx. */
+
+.guide-intro {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.guide-intro-box {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+}
+
+.guide-intro-heading {
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: 1.15rem;
+  line-height: 1.35;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--accent-soft);
+}
+
+.guide-intro-text {
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.7;
+}
+
+.guide-intro-text a {
+  color: var(--accent-dark);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+@media (min-width: 720px) {
+  .guide-intro {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .guide-intro {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
