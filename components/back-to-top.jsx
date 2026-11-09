@@ -7,7 +7,12 @@ import "./back-to-top.css";
 // reader has scrolled a screenful or two (the Ojima guide runs to 127
 // place cards), and smooth-scrolls back to the top. Rendered by the
 // article page template, so every article gets it.
-export default function BackToTop() {
+//
+// An article can pass targetId + label to send the button somewhere
+// more useful than the page top: the Ojima guide points it at the
+// directory's filter bar ("Back to filters") — the one control a
+// reader scrolling 127 cards actually wants to get back to.
+export default function BackToTop({ targetId, label = "Back to top" }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -19,12 +24,22 @@ export default function BackToTop() {
 
   if (!visible) return null;
 
+  const onClick = () => {
+    const target = targetId ? document.getElementById(targetId) : null;
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
     <button
       type="button"
       className="back-to-top"
-      aria-label="Back to top"
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      aria-label={label}
+      title={label}
+      onClick={onClick}
     >
       <svg
         viewBox="0 0 24 24"

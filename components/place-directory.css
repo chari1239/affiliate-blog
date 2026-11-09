@@ -126,6 +126,27 @@
   font-weight: 500;
 }
 
+/* Pure veg mark: the FSSAI-style green dot in a green square, with a
+   small green label, sitting beside the place name on flagged cards. */
+
+.veg-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 8px;
+  vertical-align: 2px;
+  color: #0b7a30;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.veg-mark-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
 .place-note {
   margin: 8px 0 0;
   color: var(--ink);
@@ -239,6 +260,7 @@
    controls stay in reach while scrolling the directory. */
 
 .directory-filters {
+  scroll-margin-top: 84px;
   position: sticky;
   top: 70px;
   z-index: 5;
@@ -512,3 +534,4 @@
   opacity: 0;
   pointer-events: none;
 }
+
