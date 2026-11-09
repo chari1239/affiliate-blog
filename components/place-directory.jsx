@@ -655,7 +655,7 @@ export default function PlaceDirectory({ directory, articleSlug }) {
   };
 
   return (
-    <div className="place-directory">
+    <div className="place-directory" id="place-directory">
       <div className="directory-head">
         <h2 className="directory-title">{directory.title}</h2>
         <div className="directory-head-actions">

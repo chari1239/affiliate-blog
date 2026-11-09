@@ -1,8 +1,9 @@
-/* Guide intro — two layers in the same boxed card language as the
-   place directory and the FAQ panel: an always-visible summary strip,
-   and the fuller intro paragraphs behind a collapsed "More about this
-   guide" disclosure, so the intro never pushes the directory far down
-   the page. Imported by components/guide-intro.jsx. */
+/* Guide intro — in the same boxed card language as the place
+   directory and the FAQ panel: an always-visible summary strip,
+   then each fuller intro paragraph in its own collapsed disclosure
+   box (one per section, closed by default), so the intro never
+   pushes the directory far down the page. Imported by
+   components/guide-intro.jsx. */
 
 .guide-intro {
   display: grid;
@@ -24,7 +25,7 @@
   line-height: 1.7;
 }
 
-/* The disclosure panel: the summary is a quiet tappable row with a
+/* Each disclosure panel: the summary is a quiet tappable row with a
    chevron that rotates when open; the native marker is hidden so the
    row looks the same in every browser. */
 
@@ -68,10 +69,6 @@
   border-top: 1px solid var(--line);
 }
 
-.guide-intro-more-item + .guide-intro-more-item {
-  margin-top: 14px;
-}
-
 .guide-intro-heading {
   margin: 0 0 8px;
   color: var(--ink);
@@ -91,4 +88,24 @@
   color: var(--accent-dark);
   font-weight: 600;
   text-decoration: underline;
+}
+
+/* The promo box: the same boxed panel, lifted with the accent tint
+   so it reads as a gentle highlight rather than another info panel.
+   It sits after the disclosure and is always visible. */
+
+.guide-intro-promo {
+  background: var(--accent-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+}
+
+.guide-intro-promo .guide-intro-heading {
+  border-bottom-color: var(--surface-strong);
+}
+
+.guide-intro-promo .guide-intro-text + .guide-intro-text {
+  margin-top: 4px;
 }
