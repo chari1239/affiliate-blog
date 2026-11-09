@@ -1,8 +1,8 @@
-/* Guide intro boxes — three short panels in the same boxed card
-   language as the place directory and the FAQ panel, replacing the
-   long intro paragraph wall on guide articles. Mobile-first: stacked
-   in one column, then a responsive grid as the viewport widens.
-   Imported by components/guide-intro.jsx. */
+/* Guide intro — two layers in the same boxed card language as the
+   place directory and the FAQ panel: an always-visible summary strip,
+   and the fuller intro paragraphs behind a collapsed "More about this
+   guide" disclosure, so the intro never pushes the directory far down
+   the page. Imported by components/guide-intro.jsx. */
 
 .guide-intro {
   display: grid;
@@ -10,12 +10,66 @@
   gap: 12px;
 }
 
-.guide-intro-box {
+.guide-intro-strip {
   background: var(--surface-strong);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 16px 18px;
+}
+
+.guide-intro-strip-text {
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.7;
+}
+
+/* The disclosure panel: the summary is a quiet tappable row with a
+   chevron that rotates when open; the native marker is hidden so the
+   row looks the same in every browser. */
+
+.guide-intro-more {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.guide-intro-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  color: var(--ink);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.guide-intro-summary::-webkit-details-marker {
+  display: none;
+}
+
+.guide-intro-chevron {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  color: var(--muted);
+  transition: transform 0.2s ease;
+}
+
+.guide-intro-more[open ] .guide-intro-chevron {
+  transform: rotate(180deg);
+}
+
+.guide-intro-more-body {
+  padding: 2px 18px 16px;
+  border-top: 1px solid var(--line);
+}
+
+.guide-intro-more-item + .guide-intro-more-item {
+  margin-top: 14px;
 }
 
 .guide-intro-heading {
@@ -37,16 +91,4 @@
   color: var(--accent-dark);
   font-weight: 600;
   text-decoration: underline;
-}
-
-@media (min-width: 720px) {
-  .guide-intro {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .guide-intro {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }

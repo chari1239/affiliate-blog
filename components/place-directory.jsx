@@ -397,6 +397,53 @@ function entrySearchText(sectionTitle, entry) {
   return base + keywords;
 }
 
+// The Indian vegetarian mark (FSSAI style: a green dot inside a green
+// square outline) with a small "Pure veg" label, shown beside the name
+// on cards whose data carries pureVeg — the restaurants and stores
+// whose own description says they are pure vegetarian.
+function VegMark() {
+  return (
+    <span className="veg-mark">
+      <svg
+        className="veg-mark-icon"
+        viewBox="0 0 20 20"
+        aria-hidden="true"
+      >
+        <rect
+          x="1.75"
+          y="1.75"
+          width="16.5"
+          height="16.5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+        />
+        <circle cx="10" cy="10" r="4.25" fill="currentColor" />
+      </svg>
+      Pure veg
+    </span>
+  );
+}
+
+// Cards are ordered by each entry's distanceKm — its approximate
+// distance from Ojima Station, stored in the data for ordering only
+// and never shown on the card. Entries without a distance (phone-only
+// services, apps, community contacts) come first, then nearest to
+// farthest; the index tie-break keeps equal distances in data order.
+function sortByDistance(entries) {
+  return entries
+    .map((entry, index) => ({ entry, index }))
+    .sort((a, b) => {
+      const da = a.entry.distanceKm ?? null;
+      const db = b.entry.distanceKm ?? null;
+      if (da === null && db === null) return a.index - b.index;
+      if (da === null) return -1;
+      if (db === null) return 1;
+      return da - db || a.index - b.index;
+    })
+    .map(({ entry }) => entry);
+}
+
 function PlaceCard({ entry, onSuggest, SectionIcon }) {
   const tel = telHref(entry.phone);
 
@@ -410,6 +457,7 @@ function PlaceCard({ entry, onSuggest, SectionIcon }) {
         ) : null}
         <h3 className="place-name">
           {entry.name}
+          {entry.pureVeg ? <VegMark /> : null}
           {entry.jp ? <span className="place-jp">{entry.jp}</span> : null}
         </h3>
       </div>
@@ -568,12 +616,14 @@ export default function PlaceDirectory({ directory, articleSlug }) {
       .filter((section) => !levelActive || section.title === SCHOOLS_SECTION)
       .map((section) => ({
         ...section,
-        entries: section.entries.filter((entry) => {
-          if (levelActive && entry.level !== activeLevel) return false;
-          if (!tokens.length) return true;
-          const text = entrySearchText(section.title, entry);
-          return tokens.every((token) => text.includes(token));
-        }),
+        entries: sortByDistance(
+          section.entries.filter((entry) => {
+            if (levelActive && entry.level !== activeLevel) return false;
+            if (!tokens.length) return true;
+            const text = entrySearchText(section.title, entry);
+            return tokens.every((token) => text.includes(token));
+          })
+        ),
       }))
       .filter((section) => section.entries.length > 0);
   }, [sections, query, activeSection, activeLevel]);
@@ -701,7 +751,7 @@ export default function PlaceDirectory({ directory, articleSlug }) {
         </form>
       ) : null}
 
-      <div className="directory-filters">
+      <div className="directory-filters" id="place-filters">
         <input
           type="search"
           className="directory-search"
@@ -790,3 +840,4 @@ export default function PlaceDirectory({ directory, articleSlug }) {
     </div>
   );
 }
+

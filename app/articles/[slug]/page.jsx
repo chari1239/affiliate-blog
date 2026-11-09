@@ -250,7 +250,7 @@ export default async function ArticleDetailPage({ params }) {
   // the intro copy the boxes carry, so rendering both would print the
   // same words twice. The stored body is left untouched in Sanity.
   const bodySection = guideIntros[article.slug] ? (
-    <GuideIntro boxes={guideIntros[article.slug]} />
+    <GuideIntro intro={guideIntros[article.slug]} />
   ) : (
     <section className="article-body">
       <PortableText value={article.body || []} components={portableTextComponents} />
@@ -419,8 +419,13 @@ export default async function ArticleDetailPage({ params }) {
           <Comments slug={article.slug} comments={comments} />
         </section>
       </article>
-      <BackToTop />
+      <BackToTop
+        {...(article.slug === "living-in-ojima-tokyo-guide"
+          ? { targetId: "place-filters", label: "Back to filters" }
+          : {})}
+      />
     </main>
   );
 }
+
 
