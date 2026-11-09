@@ -40,12 +40,22 @@ export const metadata = {
     follow: true
   },
   icons: {
-    icon: "/logo.png"
+    icon: "/logo.png",
+    apple: "/icons/apple-touch-icon.png"
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Nihon Diaries",
+    statusBarStyle: "default"
   },
   other: {
     // Google AdSense site-ownership verification (publisher ca-pub-7229881020426401)
     "google-adsense-account": "ca-pub-7229881020426401"
   }
+};
+
+export const viewport = {
+  themeColor: "#c63e36"
 };
 
 const structuredData = {
