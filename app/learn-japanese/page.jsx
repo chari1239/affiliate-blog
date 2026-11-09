@@ -5,6 +5,7 @@ import { isSanityConfigured } from "@/lib/sanity/env";
 import { urlForImage } from "@/lib/sanity/image";
 import { learningPath } from "@/lib/learning-path";
 import { site } from "@/lib/site";
+import ShareButton from "@/components/share-button";
 import "./learn-japanese.css";
 
 export const dynamic = "force-dynamic";
@@ -89,6 +90,14 @@ export default async function LearnJapanesePage() {
           how Japanese writing works, learn hiragana row by row, and practise with reading
           quizzes after every lesson — no experience needed.
         </p>
+        <div className="share-row">
+          <ShareButton
+            title="Learn Japanese from Zero — Free Hiragana Lessons & Quizzes"
+            text="Learn Japanese from Zero — Free Hiragana Lessons & Quizzes"
+            url={`${site.url}/learn-japanese`}
+            label="Share this page"
+          />
+        </div>
       </header>
 
       {!isSanityConfigured ? (
