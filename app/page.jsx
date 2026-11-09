@@ -33,8 +33,8 @@ const focusAreas = [
   {
     title: "Learn Japanese",
     copy: "Free beginner lessons from the very first hiragana — step-by-step rows and interactive reading quizzes, a new lesson every day.",
-    href: "/articles/the-5-japanese-vowels-hiragana-lesson-1",
-    action: "Start with Lesson 1 →"
+    href: "/learn-japanese",
+    action: "See all lessons →"
   }
 ];
 
@@ -132,7 +132,10 @@ export default async function HomePage() {
         </div>
 
         <div className="hero-actions">
-          <Link href="/articles/the-5-japanese-vowels-hiragana-lesson-1" className="btn">
+          <Link href="/learn-japanese" className="btn">
+            See all lessons & quizzes
+          </Link>
+          <Link href="/articles/the-5-japanese-vowels-hiragana-lesson-1" className="btn-secondary">
             Start with Lesson 1 — The 5 Vowels
           </Link>
           <Link
@@ -142,9 +145,6 @@ export default async function HomePage() {
             rel="noreferrer"
           >
             Watch the lessons on YouTube
-          </Link>
-          <Link href="/articles" className="btn-secondary">
-            Browse all articles
           </Link>
         </div>
 
