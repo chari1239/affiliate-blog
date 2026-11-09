@@ -15,6 +15,8 @@ import Comments from "@/components/comments";
 import { faqs } from "@/lib/faq-data";
 import FaqSection from "@/components/faq-section";
 import BackToTop from "@/components/back-to-top";
+import { videos } from "@/lib/video-data";
+import VideoEmbed from "@/components/video-embed";
 
 export const dynamic = "force-dynamic";
 
@@ -218,6 +220,11 @@ export default async function ArticleDetailPage({ params }) {
               </section>
         ) : null;
 
+  const videoId = videos[article.slug];
+  const videoSection = videoId ? (
+    <VideoEmbed videoId={videoId} title={article.title} />
+  ) : null;
+
   const quiz = quizzes[article.slug];
   const quizSection = quiz ? (
       <section className="article-quiz" id="quiz">
@@ -307,6 +314,8 @@ export default async function ArticleDetailPage({ params }) {
           </div>
         ) : null}
 
+        {videoSection}
+
         {quiz && !quiz.lead ? (
           <p className="quiz-jump-wrap">
             <a className="quiz-jump" href="#quiz">
@@ -385,3 +394,4 @@ export default async function ArticleDetailPage({ params }) {
     </main>
   );
 }
+

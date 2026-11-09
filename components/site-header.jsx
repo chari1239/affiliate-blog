@@ -8,6 +8,7 @@ import { site } from "@/lib/site";
 const links = [
   { href: "/", label: "Home" },
   { href: "/articles", label: "Articles" },
+  { href: "/learn-japanese", label: "Learn Japanese" },
   { href: "/products", label: "Products" },
   { href: "/contact", label: "Contact" },
   { href: "/disclaimer", label: "Disclosure" }
@@ -58,3 +59,4 @@ export function SiteHeader() {
     </header>
   );
 }
+
