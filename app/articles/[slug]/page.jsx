@@ -17,6 +17,7 @@ import FaqSection from "@/components/faq-section";
 import BackToTop from "@/components/back-to-top";
 import { videos } from "@/lib/video-data";
 import VideoEmbed from "@/components/video-embed";
+import ShareButton from "@/components/share-button";
 import { guideIntros } from "@/lib/guide-intro-data";
 import GuideIntro from "@/components/guide-intro";
 
@@ -257,6 +258,18 @@ export default async function ArticleDetailPage({ params }) {
   );
 
   const articleUrl = `${site.url}/articles/${article.slug}`;
+  // One Share button definition, rendered under the header and again
+  // at the end of the article. Shares the title + canonical URL.
+  const articleShare = (className) => (
+    <div className={className}>
+      <ShareButton
+        title={article.title}
+        text={article.title}
+        url={articleUrl}
+        label="Share this article"
+      />
+    </div>
+  );
   const directoryItemList = directory
     ? buildDirectoryItemList(directory, articleUrl)
     : null;
@@ -328,6 +341,8 @@ export default async function ArticleDetailPage({ params }) {
           </div>
         ) : null}
 
+        {articleShare("share-row")}
+
         {videoSection}
 
         {quiz && !quiz.lead ? (
@@ -397,6 +412,8 @@ export default async function ArticleDetailPage({ params }) {
             )}
           </nav>
         ) : null}
+
+        {articleShare("share-row share-row-end")}
 
         <section className="article-comments">
           <Comments slug={article.slug} comments={comments} />
