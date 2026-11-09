@@ -50,7 +50,8 @@ export const metadata = {
   },
   other: {
     // Google AdSense site-ownership verification (publisher ca-pub-7229881020426401)
-    "google-adsense-account": "ca-pub-7229881020426401"
+    "google-adsense-account": "ca-pub-7229881020426401",
+    "apple-mobile-web-app-capable": "yes"
   }
 };
 
