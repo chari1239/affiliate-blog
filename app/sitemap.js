@@ -6,6 +6,7 @@ export const revalidate = 3600;
 const staticRoutes = [
   { path: "", changeFrequency: "weekly", priority: 1.0 },
   { path: "/articles", changeFrequency: "daily", priority: 0.9 },
+  { path: "/learn-japanese", changeFrequency: "weekly", priority: 0.9 },
   { path: "/products", changeFrequency: "weekly", priority: 0.6 },
   { path: "/about", changeFrequency: "monthly", priority: 0.6 },
   { path: "/contact", changeFrequency: "yearly", priority: 0.4 },
@@ -35,3 +36,4 @@ export default async function sitemap() {
     ...articleRoutes
   ];
 }
+

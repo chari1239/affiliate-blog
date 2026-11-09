@@ -1,0 +1,25 @@
+/* Learn Japanese hub — the step header row on each lesson card.
+   The cards themselves reuse the site's content-card / article-card
+   styles from globals.css; only the step number + label row is new.
+   Imported by app/learn-japanese/page.jsx. */
+
+.learn-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.learn-step {
+  color: var(--accent-dark);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.learn-grid .article-card h2 {
+  font-size: 1.3rem;
+  line-height: 1.3;
+}
