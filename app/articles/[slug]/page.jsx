@@ -103,6 +103,29 @@ const portableTextComponents = {
   }
 };
 
+// Article bodies in Sanity end with a hand-typed "Affiliate
+// disclosure: ..." paragraph, but this page already renders the
+// disclosure once at the bottom from the article's affiliateDisclosure
+// field — so the typed copy made it appear twice. Drop any body block
+// whose text starts with "Affiliate disclosure:" before rendering.
+// This is a rendering filter only; the stored body is never changed,
+// and the coded bottom disclosure below is untouched.
+function stripDisclosureBlocks(body) {
+  if (!Array.isArray(body)) {
+    return [];
+  }
+  return body.filter((block) => {
+    if (block?._type !== "block") {
+      return true;
+    }
+    const text = (block.children || [])
+      .map((child) => (typeof child?.text === "string" ? child.text : ""))
+      .join("")
+      .trim();
+    return !text.startsWith("Affiliate disclosure:");
+  });
+}
+
 // Schema.org type per directory section, for the ItemList below.
 const DIRECTORY_ITEM_TYPES = {
   "Clinics & hospitals": "MedicalOrganization",
@@ -254,7 +277,7 @@ export default async function ArticleDetailPage({ params }) {
     <GuideIntro intro={guideIntros[article.slug]} />
   ) : (
     <section className="article-body">
-      <PortableText value={article.body || []} components={portableTextComponents} />
+      <PortableText value={stripDisclosureBlocks(article.body)} components={portableTextComponents} />
     </section>
   );
 
