@@ -1,6 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import {
+  getExistingSubscription,
+  getPublicKey,
+  isIosBrowserOnly,
+  isPushSupported,
+  registerWorker,
+  subscribe as subscribeToPush,
+  unsubscribe as unsubscribeFromPush
+} from "@/lib/push-client";
 import "./notify-button.css";
 
 // The bell icon, drawn like the share button's icon (16px, stroke
@@ -14,36 +23,14 @@ function BellIcon() {
   );
 }
 
-// applicationServerKey for pushManager.subscribe has to be a
-// Uint8Array, not the base64url string the server hands out.
-function urlBase64ToUint8Array(base64String) {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; i += 1) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  return outputArray;
-}
-
-function isIos() {
-  return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-}
-
-function isStandalone() {
-  return (
-    window.matchMedia("(display-mode: standalone)").matches ||
-    window.navigator.standalone === true
-  );
-}
-
 // "Get notified about new lessons" — registers the push-only service
 // worker (/sw.js) and, ONLY when the reader taps the button, asks
 // for notification permission and stores the resulting subscription
-// via /api/push-subscribe. On iPhone, Web Push only exists inside
-// the installed home-screen app, so a browser tab there gets the
-// add-to-Home-Screen hint instead of a button that cannot work.
+// via /api/push-subscribe. The push mechanics live in
+// lib/push-client.js, shared with the on-open prompt card. On
+// iPhone, Web Push only exists inside the installed home-screen
+// app, so a browser tab there gets the add-to-Home-Screen hint
+// instead of a button that cannot work.
 // Renders one quiet row; pass className="notify-row-end" to centre
 // it (matching .share-row-end on article pages). With
 // hideWhenSubscribed, a reader who ALREADY has a subscription when
@@ -68,29 +55,24 @@ export default function NotifyButton({ className = "", hideWhenSubscribed = fals
       // iOS check first: in a plain Safari tab there is no
       // PushManager at all, which would otherwise look "unsupported"
       // and hide the one step that makes it work there.
-      if (isIos() && !isStandalone()) {
+      if (isIosBrowserOnly()) {
         if (!cancelled) setState("ios-hint");
         return;
       }
-      if (
-        !("serviceWorker" in navigator) ||
-        !("PushManager" in window) ||
-        !("Notification" in window)
-      ) {
+      if (!isPushSupported()) {
         if (!cancelled) setState("unsupported");
         return;
       }
       try {
-        const keyRes = await fetch("/api/push-key");
-        const keyJson = await keyRes.json();
-        if (!keyJson.publicKey) {
+        const fetchedKey = await getPublicKey();
+        if (!fetchedKey) {
           if (!cancelled) setState("unsupported");
           return;
         }
-        const reg = await navigator.serviceWorker.register("/sw.js");
-        const existing = await reg.pushManager.getSubscription();
+        const reg = await registerWorker();
+        const existing = await getExistingSubscription(reg);
         if (cancelled) return;
-        setPublicKey(keyJson.publicKey);
+        setPublicKey(fetchedKey);
         setRegistration(reg);
         setHadSubscription(Boolean(existing));
         setState(existing ? "subscribed" : "ready");
@@ -111,24 +93,12 @@ export default function NotifyButton({ className = "", hideWhenSubscribed = fals
     try {
       // The permission prompt happens here — on the tap, never on
       // page load.
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
+      const result = await subscribeToPush(registration, publicKey);
+      if (result.reason === "denied") {
         setState("denied");
         return;
       }
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey)
-      });
-      const res = await fetch("/api/push-subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...subscription.toJSON(),
-          userAgent: window.navigator.userAgent
-        })
-      });
-      setState(res.ok ? "subscribed" : "ready");
+      setState(result.ok ? "subscribed" : "ready");
     } catch {
       setState("ready");
     }
@@ -138,15 +108,7 @@ export default function NotifyButton({ className = "", hideWhenSubscribed = fals
     if (!registration) return;
     setState("busy");
     try {
-      const subscription = await registration.pushManager.getSubscription();
-      if (subscription) {
-        await fetch("/api/push-subscribe", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ endpoint: subscription.endpoint })
-        });
-        await subscription.unsubscribe();
-      }
+      await unsubscribeFromPush(registration);
       setState("ready");
     } catch {
       setState("subscribed");
