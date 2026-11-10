@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { site } from "@/lib/site";
 import { getArticles } from "@/lib/sanity/fetchers";
+import NotifyButton from "@/components/notify-button";
 
 export const metadata = {
   title: {
@@ -147,6 +148,8 @@ export default async function HomePage() {
             Watch the lessons on YouTube
           </Link>
         </div>
+
+        <NotifyButton hideWhenSubscribed />
 
         {learnJapaneseArticles.length ? (
           <div className="content-grid learn-japanese-grid">
