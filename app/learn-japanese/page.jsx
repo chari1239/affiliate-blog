@@ -15,7 +15,7 @@ export const metadata = {
     absolute: "Learn Japanese from Zero — Free Hiragana Lessons & Quizzes | Nihon Diaries"
   },
   description:
-    "Learn Japanese from zero with free hiragana lessons and reading quizzes for beginners. Follow the lessons in order — vowels, K-row, S-row, T-row — and practise reading real Japanese words step by step.",
+    "Learn Japanese from zero with free hiragana lessons and reading quizzes for beginners. Follow the path in order, type your answers, and track your progress on your device — on the road to JLPT N4.",
   alternates: {
     canonical: "/learn-japanese"
   },
@@ -145,4 +145,3 @@ export default async function LearnJapanesePage() {
     </main>
   );
 }
-

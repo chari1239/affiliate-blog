@@ -8,7 +8,11 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "My Progress",
   description:
-    "Track the Japanese lessons you have learnt and your reading quiz results on Nihon Diaries — saved only on this device, no account needed.",
+    "See the Japanese lessons you've completed and your reading-quiz scores — saved privately on this device, no account needed.",
+  robots: {
+    index: false,
+    follow: true
+  },
   alternates: {
     canonical: "/my-progress"
   },
