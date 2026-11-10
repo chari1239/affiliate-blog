@@ -18,6 +18,14 @@
   box-shadow: var(--shadow);
   margin-top: 1.5rem;
   padding: 1.5rem 1.25rem;
+  position: relative;
+  transition: border-color 150ms ease;
+}
+
+/* Featured card, once finished: it already sits on the accent tint,
+   so completion is marked with a stronger border (plus the badge). */
+.quiz-featured.is-done {
+  border-color: var(--accent);
 }
 
 .quiz-featured-label {
@@ -33,6 +41,7 @@
   font-size: 1.5rem;
   line-height: 1.2;
   margin: 0 0 0.5rem;
+  padding-right: 2.25rem;
 }
 
 .quiz-featured-meta {
@@ -77,13 +86,69 @@
   color: inherit;
   display: block;
   padding: 1.25rem;
+  position: relative;
   text-decoration: none;
+  transition: background-color 150ms ease;
+}
+
+/* Completed / perfect cards: a soft accent tint so finished quizzes
+   read differently from unattempted ones at a glance. */
+.quiz-card.is-done {
+  background: var(--accent-soft);
+  background: color-mix(in srgb, var(--accent) 7%, #fffdf9);
 }
 
 .quiz-card-title {
   font-size: 1.15rem;
   line-height: 1.3;
   margin: 0 0 0.4rem;
+  padding-right: 2.25rem;
+}
+
+.quiz-card-action {
+  color: var(--accent-dark);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0.8rem 0 0;
+}
+
+/* Completion badge: filled accent circle, top-right, absolutely
+   positioned (space reserved via the title's padding-right) and
+   faded in when the card's state resolves — no layout shift. */
+.quiz-state-badge {
+  align-items: center;
+  animation: quiz-state-in 150ms ease both;
+  background: var(--accent);
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  height: 26px;
+  justify-content: center;
+  pointer-events: none;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  width: 26px;
+}
+
+@keyframes quiz-state-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quiz-state-badge {
+    animation: none;
+  }
+
+  .quiz-card,
+  .quiz-featured {
+    transition: none;
+  }
 }
 
 .quiz-card-meta {
@@ -120,6 +185,14 @@
   font-weight: 700;
   min-height: 1.35rem;
   padding: 0.2rem 0.7rem;
+}
+
+/* On a tinted (completed) card the accent-soft chip would vanish
+   into the background — done chips sit on the solid surface with
+   ink text instead, which also keeps small text readable. */
+.quiz-best-chip.is-done {
+  background: var(--surface-strong, #fffdf9);
+  color: var(--ink);
 }
 
 .quiz-hub-footer {
