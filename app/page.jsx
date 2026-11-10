@@ -20,22 +20,22 @@ export const metadata = {
 
 const focusAreas = [
   {
-    title: "Daily life",
-    copy: "Routines, groceries, trains, weather, apartment habits, and the small things that shape a normal week."
-  },
-  {
-    title: "Work and money",
-    copy: "Jobs, interviews, side paths, and the practical realities of earning and settling in Japan."
-  },
-  {
-    title: "Hidden gems",
-    copy: "Neighborhoods, shops, cafés, and places worth knowing beyond the obvious tourist list."
-  },
-  {
     title: "Learn Japanese",
-    copy: "Free beginner lessons from the very first hiragana — step-by-step rows and interactive reading quizzes, a new lesson every day.",
+    copy: "Free lessons from zero, in order — with reading quizzes and daily practice.",
     href: "/learn-japanese",
     action: "See all lessons →"
+  },
+  {
+    title: "Moving to Japan",
+    copy: "Settlement guides for life in Japan — neighbourhoods, schools, clinics and daily essentials. Start with Ojima, Tokyo.",
+    href: "/articles/living-in-ojima-tokyo-guide",
+    action: "Open the Ojima guide →"
+  },
+  {
+    title: "Stories from Japan",
+    copy: "Daily life, food and small observations from an Indian family in Tokyo.",
+    href: "/articles",
+    action: "Browse articles →"
   }
 ];
 
@@ -59,6 +59,10 @@ const readerPrompts = [
   "What feels different, and what feels familiar?"
 ];
 
+// The article spotlighted in the Moving to Japan section below.
+// Recent writing must not repeat it — it filters this slug out.
+const spotlightSlug = "living-in-ojima-tokyo-guide";
+
 export default async function HomePage() {
   const articles = await getArticles();
   const learnJapaneseArticles = articles
@@ -70,7 +74,10 @@ export default async function HomePage() {
   // Learn Japanese section — show the next newest articles instead.
   const learnJapaneseSlugs = new Set(learnJapaneseArticles.map((article) => article.slug));
   const featuredArticles = articles
-    .filter((article) => !learnJapaneseSlugs.has(article.slug))
+    .filter(
+      (article) =>
+        !learnJapaneseSlugs.has(article.slug) && article.slug !== spotlightSlug
+    )
     .slice(0, 3);
 
   return (
@@ -85,7 +92,13 @@ export default async function HomePage() {
             a place actually feels to live in.
           </p>
           <div className="hero-actions">
-            <Link href="/articles" className="btn">
+            <Link
+              href="/articles/the-5-japanese-vowels-hiragana-lesson-1"
+              className="btn"
+            >
+              Start with Lesson 1 — The 5 Vowels
+            </Link>
+            <Link href="/articles" className="btn-secondary">
               Explore articles
             </Link>
             <Link href="/about" className="btn-secondary">
@@ -135,12 +148,14 @@ export default async function HomePage() {
           <Link href="/learn-japanese" className="btn">
             See all lessons & quizzes
           </Link>
-          <Link href="/articles/the-5-japanese-vowels-hiragana-lesson-1" className="btn-secondary">
+        </div>
+
+        <div className="hero-text-links">
+          <Link href="/articles/the-5-japanese-vowels-hiragana-lesson-1">
             Start with Lesson 1 — The 5 Vowels
           </Link>
           <Link
             href="https://www.youtube.com/playlist?list=PLbmlPFOPmgK4"
-            className="btn-secondary"
             target="_blank"
             rel="noreferrer"
           >
@@ -191,7 +206,7 @@ export default async function HomePage() {
         </div>
 
         <div className="hero-actions">
-          <Link href="/articles/living-in-ojima-tokyo-guide" className="btn">
+          <Link href={`/articles/${spotlightSlug}`} className="btn">
             Open the Ojima guide
           </Link>
         </div>
@@ -209,7 +224,7 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="feature-grid feature-grid-four">
+        <div className="feature-grid">
           {focusAreas.map((area) =>
             area.href ? (
               <Link key={area.title} href={area.href} className="highlight-card feature-card-link">

@@ -27,9 +27,7 @@ export function SiteHeader() {
               <img src="/logo.png" alt={site.name} className="logo-image" />
               <span className="brand-text">{site.name}</span>
             </Link>
-            <span className="brand-badge">Japan journal</span>
           </div>
-          <div className="brand-subtitle">Stories, daily life, and ideas from Japan</div>
         </div>
         <button
           type="button"

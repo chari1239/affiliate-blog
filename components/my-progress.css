@@ -111,7 +111,7 @@
    cards. */
 .my-progress-checklist .my-progress-item {
   gap: 0.7rem;
-  padding: 0.7rem 0.25rem;
+  padding: 0.7rem 0.75rem;
   background: transparent;
   border: none;
   border-bottom: 1px solid var(--line);
@@ -232,4 +232,21 @@
 
 .my-progress-continue {
   margin-top: 1rem;
+}
+
+/* Zero-state checklist expander — a quiet text button under the
+   first three steps ("See all 11 steps"). */
+.my-progress-show-all {
+  margin-top: 0.75rem;
+  padding: 0.4rem 0.2rem;
+  background: none;
+  border: none;
+  color: var(--accent-dark);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.my-progress-show-all:hover {
+  text-decoration: underline;
 }

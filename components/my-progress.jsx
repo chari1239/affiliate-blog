@@ -82,6 +82,7 @@ export default function MyProgress({ titles = {} }) {
   const [confirmingClear, setConfirmingClear] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [nameDraft, setNameDraft] = useState("");
+  const [showAllSteps, setShowAllSteps] = useState(false);
 
   const refresh = useCallback(() => {
     setProgress(getProgress());
@@ -326,6 +327,12 @@ export default function MyProgress({ titles = {} }) {
         <h2 className="my-progress-heading">Lessons</h2>
         <ul className="my-progress-list my-progress-checklist">
           {learningPath.map((step, index) => {
+            // Zero state: a brand-new reader meets the first three
+            // steps, not a long echo of the Learn hub — the rest are
+            // one tap away. Once any activity exists, all steps show.
+            if (!hasActivity && !showAllSteps && index >= 3) {
+              return null;
+            }
             const learnt = Boolean(progress && progress.lessons[step.slug]);
             const quizResult = progress ? progress.quizzes[step.slug] : null;
             return (
@@ -363,6 +370,15 @@ export default function MyProgress({ titles = {} }) {
             );
           })}
         </ul>
+        {!hasActivity && !showAllSteps && totalSteps > 3 ? (
+          <button
+            type="button"
+            className="my-progress-show-all"
+            onClick={() => setShowAllSteps(true)}
+          >
+            See all {totalSteps} steps
+          </button>
+        ) : null}
       </section>
 
       {hasAnything ? (
