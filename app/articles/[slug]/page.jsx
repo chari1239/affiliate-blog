@@ -18,6 +18,7 @@ import BackToTop from "@/components/back-to-top";
 import { videos } from "@/lib/video-data";
 import VideoEmbed from "@/components/video-embed";
 import ShareButton from "@/components/share-button";
+import NotifyButton from "@/components/notify-button";
 import { guideIntros } from "@/lib/guide-intro-data";
 import GuideIntro from "@/components/guide-intro";
 
@@ -415,6 +416,8 @@ export default async function ArticleDetailPage({ params }) {
 
         {articleShare("share-row share-row-end")}
 
+        <NotifyButton className="notify-row-end" />
+
         <section className="article-comments">
           <Comments slug={article.slug} comments={comments} />
         </section>
@@ -427,5 +430,6 @@ export default async function ArticleDetailPage({ params }) {
     </main>
   );
 }
+
 
 

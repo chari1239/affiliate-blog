@@ -1,6 +1,7 @@
 import Script from "next/script";
 import "./globals.css";
 import { SiteShell } from "@/components/site-shell";
+import AppDeviceReporter from "@/components/app-device-reporter";
 import { site } from "@/lib/site";
 
 export const metadata = {
@@ -103,6 +104,9 @@ export default function RootLayout({ children }) {
       />
         
         <SiteShell>{children}</SiteShell>
+        {/* Counts this device once if the site is opened as an
+            installed web app; renders nothing. */}
+        <AppDeviceReporter />
       </body>
     </html>
   );
