@@ -1,0 +1,100 @@
+/* Articles list filter bar — search input + category chips.
+   Deliberately mirrors the Ojima directory's filter bar
+   (components/place-directory.css: .directory-filters,
+   .directory-search, .filter-chip, .filter-clear, .directory-count)
+   so the two filter UIs read as one system. The chips wrap instead
+   of sideways-scrolling: the articles list has only a handful of
+   categories, so every chip stays visible. */
+
+.articles-filters {
+  margin-top: 16px;
+  padding: 8px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.articles-search {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.articles-search::placeholder {
+  color: var(--muted);
+}
+
+.articles-search:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.articles-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.articles-chip {
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.articles-chip-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.articles-count {
+  margin: 8px 4px 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.articles-empty {
+  margin-top: 24px;
+  padding: 20px 16px;
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+  line-height: 1.6;
+  text-align: center;
+}
+
+.articles-clear {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 4px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}

@@ -56,11 +56,17 @@ function BellIcon() {
 // the page loads sees nothing at all — subscribers are not asked
 // again. (Someone who subscribes on the spot still gets the
 // "You're subscribed" confirmation and the Turn off button.)
+// vanishWhenSubscribed goes further: ANY subscribed state renders
+// nothing at all, including one created by a tap during this view —
+// no confirmation text, no Turn off. Article pages use it so the
+// end of every article stays clean for subscribers; placements
+// without the prop (the Learn hub) keep the confirmation and the
+// Turn off control.
 // First-visit courtesy: while the layout's on-open prompt card is
 // still due to ask, this button holds its own ask back so the
 // reader is never asked twice at once; it appears once the prompt
 // is answered. Subscribed and blocked states are unaffected.
-export default function NotifyButton({ className = "", hideWhenSubscribed = false }) {
+export default function NotifyButton({ className = "", hideWhenSubscribed = false, vanishWhenSubscribed = false }) {
   // states: loading | unsupported | ios-hint | ready | subscribed |
   // denied | busy
   const [state, setState] = useState("loading");
@@ -174,6 +180,10 @@ export default function NotifyButton({ className = "", hideWhenSubscribed = fals
   }
 
   if (hideWhenSubscribed && hadSubscription && state === "subscribed") {
+    return null;
+  }
+
+  if (vanishWhenSubscribed && state === "subscribed") {
     return null;
   }
 
