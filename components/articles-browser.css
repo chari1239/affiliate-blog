@@ -90,6 +90,29 @@
   text-align: center;
 }
 
+/* Card meta row: the publish date the card always showed on the
+   left, the bookmark toggle on the right. */
+.article-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 0.75rem;
+}
+
+.article-card-meta .article-meta {
+  margin: 0;
+}
+
+/* Chips centre their contents so the Bookmarks chip's glyph and
+   label share one line. */
+.articles-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
 .articles-clear {
   display: inline-flex;
   align-items: center;

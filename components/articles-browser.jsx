@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { getBookmarks, PROGRESS_EVENT } from "@/lib/progress";
+import BookmarkButton from "@/components/bookmark-button";
 import "./articles-browser.css";
 
 // The /articles list with a search box and category chips on top.
@@ -13,6 +15,30 @@ import "./articles-browser.css";
 // the initial HTML still contains the full list). The search
 // matches the title, the excerpt and the category names; a chip
 // narrows the list to one category. No API calls, no URL params.
+// A Bookmarks chip narrows the list further to the reader's saved
+// articles (device-only, from lib/progress.js), composing with the
+// search text and the category chip as one more filter dimension.
+
+// The bookmark glyph for the "Bookmarks" filter chip — the same
+// ribbon as the BookmarkButton, drawn small enough to sit inline
+// with the chip's label.
+function BookmarkChipIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="13"
+      height="13"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
 function formatDate(dateString) {
   if (!dateString) {
     return null;
@@ -28,6 +54,22 @@ function formatDate(dateString) {
 export default function ArticlesBrowser({ articles }) {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
+  const [bookmarksOnly, setBookmarksOnly] = useState(false);
+  const [bookmarks, setBookmarks] = useState({});
+
+  // Bookmarks live in the device-only progress record; read them on
+  // mount and follow every change (a card toggle, another tab) so
+  // the chip filter below always works from the current set.
+  useEffect(() => {
+    const refresh = () => setBookmarks(getBookmarks());
+    refresh();
+    window.addEventListener(PROGRESS_EVENT, refresh);
+    window.addEventListener("storage", refresh);
+    return () => {
+      window.removeEventListener(PROGRESS_EVENT, refresh);
+      window.removeEventListener("storage", refresh);
+    };
+  }, []);
 
   // One chip per category that actually appears in the data, in
   // first-seen order.
@@ -47,6 +89,9 @@ export default function ArticlesBrowser({ articles }) {
   const needle = trimmedQuery.toLowerCase();
 
   const visible = (articles || []).filter((article) => {
+    if (bookmarksOnly && !bookmarks[article.slug]) {
+      return false;
+    }
     if (activeCategory !== "all") {
       const inCategory = (article.categories || []).some(
         (category) => category.slug === activeCategory
@@ -71,6 +116,7 @@ export default function ArticlesBrowser({ articles }) {
   const clearSearch = () => {
     setQuery("");
     setActiveCategory("all");
+    setBookmarksOnly(false);
   };
 
   return (
@@ -102,6 +148,15 @@ export default function ArticlesBrowser({ articles }) {
               {category.title}
             </button>
           ))}
+          <button
+            type="button"
+            className={`articles-chip${bookmarksOnly ? " articles-chip-active" : ""}`}
+            onClick={() => setBookmarksOnly((value) => !value)}
+            aria-pressed={bookmarksOnly}
+          >
+            <BookmarkChipIcon />
+            Bookmarks
+          </button>
         </div>
         <p className="articles-count">
           {needle
@@ -132,9 +187,14 @@ export default function ArticlesBrowser({ articles }) {
                 ))}
               </div>
               <h2>{article.title}</h2>
-              {article.publishedAt ? (
-                <p className="article-meta">{formatDate(article.publishedAt)}</p>
-              ) : null}
+              <div className="article-card-meta">
+                {article.publishedAt ? (
+                  <p className="article-meta">{formatDate(article.publishedAt)}</p>
+                ) : (
+                  <span />
+                )}
+                <BookmarkButton slug={article.slug} />
+              </div>
               <p className="card-copy">{article.excerpt}</p>
               <div className="hero-actions">
                 <Link href={`/articles/${article.slug}`} className="btn">
@@ -146,7 +206,11 @@ export default function ArticlesBrowser({ articles }) {
         </section>
       ) : (
         <div className="articles-empty">
-          <p>No articles match your search.</p>
+          <p>
+            {bookmarksOnly && !Object.keys(bookmarks).length
+              ? "No bookmarks yet — tap the bookmark icon on any article to save it here."
+              : "No articles match your search."}
+          </p>
           <button type="button" className="articles-clear" onClick={clearSearch}>
             Clear search
           </button>
