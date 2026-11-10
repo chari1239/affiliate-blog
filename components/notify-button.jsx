@@ -45,13 +45,21 @@ function isStandalone() {
 // the installed home-screen app, so a browser tab there gets the
 // add-to-Home-Screen hint instead of a button that cannot work.
 // Renders one quiet row; pass className="notify-row-end" to centre
-// it (matching .share-row-end on article pages).
-export default function NotifyButton({ className = "" }) {
+// it (matching .share-row-end on article pages). With
+// hideWhenSubscribed, a reader who ALREADY has a subscription when
+// the page loads sees nothing at all — subscribers are not asked
+// again. (Someone who subscribes on the spot still gets the
+// "You're subscribed" confirmation and the Turn off button.)
+export default function NotifyButton({ className = "", hideWhenSubscribed = false }) {
   // states: loading | unsupported | ios-hint | ready | subscribed |
   // denied | busy
   const [state, setState] = useState("loading");
   const [publicKey, setPublicKey] = useState("");
   const [registration, setRegistration] = useState(null);
+  // True only when setup() found a subscription that already
+  // existed on page load, as opposed to one created by a tap in
+  // this session.
+  const [hadSubscription, setHadSubscription] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -84,6 +92,7 @@ export default function NotifyButton({ className = "" }) {
         if (cancelled) return;
         setPublicKey(keyJson.publicKey);
         setRegistration(reg);
+        setHadSubscription(Boolean(existing));
         setState(existing ? "subscribed" : "ready");
       } catch {
         if (!cancelled) setState("unsupported");
@@ -145,6 +154,10 @@ export default function NotifyButton({ className = "" }) {
   }, [registration]);
 
   if (state === "loading" || state === "unsupported") {
+    return null;
+  }
+
+  if (hideWhenSubscribed && hadSubscription && state === "subscribed") {
     return null;
   }
 
