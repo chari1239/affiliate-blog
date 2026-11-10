@@ -95,7 +95,10 @@ export default function PathProgress({ steps }) {
         </span>
         <span className="path-progress-actions">
           {next ? (
-            <Link href={`/articles/${next.slug}`} className="btn">
+            <Link
+              href={`/articles/${next.slug}`}
+              className="btn path-progress-continue"
+            >
               {doneCount === 0
                 ? "Start Lesson 1 →"
                 : `Continue: ${next.label} →`}
@@ -164,8 +167,9 @@ export default function PathProgress({ steps }) {
                 <div className="path-progress-card-main">
                   <div className="learn-card-top">
                     {renderCheckbox(step, learnt)}
-                    <span className="learn-step">Step {step.stepNumber}</span>
-                    <span className="pill">{step.label}</span>
+                    <span className="path-progress-meta">
+                      STEP {step.stepNumber} · {step.label}
+                    </span>
                     {isNext ? (
                       <span className="pill path-progress-next">Next up</span>
                     ) : null}

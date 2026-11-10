@@ -7,7 +7,7 @@
    categories, so every chip stays visible. */
 
 .articles-filters {
-  margin-top: 16px;
+  margin-top: 20px;
   padding: 8px;
   background: var(--surface-strong);
   border: 1px solid var(--line);
@@ -71,6 +71,12 @@
   color: var(--muted);
   font-size: 0.88rem;
   font-weight: 600;
+}
+
+/* Clear air between the filter card and the first article card —
+   the two cards nearly touched. */
+.articles-filters + .content-grid {
+  margin-top: 20px;
 }
 
 .articles-empty {
