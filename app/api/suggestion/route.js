@@ -14,6 +14,8 @@
 // SANITY_API_WRITE_TOKEN (Editor token, set in the Vercel project
 // settings) against the Sanity mutate API.
 
+import { sendEventEmail } from "@/lib/notify";
+
 const PROJECT_ID = "ebw9h979";
 const DATASET = "production";
 const API_VERSION = "2024-10-01";
@@ -107,6 +109,20 @@ export async function POST(request) {
   } catch {
     return json({ ok: false, error: "write_failed" }, 500);
   }
+
+  // Owner notification: a stored suggestion also emails the owner (via
+  // lib/notify, which no-ops when email is not configured and never
+  // throws, so this cannot change the response above). Sent in-route
+  // rather than via a Sanity webhook — the Free plan's two webhook
+  // slots are already used by push and new-comment emails.
+  await sendEventEmail({
+    event: "suggestion",
+    articleSlug: slug,
+    placeName,
+    name,
+    message,
+    createdAt: doc.createdAt
+  });
 
   return json({ ok: true });
 }
