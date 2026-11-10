@@ -1,4 +1,5 @@
 import { quizzes } from "@/lib/quiz-data";
+import { sendEventEmail } from "@/lib/notify";
 
 // Anonymous per-quiz counters. The quiz component posts small events here
 // (start / check / hint / finish); this route increments counters in
@@ -38,6 +39,7 @@ export async function POST(request) {
   const inc = {};
   const idx =
     Number.isInteger(index) && index >= 0 && index < total ? index : null;
+  let finishInfo = null;
 
   if (type === "start") {
     inc.starts = 1;
@@ -51,6 +53,7 @@ export async function POST(request) {
     inc.finishes = 1;
     inc.scoreSum = s;
     if (s === total) inc.fullScores = 1;
+    finishInfo = { score: s, total };
   } else {
     return done();
   }
@@ -123,5 +126,19 @@ export async function POST(request) {
   } catch {
     // Counting must never surface an error to the reader.
   }
+
+  // Owner notification: a finished quiz also emails the owner (via
+  // lib/notify, which no-ops when email is not configured and never
+  // throws, so this cannot change the response above).
+  if (finishInfo) {
+    await sendEventEmail({
+      event: "quiz_finish",
+      slug,
+      score: finishInfo.score,
+      total: finishInfo.total,
+      title: quizzes[slug].title
+    });
+  }
+
   return done();
 }
