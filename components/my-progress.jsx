@@ -68,10 +68,14 @@ function lastActivity(progress) {
   return stamps.length ? stamps[stamps.length - 1] : null;
 }
 
-// The /my-progress dashboard. Everything shown here comes from this
-// device's localStorage (lib/progress.js) — the server page only
-// supplies article titles for the learning-path slugs. Before mount
-// (and for a brand-new reader) it renders the zero state.
+// The /my-progress dashboard — the reader's own record, deliberately
+// different in shape from the Learn hub's browsing cards: a greeting
+// with a Continue button, three stat tiles, the quiz results as
+// clean rows, then a compact lesson checklist. Everything shown here
+// comes from this device's localStorage (lib/progress.js) — the
+// server page only supplies article titles for the learning-path
+// slugs. Before mount (and for a brand-new reader) it renders the
+// zero state.
 export default function MyProgress({ titles = {} }) {
   const [progress, setProgress] = useState(null);
   const [confirmingClear, setConfirmingClear] = useState(false);
@@ -109,6 +113,21 @@ export default function MyProgress({ titles = {} }) {
         String(b[1].lastAt || "").localeCompare(String(a[1].lastAt || ""))
       )
     : [];
+
+  // The single best quiz result, by percentage, for the stat tile —
+  // shown as that quiz's own "A/B".
+  const bestResult = quizEntries.reduce((best, [, result]) => {
+    if (!result || !result.total) {
+      return best;
+    }
+    if (!best || result.best / result.total > best.best / best.total) {
+      return result;
+    }
+    return best;
+  }, null);
+  const bestScoreText = bestResult
+    ? `${bestResult.best}/${bestResult.total}`
+    : "—";
 
   const learnerName = progress ? progress.profile.name : "";
   const hasAnything =
@@ -243,9 +262,57 @@ export default function MyProgress({ titles = {} }) {
         ) : null}
       </section>
 
+      <section aria-label="Your stats">
+        <div className="my-progress-stats">
+          <div className="my-progress-stat">
+            <span className="my-progress-stat-value">
+              {doneCount} of {totalSteps}
+            </span>
+            <span className="my-progress-stat-label">Lessons done</span>
+          </div>
+          <div className="my-progress-stat">
+            <span className="my-progress-stat-value">{quizEntries.length}</span>
+            <span className="my-progress-stat-label">Quizzes taken</span>
+          </div>
+          <div className="my-progress-stat">
+            <span className="my-progress-stat-value">{bestScoreText}</span>
+            <span className="my-progress-stat-label">Best score</span>
+          </div>
+        </div>
+      </section>
+
+      {quizEntries.length ? (
+        <section>
+          <h2 className="my-progress-heading">Your quiz results</h2>
+          <ul className="my-progress-results">
+            {quizEntries.map(([slug, result]) => (
+              <li key={slug} className="my-progress-result-row">
+                <div className="my-progress-item-main">
+                  <Link
+                    href={`/articles/${slug}#quiz`}
+                    className="my-progress-item-title"
+                  >
+                    {quizName(slug, titles)}
+                  </Link>
+                  <span className="my-progress-item-meta">
+                    {result.attempts}{" "}
+                    {result.attempts === 1 ? "attempt" : "attempts"} · Last{" "}
+                    {result.lastScore}/{result.total}
+                    {result.lastAt ? ` · ${formatDate(result.lastAt)}` : ""}
+                  </span>
+                </div>
+                <span className="pill my-progress-quiz-chip">
+                  Best {result.best}/{result.total}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section>
         <h2 className="my-progress-heading">Lessons</h2>
-        <ul className="my-progress-list">
+        <ul className="my-progress-list my-progress-checklist">
           {learningPath.map((step, index) => {
             const learnt = Boolean(progress && progress.lessons[step.slug]);
             const quizResult = progress ? progress.quizzes[step.slug] : null;
@@ -264,7 +331,7 @@ export default function MyProgress({ titles = {} }) {
                 >
                   {learnt ? "✓" : ""}
                 </button>
-                <div className="my-progress-item-main">
+                <div className="my-progress-item-main my-progress-row-main">
                   <span className="my-progress-item-label">
                     Step {index + 1} · {step.label}
                   </span>
@@ -285,32 +352,6 @@ export default function MyProgress({ titles = {} }) {
           })}
         </ul>
       </section>
-
-      {quizEntries.length ? (
-        <section>
-          <h2 className="my-progress-heading">Your quiz results</h2>
-          <ul className="my-progress-list">
-            {quizEntries.map(([slug, result]) => (
-              <li key={slug} className="my-progress-item">
-                <div className="my-progress-item-main">
-                  <Link
-                    href={`/articles/${slug}#quiz`}
-                    className="my-progress-item-title"
-                  >
-                    {quizName(slug, titles)}
-                  </Link>
-                  <span className="my-progress-item-meta">
-                    Best {result.best}/{result.total} · Last {result.lastScore}
-                    /{result.total} · {result.attempts}{" "}
-                    {result.attempts === 1 ? "attempt" : "attempts"}
-                    {result.lastAt ? ` · ${formatDate(result.lastAt)}` : ""}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
 
       {hasAnything ? (
         <section>

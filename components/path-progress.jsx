@@ -30,13 +30,16 @@ function actionLabel(step) {
 // The Learn Japanese hub's step list, rendered client-side so it can
 // carry the reader's own local progress (lib/progress.js): a summary
 // strip with a Continue button above the cards, a "Next up" pill on
-// the first unlearnt card, and cards that read as done at a glance —
-// ticked checkbox, compact muted style, no cover — once the reader
-// has marked them learnt. The whole card is the tap target (the
-// action link stretches over it); the checkbox sits above that
-// layer and toggles the learnt state without navigating. Everything
-// is this-device only. The server page hands over plain serializable
-// step props (cover URLs already built).
+// the first unlearnt card, and compact horizontal cards — a small
+// cover thumbnail beside the title, a one-line excerpt and the
+// action. A step the reader has marked learnt collapses into a
+// minimised single row: checkbox, step number, the muted title and a
+// "Completed" label, nothing more. Both layouts keep the whole card
+// as the tap target (the action link stretches over it); the
+// checkbox sits above that layer and toggles the learnt state
+// without navigating. Everything is this-device only. The server
+// page hands over plain serializable step props (cover URLs already
+// built).
 export default function PathProgress({ steps }) {
   const [progress, setProgress] = useState(null);
 
@@ -60,6 +63,26 @@ export default function PathProgress({ steps }) {
 
   const name = progress && progress.profile ? progress.profile.name : "";
   const next = nextStep(steps, progress);
+
+  const renderCheckbox = (step, learnt) => (
+    <button
+      type="button"
+      className={
+        learnt
+          ? "path-progress-check path-progress-check-on"
+          : "path-progress-check"
+      }
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        markLesson(step.slug, !learnt);
+      }}
+      aria-pressed={learnt}
+      aria-label={`Step ${step.stepNumber}: mark as ${learnt ? "not learnt" : "learnt"}`}
+    >
+      {learnt ? "✓" : ""}
+    </button>
+  );
 
   return (
     <>
@@ -88,64 +111,80 @@ export default function PathProgress({ steps }) {
         {steps.map((step) => {
           const learnt = Boolean(progress && progress.lessons[step.slug]);
           const isNext = Boolean(next && next.slug === step.slug);
+
+          if (learnt) {
+            // Minimised completed row: no cover, no excerpt, no
+            // action label — just the state, at a glance.
+            return (
+              <article
+                key={step.slug}
+                className="content-card article-card path-progress-card is-done"
+              >
+                <div className="path-progress-done-row">
+                  {renderCheckbox(step, learnt)}
+                  <span className="learn-step">Step {step.stepNumber}</span>
+                  <h2 className="path-progress-done-title">{step.title}</h2>
+                  <span className="path-progress-completed">Completed</span>
+                </div>
+                <Link
+                  href={`/articles/${step.slug}`}
+                  className="path-progress-card-link"
+                  aria-label={`Open Step ${step.stepNumber}: ${step.title}`}
+                >
+                  <span className="path-progress-sr-only">{step.title}</span>
+                </Link>
+              </article>
+            );
+          }
+
           return (
             <article
               key={step.slug}
               className={
                 "content-card article-card path-progress-card" +
-                (learnt ? " is-done" : "") +
                 (isNext ? " path-progress-card-next" : "")
               }
             >
-              <div className="learn-card-top">
-                <button
-                  type="button"
-                  className={
-                    learnt
-                      ? "path-progress-check path-progress-check-on"
-                      : "path-progress-check"
-                  }
-                  onClick={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    markLesson(step.slug, !learnt);
-                  }}
-                  aria-pressed={learnt}
-                  aria-label={`Step ${step.stepNumber}: mark as ${learnt ? "not learnt" : "learnt"}`}
-                >
-                  {learnt ? "✓" : ""}
-                </button>
-                <span className="learn-step">Step {step.stepNumber}</span>
-                <span className="pill">{step.label}</span>
-                {isNext ? (
-                  <span className="pill path-progress-next">Next up</span>
+              <div className="path-progress-card-body">
+                {step.coverUrl ? (
+                  <Link
+                    href={`/articles/${step.slug}`}
+                    className="path-progress-thumb"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                  >
+                    <Image
+                      src={step.coverUrl}
+                      alt=""
+                      width={152}
+                      height={152}
+                    />
+                  </Link>
                 ) : null}
-              </div>
-              {step.coverUrl && !learnt ? (
-                <Link
-                  href={`/articles/${step.slug}`}
-                  className="article-card-image"
-                >
-                  <Image
-                    src={step.coverUrl}
-                    alt={step.coverAlt || step.title}
-                    width={960}
-                    height={640}
-                  />
-                </Link>
-              ) : null}
-              <h2>{step.title}</h2>
-              <p className="card-copy">{step.excerpt}</p>
-              <div className="hero-actions">
-                <Link
-                  href={`/articles/${step.slug}`}
-                  className="btn path-progress-card-link"
-                >
-                  {actionLabel(step)}
-                </Link>
-                {learnt ? (
-                  <span className="path-progress-completed">Completed</span>
-                ) : null}
+                <div className="path-progress-card-main">
+                  <div className="learn-card-top">
+                    {renderCheckbox(step, learnt)}
+                    <span className="learn-step">Step {step.stepNumber}</span>
+                    <span className="pill">{step.label}</span>
+                    {isNext ? (
+                      <span className="pill path-progress-next">Next up</span>
+                    ) : null}
+                  </div>
+                  <h2>{step.title}</h2>
+                  {step.excerpt ? (
+                    <p className="card-copy path-progress-excerpt">
+                      {step.excerpt}
+                    </p>
+                  ) : null}
+                  <div className="path-progress-card-actions">
+                    <Link
+                      href={`/articles/${step.slug}`}
+                      className="path-progress-action path-progress-card-link"
+                    >
+                      {actionLabel(step)}
+                    </Link>
+                  </div>
+                </div>
               </div>
             </article>
           );
