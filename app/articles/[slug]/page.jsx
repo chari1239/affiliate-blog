@@ -275,7 +275,15 @@ export default async function ArticleDetailPage({ params }) {
     nextStep = toPathStep(learningPath[pathStepIndex + 1]);
   }
 
-    const disclosureSection = article.affiliateDisclosure ? (
+  // Learn Japanese articles carry no affiliate products, so the
+  // disclosure section is skipped for them entirely. Every other
+  // article keeps it exactly once, at the bottom. Articles with no
+  // category data keep the disclosure (the previous behaviour).
+  const isLearnJapanese = (article.categories || []).some(
+    (category) => category?.slug === "learn-japanese"
+  );
+
+    const disclosureSection = !isLearnJapanese && article.affiliateDisclosure ? (
               <section className="article-disclosure">
                           <strong>Affiliate disclosure:</strong> {article.affiliateDisclosure}
               </section>
