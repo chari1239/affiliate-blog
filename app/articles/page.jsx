@@ -1,8 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
 import { getArticles } from "@/lib/sanity/fetchers";
 import { isSanityConfigured } from "@/lib/sanity/env";
 import { urlForImage } from "@/lib/sanity/image";
+import ArticlesBrowser from "@/components/articles-browser";
 
 export const dynamic = "force-dynamic";
 
@@ -15,20 +14,27 @@ export const metadata = {
   }
 };
 
-function formatDate(dateString) {
-  if (!dateString) {
-    return null;
-  }
-
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  }).format(new Date(dateString));
-}
-
 export default async function ArticlesPage() {
   const articles = await getArticles();
+
+  // Plain serializable props for the client-side list browser: the
+  // search box and category chips filter in memory on the reader's
+  // device, while the cards themselves still server-render inside
+  // the client component, so the initial HTML carries the full list.
+  const articleProps = (articles || []).map((article) => ({
+    slug: article.slug,
+    title: article.title,
+    excerpt: article.excerpt,
+    categories: (article.categories || []).map((category) => ({
+      title: category.title,
+      slug: category.slug
+    })),
+    coverUrl: article.coverImage
+      ? urlForImage(article.coverImage).width(960).height(640).fit("crop").url()
+      : null,
+    coverAlt: article.coverImage?.alt || article.title,
+    publishedAt: article.publishedAt || null
+  }));
 
   return (
     <main className="page-frame">
@@ -61,41 +67,7 @@ export default async function ArticlesPage() {
           </section>
       ) : null}
 
-      {!!articles.length ? (
-        <section className="content-grid">
-          {articles.map((article) => (
-            <article key={article._id} className="content-card article-card">
-              {article.coverImage ? (
-                <Link href={`/articles/${article.slug}`} className="article-card-image">
-                  <Image
-                    src={urlForImage(article.coverImage).width(960).height(640).fit("crop").url()}
-                    alt={article.coverImage?.alt || article.title}
-                    width={960}
-                    height={640}
-                  />
-                </Link>
-              ) : null}
-              <div className="pill-row">
-                {(article.categories || []).map((category) => (
-                  <span key={category.slug || category.title} className="pill">
-                    {category.title}
-                  </span>
-                ))}
-              </div>
-              <h2>{article.title}</h2>
-              {article.publishedAt ? (
-                <p className="article-meta">{formatDate(article.publishedAt)}</p>
-              ) : null}
-              <p className="card-copy">{article.excerpt}</p>
-              <div className="hero-actions">
-                <Link href={`/articles/${article.slug}`} className="btn">
-                  Read article
-                </Link>
-              </div>
-            </article>
-          ))}
-        </section>
-      ) : null}
+      {!!articles.length ? <ArticlesBrowser articles={articleProps} /> : null}
     </main>
   );
 }

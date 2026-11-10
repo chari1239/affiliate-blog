@@ -23,3 +23,24 @@
   font-size: 1.3rem;
   line-height: 1.3;
 }
+
+/* Header row: the title/intro block on the left and the icon-only
+   Share button at the right end. The standalone share row that used
+   to sit under the intro is gone — the header is the one place to
+   share this page from. */
+.learn-header-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.learn-header-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.learn-header-share {
+  flex: 0 0 auto;
+  display: inline-flex;
+  margin-top: 0.25rem;
+}

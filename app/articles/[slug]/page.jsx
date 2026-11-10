@@ -324,18 +324,6 @@ export default async function ArticleDetailPage({ params }) {
   );
 
   const articleUrl = `${site.url}/articles/${article.slug}`;
-  // One Share button definition, rendered under the header and again
-  // at the end of the article. Shares the title + canonical URL.
-  const articleShare = (className) => (
-    <div className={className}>
-      <ShareButton
-        title={article.title}
-        text={article.title}
-        url={articleUrl}
-        label="Share this article"
-      />
-    </div>
-  );
   const directoryItemList = directory
     ? buildDirectoryItemList(directory, articleUrl)
     : null;
@@ -389,8 +377,18 @@ export default async function ArticleDetailPage({ params }) {
           </div>
           <h1 className="page-title">{article.title}</h1>
           <div className="article-meta-row">
-            {article.author?.name ? <span>By {article.author.name}</span> : null}
-            {article.publishedAt ? <span>{formatDate(article.publishedAt)}</span> : null}
+            <span className="article-byline">
+              {article.author?.name ? <span>By {article.author.name}</span> : null}
+              {article.publishedAt ? <span>{formatDate(article.publishedAt)}</span> : null}
+            </span>
+            <span className="article-meta-share">
+              <ShareButton
+                title={article.title}
+                text={article.title}
+                url={articleUrl}
+                label="Share this article"
+              />
+            </span>
           </div>
           <p className="page-intro">{article.excerpt}</p>
         </header>
@@ -406,8 +404,6 @@ export default async function ArticleDetailPage({ params }) {
             />
           </div>
         ) : null}
-
-        {articleShare("share-row")}
 
         {videoSection}
 
@@ -497,9 +493,7 @@ export default async function ArticleDetailPage({ params }) {
           </nav>
         ) : null}
 
-        {articleShare("share-row share-row-end")}
-
-        <NotifyButton className="notify-row-end" />
+        <NotifyButton className="notify-row-end" vanishWhenSubscribed />
 
         {inLearningPath ? <LearntButton slug={article.slug} /> : null}
 

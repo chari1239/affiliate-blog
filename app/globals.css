@@ -1463,3 +1463,31 @@ img {
     padding: 0.75rem;
   }
 }
+
+/* The article byline row carries the icon-only Share button at its
+   right end; the standalone share rows that used to sit under the
+   cover and after the prev/next cards are gone, so the header is
+   the one place to share an article from. */
+.article-byline {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1rem;
+}
+
+.article-meta-share {
+  margin-left: auto;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  /* The generic small-screen rule stacks .article-meta-row into a
+     column; with the share button in the row it must stay a row so
+     the button keeps its right-end place next to the byline. */
+  .article-header .article-meta-row {
+    flex-direction: row;
+    align-items: center;
+  }
+}

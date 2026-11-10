@@ -98,20 +98,24 @@ export default async function LearnJapanesePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <header className="page-header">
-        <div className="eyebrow">Learn Japanese</div>
-        <h1 className="page-title">Learn Japanese from Zero 🇯🇵</h1>
-        <p className="page-intro">
-          Free Japanese lessons for complete beginners, in the order to learn them. Start with
-          how Japanese writing works, learn hiragana row by row, and practise with reading
-          quizzes after every lesson — no experience needed.
-        </p>
-        <div className="share-row">
-          <ShareButton
-            title="Learn Japanese from Zero — Free Hiragana Lessons & Quizzes"
-            text="Learn Japanese from Zero — Free Hiragana Lessons & Quizzes"
-            url={`${site.url}/learn-japanese`}
-            label="Share this page"
-          />
+        <div className="learn-header-row">
+          <div className="learn-header-main">
+            <div className="eyebrow">Learn Japanese</div>
+            <h1 className="page-title">Learn Japanese from Zero 🇯🇵</h1>
+            <p className="page-intro">
+              Free Japanese lessons for complete beginners, in the order to learn them. Start with
+              how Japanese writing works, learn hiragana row by row, and practise with reading
+              quizzes after every lesson — no experience needed.
+            </p>
+          </div>
+          <span className="learn-header-share">
+            <ShareButton
+              title="Learn Japanese from Zero — Free Hiragana Lessons & Quizzes"
+              text="Learn Japanese from Zero — Free Hiragana Lessons & Quizzes"
+              url={`${site.url}/learn-japanese`}
+              label="Share this page"
+            />
+          </span>
         </div>
         <NotifyButton />
       </header>
