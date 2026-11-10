@@ -29,6 +29,11 @@ self.addEventListener("push", (event) => {
     body: payload.body || "A new article is up on Nihon Diaries.",
     icon: "/icons/icon-192.png",
     badge: "/icons/icon-192.png",
+    // Tag the notification with the article slug: when another push
+    // for the same article arrives, the browser REPLACES this
+    // notification instead of stacking a second one, and the unread
+    // indicator stays tied to the newest copy.
+    ...(payload.slug ? { tag: payload.slug } : {}),
     data: { url: payload.url || "/" }
   };
 
@@ -36,6 +41,9 @@ self.addEventListener("push", (event) => {
 });
 
 self.addEventListener("notificationclick", (event) => {
+  // Close the tapped notification explicitly, before anything else,
+  // so it can never linger on screen or in the notification shade
+  // after the reader has opened it.
   event.notification.close();
   const target =
     (event.notification.data && event.notification.data.url) || "/";
