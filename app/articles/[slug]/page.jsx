@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import { notFound } from "next/navigation";
-import { getArticle, getArticleNeighbours, getApprovedComments } from "@/lib/sanity/fetchers";
+import { getArticle, getArticles, getArticleNeighbours, getApprovedComments } from "@/lib/sanity/fetchers";
 import { isSanityConfigured } from "@/lib/sanity/env";
 import { urlForImage } from "@/lib/sanity/image";
 import { getProduct } from "@/lib/products";
@@ -21,6 +21,7 @@ import ShareButton from "@/components/share-button";
 import NotifyButton from "@/components/notify-button";
 import { learningPath } from "@/lib/learning-path";
 import LearntButton from "@/components/learnt-button";
+import LessonNav from "@/components/lesson-nav";
 import { guideIntros } from "@/lib/guide-intro-data";
 import GuideIntro from "@/components/guide-intro";
 
@@ -245,9 +246,34 @@ export default async function ArticleDetailPage({ params }) {
 
   // The "Mark as learnt" toggle only belongs on articles that are
   // steps in the Learn Japanese learning path.
-  const inLearningPath = learningPath.some(
+  const pathStepIndex = learningPath.findIndex(
     (step) => step.slug === article.slug
   );
+  const inLearningPath = pathStepIndex !== -1;
+
+  // For learning-path articles, the previous / next steps in path
+  // order (not publish order) drive the lesson navigation rendered
+  // below. Neighbour titles are looked up the same way the
+  // /my-progress page looks them up; a failed lookup just falls
+  // back to the step labels on their own.
+  let prevStep = null;
+  let nextStep = null;
+  if (inLearningPath) {
+    const allArticles = await getArticles().catch(() => []);
+    const titleBySlug = new Map(
+      (allArticles || []).map((item) => [item.slug, item.title])
+    );
+    const toPathStep = (step) =>
+      step
+        ? {
+            slug: step.slug,
+            label: step.label,
+            title: titleBySlug.get(step.slug) || null
+          }
+        : null;
+    prevStep = toPathStep(learningPath[pathStepIndex - 1]);
+    nextStep = toPathStep(learningPath[pathStepIndex + 1]);
+  }
 
     const disclosureSection = article.affiliateDisclosure ? (
               <section className="article-disclosure">
@@ -377,6 +403,16 @@ export default async function ArticleDetailPage({ params }) {
 
         {videoSection}
 
+        {inLearningPath ? (
+          <LessonNav
+            variant="top"
+            stepNumber={pathStepIndex + 1}
+            totalSteps={learningPath.length}
+            prev={prevStep}
+            next={nextStep}
+          />
+        ) : null}
+
         {quiz && !quiz.lead ? (
           <p className="quiz-jump-wrap">
             <a className="quiz-jump" href="#quiz">
@@ -418,7 +454,15 @@ export default async function ArticleDetailPage({ params }) {
           </section>
         ) : null}
 
-        {prevArticle || nextArticle ? (
+        {inLearningPath ? (
+          <LessonNav
+            variant="bottom"
+            stepNumber={pathStepIndex + 1}
+            totalSteps={learningPath.length}
+            prev={prevStep}
+            next={nextStep}
+          />
+        ) : prevArticle || nextArticle ? (
           <nav className="article-nav" aria-label="More articles">
             {prevArticle ? (
               <Link

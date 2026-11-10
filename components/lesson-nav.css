@@ -1,0 +1,110 @@
+/* Lesson path navigation (components/lesson-nav.jsx): follows the
+   Learn Japanese learning path order. The bottom cards mirror the
+   generic .article-nav card look in globals.css, with the Next
+   card washed in the soft accent so the way forward reads as the
+   obvious tap; on mobile the cards stack with Next first. */
+
+/* Top strip: Prev link at the left edge, step position centred,
+   Next link at the right edge. Links and spacers share the same
+   flex share so the step text stays centred on the first and
+   last steps too. */
+.lesson-nav-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.lesson-nav-top-link,
+.lesson-nav-top-spacer {
+  flex: 1 1 0;
+}
+
+.lesson-nav-top-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+
+.lesson-nav-top-link:hover {
+  text-decoration: underline;
+}
+
+.lesson-nav-top-next {
+  justify-content: flex-end;
+}
+
+.lesson-nav-top-step {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Bottom cards: same grid footprint as .article-nav so the swap
+   changes nothing else on the page. */
+.lesson-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.lesson-nav-single {
+  grid-template-columns: 1fr;
+}
+
+.lesson-nav-card {
+  display: grid;
+  gap: 0.35rem;
+  align-content: start;
+  min-height: 52px;
+  padding: 1.2rem;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.lesson-nav-next {
+  background: var(--accent-soft);
+  border-color: transparent;
+  text-align: right;
+}
+
+.lesson-nav-label {
+  color: var(--accent-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lesson-nav-prev .lesson-nav-label {
+  color: var(--muted);
+}
+
+.lesson-nav-title {
+  font-family: "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: 1.15rem;
+  line-height: 1.35;
+}
+
+.lesson-nav-next .lesson-nav-title {
+  color: var(--accent-dark);
+}
+
+@media (max-width: 640px) {
+  .lesson-nav {
+    grid-template-columns: 1fr;
+  }
+
+  /* Next first on mobile: continuing is the action almost every
+     learner wants, so it sits at the top of the stack. */
+  .lesson-nav-next {
+    order: -1;
+    text-align: left;
+  }
+}
