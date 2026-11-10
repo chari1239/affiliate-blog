@@ -1,3 +1,5 @@
+import { sendEventEmail } from "@/lib/notify";
+
 // Installed-app device counter. When the site is opened from a
 // home-screen icon (standalone display mode) or an `appinstalled`
 // event fires, components/app-device-reporter.jsx generates one UUID
@@ -10,6 +12,12 @@
 //
 // Like /api/quiz-event, counting must never break the page: without
 // SANITY_API_WRITE_TOKEN (or on any error) this quietly no-ops.
+//
+// A genuinely new device also emails the owner (via lib/notify).
+// Because the store below is createIfNotExists, the route first
+// checks whether the device document already exists and only
+// notifies when it does not — repeat reports from a known device
+// must not re-email.
 
 const PROJECT_ID = "ebw9h979";
 const DATASET = "production";
@@ -36,6 +44,25 @@ export async function POST(request) {
   const token = process.env.SANITY_API_WRITE_TOKEN;
   if (!token) return done();
 
+  const id = `appDevice.${deviceId}`;
+  const firstSeen = new Date().toISOString();
+
+  // New-device check, in the same query style /api/quiz-event uses.
+  // If the check itself fails we stay silent (no email): registration
+  // continues exactly as before either way.
+  let isNew = false;
+  try {
+    const query = encodeURIComponent(`*[_id == "${id}"][0]._id`);
+    const res = await fetch(
+      `https://${PROJECT_ID}.api.sanity.io/v${API_VERSION}/data/query/${DATASET}?query=${query}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const json = await res.json();
+    isNew = !json || !json.result;
+  } catch {
+    // Counting must never surface an error to the reader.
+  }
+
   try {
     await fetch(
       `https://${PROJECT_ID}.api.sanity.io/v${API_VERSION}/data/mutate/${DATASET}`,
@@ -51,11 +78,11 @@ export async function POST(request) {
               // createIfNotExists (not createOrReplace) so a device
               // that somehow reports twice keeps its true firstSeen.
               createIfNotExists: {
-                _id: `appDevice.${deviceId}`,
+                _id: id,
                 _type: "appDevice",
                 deviceId,
                 platform,
-                firstSeen: new Date().toISOString()
+                firstSeen
               }
             }
           ]
@@ -65,5 +92,10 @@ export async function POST(request) {
   } catch {
     // Counting must never surface an error to the reader.
   }
+
+  if (isNew) {
+    await sendEventEmail({ event: "app_install", platform, firstSeen });
+  }
+
   return done();
 }
