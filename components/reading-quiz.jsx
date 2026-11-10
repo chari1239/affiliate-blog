@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { recordQuizResult } from "@/lib/progress";
 
 // Fire-and-forget anonymous counting (per quiz, keyed by article slug).
 // The /api/quiz-event route turns these into counters; failures are
@@ -33,6 +35,7 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
   const [showAll, setShowAll] = useState(false);
   const [showFinish, setShowFinish] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [savedToProgress, setSavedToProgress] = useState(false);
   const startedRef = useRef(false);
   const finishedRef = useRef(false);
   const inputRef = useRef(null);
@@ -69,6 +72,10 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
       (_, i) => nextStates[i] === "correct"
     ).length;
     sendQuizEvent(quizSlug, { type: "finish", score: finalScore });
+    // The same finish moment also writes the reader's own local
+    // record — this device only, no server involved (lib/progress.js).
+    recordQuizResult(quizSlug, finalScore, total);
+    setSavedToProgress(true);
     setShowFinish(true);
   }
 
@@ -118,6 +125,7 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
     setShowAll(false);
     setShowFinish(false);
     setCopied(false);
+    setSavedToProgress(false);
     startedRef.current = false;
     finishedRef.current = false;
   }
@@ -177,6 +185,12 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
             {score} / {total}
           </p>
           <p className="quiz-finish-band">{bandMessage}</p>
+          {savedToProgress ? (
+            <p className="quiz-finish-loop">
+              Saved to your progress on this device ·{" "}
+              <Link href="/my-progress">See My progress</Link>
+            </p>
+          ) : null}
           <div className="quiz-finish-actions">
             <button type="button" className="btn" onClick={copyScore}>
               {copied ? "Copied ✓" : "📋 Copy my score"}

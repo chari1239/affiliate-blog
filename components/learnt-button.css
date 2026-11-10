@@ -1,0 +1,38 @@
+/* Learnt row: mirrors .notify-wrap spacing so it sits quietly in the
+   end-of-article action rows, centred like .notify-row-end. The
+   "done" state swaps the quiet button onto the soft accent wash so
+   a learnt lesson reads as settled, not as another call to action. */
+.learnt-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 1rem;
+  margin-top: 1rem;
+}
+
+.learnt-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.learnt-button .btn-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.learnt-button-done {
+  background: var(--accent-soft);
+  border-color: transparent;
+  color: var(--accent-dark);
+}
+
+.learnt-progress-link {
+  font-size: 0.9rem;
+  color: var(--accent-dark);
+  text-decoration: underline;
+}

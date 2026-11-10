@@ -1,0 +1,106 @@
+/* My Progress dashboard: a summary card (reusing .policy-card) over
+   simple checklist rows built from the site's surface tokens. */
+.my-progress {
+  display: grid;
+  gap: 2rem;
+}
+
+.my-progress-count {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+}
+
+.my-progress-bar {
+  height: 10px;
+  margin-top: 0.85rem;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.my-progress-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.my-progress-heading {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+}
+
+.my-progress-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.my-progress-item {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.8rem 1rem;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.my-progress-toggle {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent-dark);
+  font: inherit;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.my-progress-toggle-on {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.my-progress-item-main {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.my-progress-item-label {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.my-progress-item-title {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.my-progress-item-title:hover {
+  text-decoration: underline;
+}
+
+.my-progress-item-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.my-progress-quiz-chip {
+  flex: 0 0 auto;
+}
