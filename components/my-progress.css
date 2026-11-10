@@ -104,3 +104,46 @@
 .my-progress-quiz-chip {
   flex: 0 0 auto;
 }
+
+.my-progress-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem 0.9rem;
+}
+
+.my-progress-name-form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.my-progress-name-form label {
+  font-weight: 600;
+}
+
+.my-progress-name-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.my-progress-name-controls input {
+  flex: 1 1 200px;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-strong);
+  color: var(--ink);
+  font: inherit;
+}
+
+.my-progress-name-help {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.my-progress-continue {
+  margin-top: 1rem;
+}

@@ -8,8 +8,12 @@ import {
   clearProgress,
   getProgress,
   markLesson,
+  nextStep,
+  setLearnerName,
   PROGRESS_EVENT
 } from "@/lib/progress";
+import { openGreeting } from "@/lib/cheers";
+import CheerBanner from "@/components/cheer-banner";
 import "./my-progress.css";
 
 // A readable name for a recorded quiz: prefer the quiz's own title
@@ -48,6 +52,22 @@ function formatDate(iso) {
   }
 }
 
+// The most recent moment the reader did anything — a lesson marked
+// learnt or a quiz finished — for the greeting's "back again today"
+// warmth. ISO strings sort chronologically, so a plain sort works.
+function lastActivity(progress) {
+  if (!progress) {
+    return null;
+  }
+  const stamps = [
+    ...Object.values(progress.lessons).map((entry) => entry && entry.doneAt),
+    ...Object.values(progress.quizzes).map((entry) => entry && entry.lastAt)
+  ]
+    .filter(Boolean)
+    .sort();
+  return stamps.length ? stamps[stamps.length - 1] : null;
+}
+
 // The /my-progress dashboard. Everything shown here comes from this
 // device's localStorage (lib/progress.js) — the server page only
 // supplies article titles for the learning-path slugs. Before mount
@@ -55,6 +75,8 @@ function formatDate(iso) {
 export default function MyProgress({ titles = {} }) {
   const [progress, setProgress] = useState(null);
   const [confirmingClear, setConfirmingClear] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState("");
 
   const refresh = useCallback(() => {
     setProgress(getProgress());
@@ -88,19 +110,98 @@ export default function MyProgress({ titles = {} }) {
       )
     : [];
 
-  const hasAnything = doneCount > 0 || quizEntries.length > 0;
+  const learnerName = progress ? progress.profile.name : "";
+  const hasAnything =
+    doneCount > 0 || quizEntries.length > 0 || Boolean(learnerName);
 
-  const statusLine =
-    doneCount >= totalSteps && totalSteps > 0
-      ? "All current lessons done — new lessons drop daily at 9 PM Japan time, 5:30 PM in India."
-      : doneCount > 0
-        ? "You're on your way"
-        : "Just getting started";
+  const greeting = openGreeting({
+    doneCount,
+    totalSteps,
+    lastActivityAt: lastActivity(progress),
+    name: learnerName
+  });
+
+  const next = progress ? nextStep(learningPath, progress) : null;
+
+  const saveName = (event) => {
+    event.preventDefault();
+    setLearnerName(nameDraft);
+    setEditingName(false);
+  };
+
+  const removeName = () => {
+    setLearnerName("");
+    setNameDraft("");
+    setEditingName(false);
+  };
 
   return (
     <div className="my-progress">
+      <CheerBanner />
+
+      {progress ? (
+        <section aria-label="Your name">
+          {learnerName && !editingName ? (
+            <div className="my-progress-name-row">
+              <span>
+                Name: <strong>{learnerName}</strong>
+              </span>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => {
+                  setNameDraft(learnerName);
+                  setEditingName(true);
+                }}
+              >
+                Edit
+              </button>
+            </div>
+          ) : (
+            <form className="my-progress-name-form" onSubmit={saveName}>
+              <label htmlFor="learner-name">Your name (optional)</label>
+              <div className="my-progress-name-controls">
+                <input
+                  id="learner-name"
+                  type="text"
+                  value={nameDraft}
+                  onChange={(event) => setNameDraft(event.target.value)}
+                  maxLength={40}
+                  placeholder="e.g. Rina"
+                  autoComplete="given-name"
+                />
+                <button type="submit" className="btn">
+                  Save
+                </button>
+                {learnerName ? (
+                  <>
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={() => setEditingName(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={removeName}
+                    >
+                      Remove
+                    </button>
+                  </>
+                ) : null}
+              </div>
+              <p className="my-progress-name-help">
+                Stays on this device only.
+              </p>
+            </form>
+          )}
+        </section>
+      ) : null}
+
       <section className="policy-card">
-        <h2>{statusLine}</h2>
+        <h2>{greeting}</h2>
         <p className="my-progress-count">
           {doneCount} of {totalSteps} steps done
         </p>
@@ -117,6 +218,15 @@ export default function MyProgress({ titles = {} }) {
             style={{ width: `${percent}%` }}
           />
         </div>
+        {hasAnything && next ? (
+          <div className="hero-actions my-progress-continue">
+            <Link href={`/articles/${next.slug}`} className="btn">
+              {doneCount === 0
+                ? "Start Lesson 1 →"
+                : `Continue: ${next.label} →`}
+            </Link>
+          </div>
+        ) : null}
         {!hasAnything ? (
           <>
             <p className="policy-copy">

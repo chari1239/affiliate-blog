@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { recordQuizResult } from "@/lib/progress";
+import { getLearnerName, recordQuizResult } from "@/lib/progress";
+import { quizCheer } from "@/lib/cheers";
 
 // Fire-and-forget anonymous counting (per quiz, keyed by article slug).
 // The /api/quiz-event route turns these into counters; failures are
@@ -36,6 +37,7 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
   const [showFinish, setShowFinish] = useState(false);
   const [copied, setCopied] = useState(false);
   const [savedToProgress, setSavedToProgress] = useState(false);
+  const [finishCheer, setFinishCheer] = useState("");
   const startedRef = useRef(false);
   const finishedRef = useRef(false);
   const inputRef = useRef(null);
@@ -75,6 +77,7 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
     // The same finish moment also writes the reader's own local
     // record — this device only, no server involved (lib/progress.js).
     recordQuizResult(quizSlug, finalScore, total);
+    setFinishCheer(quizCheer(finalScore, total, getLearnerName()));
     setSavedToProgress(true);
     setShowFinish(true);
   }
@@ -126,6 +129,7 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
     setShowFinish(false);
     setCopied(false);
     setSavedToProgress(false);
+    setFinishCheer("");
     startedRef.current = false;
     finishedRef.current = false;
   }
@@ -185,6 +189,9 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
             {score} / {total}
           </p>
           <p className="quiz-finish-band">{bandMessage}</p>
+          {finishCheer ? (
+            <p className="quiz-finish-cheer">{finishCheer}</p>
+          ) : null}
           {savedToProgress ? (
             <p className="quiz-finish-loop">
               Saved to your progress on this device ·{" "}
