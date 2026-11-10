@@ -1,0 +1,177 @@
+/* Quiz hub (/quiz) and standalone quiz pages (/quiz/[slug]).
+   Only the hub/chrome styles live here — the quiz itself keeps its
+   own styles in globals.css (components/reading-quiz). */
+
+.quiz-hub-intro {
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 0.5rem 0 0;
+  max-width: 42rem;
+}
+
+/* Featured latest quiz */
+.quiz-featured {
+  background: var(--accent-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-top: 1.5rem;
+  padding: 1.5rem 1.25rem;
+}
+
+.quiz-featured-label {
+  color: var(--accent-dark);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.quiz-featured-title {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
+}
+
+.quiz-featured-meta {
+  color: var(--muted);
+  margin: 0 0 1.1rem;
+}
+
+.quiz-primary-button {
+  background: var(--accent);
+  border-radius: 999px;
+  color: #fff;
+  display: inline-block;
+  font-weight: 700;
+  min-height: 48px;
+  padding: 0.8rem 1.6rem;
+  text-decoration: none;
+}
+
+.quiz-primary-button:hover {
+  background: var(--accent-dark);
+}
+
+/* Quiz card list */
+.quiz-card-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 720px) {
+  .quiz-card-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.quiz-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  color: inherit;
+  display: block;
+  padding: 1.25rem;
+  text-decoration: none;
+}
+
+.quiz-card-title {
+  font-size: 1.15rem;
+  line-height: 1.3;
+  margin: 0 0 0.4rem;
+}
+
+.quiz-card-meta {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0 0 0.6rem;
+}
+
+.quiz-card-words {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.quiz-card-intro {
+  color: var(--muted);
+  display: -webkit-box;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.quiz-best-chip {
+  background: var(--accent-soft);
+  border-radius: 999px;
+  color: var(--accent-dark);
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  min-height: 1.35rem;
+  padding: 0.2rem 0.7rem;
+}
+
+.quiz-hub-footer {
+  margin-top: 2rem;
+}
+
+.quiz-hub-footer a {
+  color: var(--accent-dark);
+  font-weight: 700;
+}
+
+/* Standalone quiz page */
+.quiz-back-link {
+  color: var(--accent-dark);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.quiz-standalone-intro {
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 0.5rem 0 1.5rem;
+  max-width: 42rem;
+}
+
+.quiz-lesson-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-top: 2rem;
+  padding: 1.5rem 1.25rem;
+}
+
+.quiz-lesson-card h2 {
+  font-size: 1.3rem;
+  margin: 0 0 0.5rem;
+}
+
+.quiz-lesson-card p {
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0 0 1.1rem;
+  max-width: 42rem;
+}
+
+.quiz-all-link {
+  margin-top: 1.5rem;
+}
+
+.quiz-all-link a {
+  color: var(--accent-dark);
+  font-weight: 700;
+}
