@@ -3,6 +3,7 @@ import "./globals.css";
 import { SiteShell } from "@/components/site-shell";
 import AppDeviceReporter from "@/components/app-device-reporter";
 import NotifyPrompt from "@/components/notify-prompt";
+import NamePrompt from "@/components/name-prompt";
 import BottomNav from "@/components/bottom-nav";
 import { site } from "@/lib/site";
 
@@ -113,6 +114,7 @@ export default function RootLayout({ children }) {
             renders nothing once the reader has answered (or is
             already subscribed). */}
         <NotifyPrompt />
+        <NamePrompt />
         {/* Mobile app-style bottom tab bar; renders nothing on
             desktop or in the Studio. */}
         <BottomNav />
