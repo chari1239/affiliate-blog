@@ -6,6 +6,7 @@ import { urlForImage } from "@/lib/sanity/image";
 import { learningPath } from "@/lib/learning-path";
 import { site } from "@/lib/site";
 import ShareButton from "@/components/share-button";
+import NotifyButton from "@/components/notify-button";
 import "./learn-japanese.css";
 
 export const dynamic = "force-dynamic";
@@ -98,6 +99,7 @@ export default async function LearnJapanesePage() {
             label="Share this page"
           />
         </div>
+        <NotifyButton />
       </header>
 
       {!isSanityConfigured ? (
@@ -152,3 +154,4 @@ export default async function LearnJapanesePage() {
     </main>
   );
 }
+
