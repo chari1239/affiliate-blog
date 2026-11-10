@@ -19,6 +19,8 @@ import { videos } from "@/lib/video-data";
 import VideoEmbed from "@/components/video-embed";
 import ShareButton from "@/components/share-button";
 import NotifyButton from "@/components/notify-button";
+import { learningPath } from "@/lib/learning-path";
+import LearntButton from "@/components/learnt-button";
 import { guideIntros } from "@/lib/guide-intro-data";
 import GuideIntro from "@/components/guide-intro";
 
@@ -241,6 +243,12 @@ export default async function ArticleDetailPage({ params }) {
   // approved == true, so pending comments never reach this page.
   const comments = await getApprovedComments(article.slug);
 
+  // The "Mark as learnt" toggle only belongs on articles that are
+  // steps in the Learn Japanese learning path.
+  const inLearningPath = learningPath.some(
+    (step) => step.slug === article.slug
+  );
+
     const disclosureSection = article.affiliateDisclosure ? (
               <section className="article-disclosure">
                           <strong>Affiliate disclosure:</strong> {article.affiliateDisclosure}
@@ -440,6 +448,8 @@ export default async function ArticleDetailPage({ params }) {
         {articleShare("share-row share-row-end")}
 
         <NotifyButton className="notify-row-end" />
+
+        {inLearningPath ? <LearntButton slug={article.slug} /> : null}
 
         <section className="article-comments">
           <Comments slug={article.slug} comments={comments} />

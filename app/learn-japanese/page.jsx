@@ -1,5 +1,3 @@
-import Image from "next/image";
-import Link from "next/link";
 import { getArticles } from "@/lib/sanity/fetchers";
 import { isSanityConfigured } from "@/lib/sanity/env";
 import { urlForImage } from "@/lib/sanity/image";
@@ -7,6 +5,7 @@ import { learningPath } from "@/lib/learning-path";
 import { site } from "@/lib/site";
 import ShareButton from "@/components/share-button";
 import NotifyButton from "@/components/notify-button";
+import PathProgress from "@/components/path-progress";
 import "./learn-japanese.css";
 
 export const dynamic = "force-dynamic";
@@ -77,6 +76,21 @@ export default async function LearnJapanesePage() {
     }))
   };
 
+  // Plain serializable props for the client-side step list, which
+  // layers the reader's local progress (a summary strip and "Learnt"
+  // badges, from lib/progress.js) over the same step cards.
+  const stepProps = steps.map((step, index) => ({
+    slug: step.article.slug,
+    title: step.article.title,
+    excerpt: step.article.excerpt,
+    label: step.label,
+    stepNumber: index + 1,
+    coverUrl: step.article.coverImage
+      ? urlForImage(step.article.coverImage).width(960).height(640).fit("crop").url()
+      : null,
+    coverAlt: step.article.coverImage?.alt || step.article.title
+  }));
+
   return (
     <main className="page-frame">
       <script
@@ -122,35 +136,8 @@ export default async function LearnJapanesePage() {
         </section>
       ) : null}
 
-      {!!steps.length ? (
-        <section className="content-grid learn-grid">
-          {steps.map((step, index) => (
-            <article key={step.article._id} className="content-card article-card">
-              <div className="learn-card-top">
-                <span className="learn-step">Step {index + 1}</span>
-                <span className="pill">{step.label}</span>
-              </div>
-              {step.article.coverImage ? (
-                <Link href={`/articles/${step.article.slug}`} className="article-card-image">
-                  <Image
-                    src={urlForImage(step.article.coverImage).width(960).height(640).fit("crop").url()}
-                    alt={step.article.coverImage?.alt || step.article.title}
-                    width={960}
-                    height={640}
-                  />
-                </Link>
-              ) : null}
-              <h2>{step.article.title}</h2>
-              <p className="card-copy">{step.article.excerpt}</p>
-              <div className="hero-actions">
-                <Link href={`/articles/${step.article.slug}`} className="btn">
-                  Start this step
-                </Link>
-              </div>
-            </article>
-          ))}
-        </section>
-      ) : null}
+      {!!steps.length ? <PathProgress steps={stepProps} /> : null}
+
     </main>
   );
 }

@@ -1,0 +1,36 @@
+/* Learn Japanese hub progress touches: the summary strip above the
+   step cards and the "Learnt ✓" badge on finished cards. The cards
+   themselves keep the site's content-card styles; only these two
+   elements are new. */
+.path-progress-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
+  padding: 0.9rem 1.1rem;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.path-progress-link {
+  color: var(--accent-dark);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.path-progress-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
