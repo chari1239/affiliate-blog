@@ -3,7 +3,7 @@ import { getArticles } from "@/lib/sanity/fetchers";
 import { quizzes } from "@/lib/quiz-data";
 import { learningPath } from "@/lib/learning-path";
 import { site } from "@/lib/site";
-import BestScoreChip from "./best-score-chip";
+import QuizCard from "./quiz-card";
 import "./quiz.css";
 
 // The quiz hub: every reading quiz on one page, with the newest one
@@ -94,35 +94,25 @@ export default async function QuizHubPage() {
       </p>
 
       {latestQuiz ? (
-        <section className="quiz-featured" aria-label="Latest quiz">
-          <p className="quiz-featured-label">Latest quiz</p>
-          <h2 className="quiz-featured-title">{latestQuiz.title}</h2>
-          <p className="quiz-featured-meta">
-            {latestQuiz.items.length} words ·{" "}
-            <BestScoreChip slug={latestSlug} />
-          </p>
-          <Link className="quiz-primary-button" href={`/quiz/${latestSlug}`}>
-            Start the quiz →
-          </Link>
-        </section>
+        <QuizCard
+          featured
+          slug={latestSlug}
+          title={latestQuiz.title}
+          wordCount={latestQuiz.items.length}
+        />
       ) : null}
 
       <div className="quiz-card-grid">
         {orderedSlugs.map((slug) => {
           const quiz = quizzes[slug];
           return (
-            <Link key={slug} className="quiz-card" href={`/quiz/${slug}`}>
-              <h2 className="quiz-card-title">{quiz.title}</h2>
-              <p className="quiz-card-meta">
-                <span className="quiz-card-words">
-                  {quiz.items.length} words
-                </span>
-                <BestScoreChip slug={slug} />
-              </p>
-              {quiz.intro ? (
-                <p className="quiz-card-intro">{quiz.intro}</p>
-              ) : null}
-            </Link>
+            <QuizCard
+              key={slug}
+              slug={slug}
+              title={quiz.title}
+              wordCount={quiz.items.length}
+              intro={quiz.intro || null}
+            />
           );
         })}
       </div>
