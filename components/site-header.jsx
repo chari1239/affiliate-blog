@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -24,7 +25,14 @@ export function SiteHeader() {
         <div className="brand-block">
           <div className="brand-row">
             <Link href="/" className="brand-mark" onClick={() => setMenuOpen(false)}>
-              <img src="/logo.png" alt={site.name} className="logo-image" />
+              <Image
+                src="/logo.png"
+                alt={site.name}
+                width={80}
+                height={80}
+                className="logo-image"
+                priority
+              />
               <span className="brand-text">{site.name}</span>
             </Link>
           </div>
@@ -57,4 +65,3 @@ export function SiteHeader() {
     </header>
   );
 }
-
