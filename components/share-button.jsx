@@ -21,7 +21,10 @@ function ShareIcon() {
 // link when it is not (or when the reader dismisses the share sheet).
 // `url` may be an absolute URL (used as-is) or a site path such as
 // "/articles/my-post", which is made absolute from the current origin
-// at click time.
+// at click time. The button itself is icon-only — a circular button
+// with the share glyph; `label` survives as the accessible name
+// (aria-label, tooltip and a visually-hidden span) so call sites
+// still say what is being shared ("Share this article", ...).
 export default function ShareButton({ title, text, url, label = "Share" }) {
   const handleShare = async () => {
     const absoluteUrl = url
@@ -44,8 +47,15 @@ export default function ShareButton({ title, text, url, label = "Share" }) {
   };
 
   return (
-    <button type="button" className="btn-secondary share-button" onClick={handleShare}>
-      <ShareIcon /> {label}
+    <button
+      type="button"
+      className="share-button"
+      onClick={handleShare}
+      aria-label={label}
+      title={label}
+    >
+      <ShareIcon />
+      <span className="share-button-sr-only">{label}</span>
     </button>
   );
 }
