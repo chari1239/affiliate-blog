@@ -72,6 +72,9 @@ export default function NotifyPrompt() {
             // Storage unavailable — the card simply stays hidden
             // this visit.
           }
+          // Let the in-page NotifyButton know the prompt question
+          // is settled (it holds its own ask back until then).
+          window.dispatchEvent(new CustomEvent("nd-notify-resolved"));
           return;
         }
         setPublicKey(fetchedKey);
@@ -97,6 +100,9 @@ export default function NotifyPrompt() {
     } catch {
       // Even if the answer cannot be stored, hide for this visit.
     }
+    // The in-page NotifyButton holds its ask back while this
+    // prompt is still unanswered; this is its release signal.
+    window.dispatchEvent(new CustomEvent("nd-notify-resolved"));
     setVisible(false);
   }, []);
 

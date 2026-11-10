@@ -32,8 +32,9 @@ function CheckIcon() {
 // "Mark as learnt" toggle for lesson articles. The state lives only
 // in this device's localStorage (lib/progress.js) — tapping again
 // undoes it. Beside the button, a quiet link to the reader's
-// /my-progress page. Renders nothing until mounted so the first
-// paint never flashes the wrong state.
+// /my-progress page. Renders an empty wrap (which reserves the
+// row's height in CSS) until mounted, so the first paint never
+// flashes the wrong state and the page never grows when it loads.
 export default function LearntButton({ slug }) {
   const [learnt, setLearnt] = useState(false);
   const [ready, setReady] = useState(false);
@@ -53,8 +54,12 @@ export default function LearntButton({ slug }) {
     };
   }, [refresh]);
 
-  if (!ready || !slug) {
+  if (!slug) {
     return null;
+  }
+
+  if (!ready) {
+    return <div className="learnt-wrap" aria-hidden="true" />;
   }
 
   return (

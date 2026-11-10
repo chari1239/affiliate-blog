@@ -7,6 +7,10 @@
   align-items: center;
   gap: 0.75rem;
   margin-top: 1rem;
+  /* Reserves the button's height before hydration (the component
+     renders this wrap empty while loading) so the row never pops
+     in and pushes the page down. */
+  min-height: 44px;
 }
 
 .notify-row-end {

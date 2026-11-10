@@ -132,6 +132,11 @@ export default function MyProgress({ titles = {} }) {
   const learnerName = progress ? progress.profile.name : "";
   const hasAnything =
     doneCount > 0 || quizEntries.length > 0 || Boolean(learnerName);
+  // Recorded activity only (a saved name alone does not count):
+  // until the first lesson or quiz lands, the stat tiles and the
+  // "0 of N steps done" line stay hidden — the greeting and the
+  // empty-state text carry the zero state on their own.
+  const hasActivity = doneCount > 0 || quizEntries.length > 0;
 
   const greeting = openGreeting({
     doneCount,
@@ -221,9 +226,11 @@ export default function MyProgress({ titles = {} }) {
 
       <section className="policy-card">
         <h2>{greeting}</h2>
-        <p className="my-progress-count">
-          {doneCount} of {totalSteps} steps done
-        </p>
+        {hasActivity ? (
+          <p className="my-progress-count">
+            {doneCount} of {totalSteps} steps done
+          </p>
+        ) : null}
         <div
           className="my-progress-bar"
           role="progressbar"
@@ -262,6 +269,7 @@ export default function MyProgress({ titles = {} }) {
         ) : null}
       </section>
 
+      {hasActivity ? (
       <section aria-label="Your stats">
         <div className="my-progress-stats">
           <div className="my-progress-stat">
@@ -280,6 +288,7 @@ export default function MyProgress({ titles = {} }) {
           </div>
         </div>
       </section>
+      ) : null}
 
       {quizEntries.length ? (
         <section>

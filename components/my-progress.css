@@ -90,7 +90,8 @@
 }
 
 .my-progress-checklist {
-  gap: 0.45rem;
+  gap: 0;
+  border-top: 1px solid var(--line);
 }
 
 .my-progress-item {
@@ -104,13 +105,22 @@
   box-shadow: var(--shadow);
 }
 
+/* Checklist rows read like the quiz-result rows — hairline
+   dividers on open ground, not bordered boxes — which is what
+   keeps this dashboard visually distinct from the Learn hub's
+   cards. */
 .my-progress-checklist .my-progress-item {
   gap: 0.7rem;
-  padding: 0.55rem 0.75rem;
+  padding: 0.7rem 0.25rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
   box-shadow: none;
 }
 
 .my-progress-toggle {
+  position: relative;
   width: 26px;
   height: 26px;
   flex: 0 0 auto;
@@ -130,6 +140,14 @@
 .my-progress-toggle-on {
   background: var(--accent-soft);
   border-color: var(--accent);
+}
+
+/* Invisible 40×40px hit area around the 26px visual box (7px on
+   every side), same treatment as the hub's checkbox. */
+.my-progress-toggle::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
 }
 
 .my-progress-item-main {

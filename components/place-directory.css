@@ -109,7 +109,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 18px;
+  padding: 20px;
   scroll-margin-top: 264px;
   min-width: 0;
 }
@@ -543,3 +543,21 @@
   pointer-events: none;
 }
 
+/* On phones the sticky site header is taller than the desktop
+   offsets above assume: header-inner vertical padding (0.85rem
+   ≤640px / 0.95rem above it — 27–30px total) + the 40px logo row
+   + the ~23px brand subtitle + the 1px border ≈ 91–94px. The
+   desktop top:70px therefore parked the filter bar UNDER the
+   header and clipped the search box. 96px is the shared mobile
+   value for the bar's sticky top and both scroll margins — it
+   clears the computed header height with a small cushion. */
+@media (max-width: 767px) {
+  #place-directory {
+    scroll-margin-top: 96px;
+  }
+
+  .directory-filters {
+    top: 96px;
+    scroll-margin-top: 96px;
+  }
+}
