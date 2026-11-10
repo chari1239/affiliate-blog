@@ -9,6 +9,7 @@ import { getProduct } from "@/lib/products";
 import { site } from "@/lib/site";
 import { quizzes } from "@/lib/quiz-data";
 import ReadingQuiz from "@/components/reading-quiz";
+import WordCards from "@/components/word-cards";
 import { directories } from "@/lib/directory-data";
 import PlaceDirectory from "@/components/place-directory";
 import Comments from "@/components/comments";
@@ -302,6 +303,12 @@ export default async function ArticleDetailPage({ params }) {
       </section>
       ) : null;
 
+  // The word review is a recap of the quiz's answers, so it renders
+  // at the end of the article content (see the return below) — after
+  // both the body and the quiz, in whichever order those two came.
+  // Same `quiz` condition as the quiz section itself.
+  const wordCardsSection = quiz ? <WordCards quiz={quiz} /> : null;
+
   const directory = directories[article.slug];
   const directorySection = directory ? (
       <section className="article-directory" id="directory">
@@ -432,6 +439,8 @@ export default async function ArticleDetailPage({ params }) {
         {bodySection}
 
         {quiz?.lead ? null : quizSection}
+
+        {wordCardsSection}
 
         {directorySection}
 
