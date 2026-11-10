@@ -543,21 +543,22 @@
   pointer-events: none;
 }
 
-/* On phones the sticky site header is taller than the desktop
-   offsets above assume: header-inner vertical padding (0.85rem
-   ≤640px / 0.95rem above it — 27–30px total) + the 40px logo row
-   + the ~23px brand subtitle + the 1px border ≈ 91–94px. The
-   desktop top:70px therefore parked the filter bar UNDER the
-   header and clipped the search box. 96px is the shared mobile
-   value for the bar's sticky top and both scroll margins — it
-   clears the computed header height with a small cushion. */
+/* On phones the filter bar must clear the sticky site header.
+   The header is one brand row now (the badge and subtitle were
+   removed from it), and globals.css tracks its height per
+   breakpoint in --header-h (72px desktop / 80px at ≤767px / 77px
+   at ≤640px, where the 48px menu toggle is the row's tallest item
+   and the padding differs). The bar's sticky top and both scroll
+   margins follow the variable instead of a hard-coded guess —
+   the previous fixed values (84px, then 96px) each drifted out of
+   sync with the real header and let the search box slide under it. */
 @media (max-width: 767px) {
   #place-directory {
-    scroll-margin-top: 96px;
+    scroll-margin-top: var(--header-h);
   }
 
   .directory-filters {
-    top: 96px;
-    scroll-margin-top: 96px;
+    top: var(--header-h);
+    scroll-margin-top: var(--header-h);
   }
 }

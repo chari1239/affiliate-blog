@@ -8,6 +8,11 @@ import { SiteHeader } from "@/components/site-header";
 export function SiteShell({ children }) {
   const pathname = usePathname();
   const isStudioRoute = pathname?.startsWith("/studio");
+  // The Amazon Associates banner belongs with the writing itself:
+  // article pages only (/articles/<slug>), not the home page, the
+  // learning hub, the progress dashboard or the articles list,
+  // where it read as stray text.
+  const isArticleRoute = pathname?.startsWith("/articles/");
 
   if (isStudioRoute) {
     return children;
@@ -17,7 +22,7 @@ export function SiteShell({ children }) {
     <div className="page-shell">
       <SiteHeader />
       {children}
-      <DisclosureBanner />
+      {isArticleRoute ? <DisclosureBanner /> : null}
       <SiteFooter />
     </div>
   );
