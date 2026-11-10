@@ -20,22 +20,27 @@ function sendQuizEvent(slug, payload) {
   } catch {}
 }
 
-// Interactive reading quiz, one word at a time: the reader types the
-// romaji reading for the kana word on the card and checks it. Meanings
-// and memory hooks stay hidden until the reader answers correctly, asks
-// for the answer, or opens the full answers panel at the end. A hint
-// (the meaning plus the first letter) is available on every card so
-// nobody gets stuck on word one. Finishing swaps the cards for a score
-// screen that invites the reader to share their score back in the
-// reel's comments.
+// Interactive reading quiz as a one-word-at-a-time stepper. A slim
+// header stays on screen throughout (step label, "Question n of N", a
+// progress bar filled by answered questions, and a dot row that jumps
+// to any question). Each step shows one kana word, large and centred;
+// the reader types the romaji reading and presses Check, which locks
+// the word and reveals the reading, meaning and memory hook. From the
+// last word, "See my result" leads to the score screen — via a
+// skip-check first when earlier words were left unanswered.
+//
+// External behaviour matches the previous card design: a "start"
+// counter event on the first check, a "check" event per checked word,
+// and — exactly once per run, when the results screen is reached — a
+// "finish" event plus the reader's local record via recordQuizResult
+// (lib/progress.js). Retaking the quiz starts a fresh run that records
+// again, just like the old Play again.
 export default function ReadingQuiz({ quiz, quizSlug }) {
   const [values, setValues] = useState({});
-  const [states, setStates] = useState({});
-  const [hints, setHints] = useState({});
+  const [results, setResults] = useState({});
   const [current, setCurrent] = useState(0);
-  const [showAll, setShowAll] = useState(false);
-  const [showFinish, setShowFinish] = useState(false);
-  const [copied, setCopied] = useState(false);
+  // "questions" | "confirm-skip" | "results"
+  const [phase, setPhase] = useState("questions");
   const [savedToProgress, setSavedToProgress] = useState(false);
   const [finishCheer, setFinishCheer] = useState("");
   const startedRef = useRef(false);
@@ -43,35 +48,45 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
   const inputRef = useRef(null);
 
   const total = quiz.items.length;
-  const score = quiz.items.filter((_, i) => states[i] === "correct").length;
-  const resolved = quiz.items.filter(
-    (_, i) => states[i] === "correct" || states[i] === "revealed"
-  ).length;
+  const score = quiz.items.filter((_, i) => results[i] === "correct").length;
+  const answered = Object.keys(results).length;
+  const skipped = quiz.items
+    .map((_, i) => i)
+    .filter((i) => !results[i]);
   const minutes = Math.max(1, Math.round(total / 8));
 
   const item = quiz.items[current];
-  const st = states[current];
-  const done = st === "correct" || st === "revealed";
+  const result = results[current];
+  const locked = Boolean(result);
+  const isLast = current === total - 1;
 
-  // Keep the typing box focused as the reader moves between cards.
+  // Keep the typing box focused as the reader steps between words
+  // (only while the word on screen is still theirs to answer).
   useEffect(() => {
-    if (!showFinish && !done && inputRef.current) {
+    if (phase === "questions" && !results[current] && inputRef.current) {
       inputRef.current.focus({ preventScroll: true });
     }
-  }, [current, showFinish, done]);
+  }, [current, phase, results]);
 
-  // A quiz counts as finished once every word is resolved — answered
-  // correctly or revealed. Fires at most once per page view (Play again
-  // resets the refs, so a genuine replay counts as a fresh run).
-  function maybeFinish(nextStates) {
+  function check(i) {
+    const v = (values[i] || "").trim().toLowerCase();
+    if (!v || results[i]) return;
+    const isCorrect = v === quiz.items[i].reading;
+    if (!startedRef.current) {
+      startedRef.current = true;
+      sendQuizEvent(quizSlug, { type: "start" });
+    }
+    sendQuizEvent(quizSlug, { type: "check", correct: isCorrect, index: i });
+    setResults((r) => ({ ...r, [i]: isCorrect ? "correct" : "wrong" }));
+  }
+
+  // The run finishes the moment the results screen is reached — once
+  // per run. Unanswered words simply count as not correct.
+  function finishRun() {
     if (finishedRef.current) return;
-    const allResolved = quiz.items.every(
-      (_, i) => nextStates[i] === "correct" || nextStates[i] === "revealed"
-    );
-    if (!allResolved) return;
     finishedRef.current = true;
     const finalScore = quiz.items.filter(
-      (_, i) => nextStates[i] === "correct"
+      (_, i) => results[i] === "correct"
     ).length;
     sendQuizEvent(quizSlug, { type: "finish", score: finalScore });
     // The same finish moment also writes the reader's own local
@@ -79,99 +94,108 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
     recordQuizResult(quizSlug, finalScore, total);
     setFinishCheer(quizCheer(finalScore, total, getLearnerName()));
     setSavedToProgress(true);
-    setShowFinish(true);
+    setPhase("results");
   }
 
-  function check(i) {
-    const v = (values[i] || "").trim().toLowerCase();
-    if (!v) return;
-    const isCorrect = v === quiz.items[i].reading;
-    if (!startedRef.current) {
-      startedRef.current = true;
-      sendQuizEvent(quizSlug, { type: "start" });
+  // Stepping forward from a locked word. The last word leads to the
+  // results — unless earlier words were skipped, in which case the
+  // reader chooses: go back for them, or take the score as it stands.
+  function advance() {
+    if (!isLast) {
+      setCurrent(current + 1);
+      return;
     }
-    sendQuizEvent(quizSlug, { type: "check", correct: isCorrect, index: i });
-    const nextStates = { ...states, [i]: isCorrect ? "correct" : "wrong" };
-    setStates(nextStates);
-    maybeFinish(nextStates);
-  }
-
-  function reveal(i) {
-    const nextStates = { ...states, [i]: "revealed" };
-    setStates(nextStates);
-    maybeFinish(nextStates);
-  }
-
-  function useHint(i) {
-    if (hints[i]) return;
-    setHints((h) => ({ ...h, [i]: true }));
-    sendQuizEvent(quizSlug, { type: "hint", index: i });
-  }
-
-  // Next = the next word that still needs an answer, wrapping around to
-  // the first unresolved one; stays put when everything is resolved.
-  function goNext() {
-    for (let step = 1; step <= total; step += 1) {
-      const idx = (current + step) % total;
-      if (states[idx] !== "correct" && states[idx] !== "revealed") {
-        setCurrent(idx);
-        return;
-      }
+    if (skipped.length > 0) {
+      setPhase("confirm-skip");
+    } else {
+      finishRun();
     }
   }
 
-  function playAgain() {
+  // One form, one submit: Enter (or the primary button) checks an
+  // open word and steps forward from a locked one.
+  function onSubmit(e) {
+    e.preventDefault();
+    if (phase !== "questions") return;
+    if (locked) {
+      advance();
+    } else {
+      check(current);
+    }
+  }
+
+  function jumpTo(i) {
+    setCurrent(i);
+    if (phase === "confirm-skip") setPhase("questions");
+  }
+
+  function retake() {
     setValues({});
-    setStates({});
-    setHints({});
+    setResults({});
     setCurrent(0);
-    setShowAll(false);
-    setShowFinish(false);
-    setCopied(false);
+    setPhase("questions");
     setSavedToProgress(false);
     setFinishCheer("");
     startedRef.current = false;
     finishedRef.current = false;
   }
 
-  function copyScore() {
-    const text = `I scored ${score}/${total} on the Nihon Diaries reading quiz 🇯🇵 Try it: ${window.location.origin}/articles/${quizSlug}#quiz`;
-    const doneCopy = () => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    };
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(doneCopy).catch(doneCopy);
-    } else {
-      doneCopy();
-    }
-  }
-
-  const bandMessage =
-    score === total
-      ? "Flawless — you read every single word! 🎉"
-      : score >= Math.ceil(total * 0.7)
-        ? "Great reading — most of those were first-try correct."
-        : score >= Math.ceil(total * 0.4)
-          ? "Good start — the letters are starting to stick."
-          : "Every attempt makes the letters stick — one more run?";
-
-  const answersPanel = showAll ? (
-    <div className="quiz-answers">
-      <h3>Answers &amp; explanations</h3>
-      <ul>
-        {quiz.items.map((it) => (
-          <li key={it.word}>
-            <strong>
-              {it.word} ({it.reading}) = {it.meaning}
-            </strong>
-            <span className="quiz-hook">{it.hook}</span>
-          </li>
-        ))}
-      </ul>
-      {quiz.nextNote ? <p className="quiz-next">{quiz.nextNote}</p> : null}
+  const header = (
+    <div className="quiz-stepper-head">
+      <div className="quiz-progress-row">
+        <span className="quiz-stepper-label">Reading quiz</span>
+        <span className="quiz-count">
+          {phase === "results"
+            ? "Your result"
+            : `Question ${current + 1} of ${total}`}
+        </span>
+      </div>
+      <div
+        className="quiz-progress"
+        role="progressbar"
+        aria-valuenow={answered}
+        aria-valuemin={0}
+        aria-valuemax={total}
+        aria-label="Questions answered"
+      >
+        <div
+          className="quiz-progress-fill"
+          style={{ width: `${(answered / total) * 100}%` }}
+        />
+      </div>
+      <div className="quiz-dots" aria-label="Jump to a question">
+        {quiz.items.map((it, i) => {
+          const r = results[i];
+          const cls =
+            "quiz-dot" +
+            (i === current && phase !== "results" ? " quiz-dot-current" : "") +
+            (r === "correct"
+              ? " quiz-dot-correct"
+              : r === "wrong"
+                ? " quiz-dot-wrong"
+                : "");
+          const status =
+            r === "correct"
+              ? "answered correctly"
+              : r === "wrong"
+                ? "answered, not quite"
+                : "not answered yet";
+          return (
+            <button
+              key={`${it.word}-${i}`}
+              type="button"
+              className={cls}
+              aria-label={`Question ${i + 1}, ${status}`}
+              disabled={phase === "results"}
+              onClick={() => jumpTo(i)}
+            >
+              {i + 1}
+            </button>
+          );
+        })}
+      </div>
     </div>
-  ) : null;
+  );
 
   return (
     <div className="quiz">
@@ -181,14 +205,14 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
         🎯 {total} words · about {minutes} min · type the romaji reading
       </p>
 
-      {showFinish ? (
+      {header}
+
+      {phase === "results" ? (
         <div className="quiz-finish">
-          <p className="quiz-finish-emoji">🎉</p>
           <h3 className="quiz-finish-title">Quiz complete!</h3>
           <p className="quiz-finish-score">
-            {score} / {total}
+            You scored {score} of {total}
           </p>
-          <p className="quiz-finish-band">{bandMessage}</p>
           {finishCheer ? (
             <p className="quiz-finish-cheer">{finishCheer}</p>
           ) : null}
@@ -199,194 +223,132 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
             </p>
           ) : null}
           <div className="quiz-finish-actions">
-            <button type="button" className="btn" onClick={copyScore}>
-              {copied ? "Copied ✓" : "📋 Copy my score"}
+            <button type="button" className="btn" onClick={retake}>
+              Retake quiz
             </button>
-            <button type="button" className="btn-secondary" onClick={playAgain}>
-              ↻ Play again
+          </div>
+          <details className="quiz-review">
+            <summary>See all answers</summary>
+            <ul>
+              {quiz.items.map((it, i) => {
+                const r = results[i];
+                return (
+                  <li key={`${it.word}-${i}`} className="quiz-review-item">
+                    <span className="quiz-review-main">
+                      <strong>{it.word}</strong> · {it.reading} · {it.meaning}
+                    </span>
+                    {r === "correct" ? (
+                      <span
+                        className="quiz-review-mark quiz-review-mark-correct"
+                        aria-label="You read this correctly"
+                      >
+                        ✓
+                      </span>
+                    ) : r === "wrong" ? (
+                      <span
+                        className="quiz-review-mark quiz-review-mark-wrong"
+                        aria-label="You did not read this correctly"
+                      >
+                        ✗
+                      </span>
+                    ) : (
+                      <span className="quiz-review-mark quiz-review-mark-skipped">
+                        Not answered
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+            {quiz.nextNote ? <p className="quiz-next">{quiz.nextNote}</p> : null}
+          </details>
+        </div>
+      ) : phase === "confirm-skip" ? (
+        <div className="quiz-skip">
+          <p className="quiz-skip-text">
+            You skipped {skipped.length}{" "}
+            {skipped.length === 1 ? "word" : "words"} — go back and try
+            them, or see your score anyway.
+          </p>
+          <div className="quiz-finish-actions">
+            <button
+              type="button"
+              className="btn"
+              onClick={() => jumpTo(skipped[0])}
+            >
+              Try the skipped words
             </button>
             <button
               type="button"
               className="btn-secondary"
-              onClick={() => setShowAll((s) => !s)}
+              onClick={finishRun}
             >
-              {showAll ? "Hide the answers" : "Review all answers"}
+              See my score anyway
             </button>
           </div>
-          <p className="quiz-finish-loop">
-            💬 Paste your score in the comments on today&apos;s reel — we
-            read every one!
-          </p>
-          <button
-            type="button"
-            className="quiz-link"
-            onClick={() => setShowFinish(false)}
-          >
-            Look at the words again
-          </button>
-          {answersPanel}
         </div>
       ) : (
-        <>
-          <div className="quiz-progress-row">
-            <span className="quiz-count">
-              Word {current + 1} of {total}
-            </span>
-            <span className="quiz-score-chip">Score: {score}</span>
-          </div>
-          <div
-            className="quiz-progress"
-            role="progressbar"
-            aria-valuenow={resolved}
-            aria-valuemin={0}
-            aria-valuemax={total}
-            aria-label="Words completed"
-          >
-            <div
-              className="quiz-progress-fill"
-              style={{ width: `${(resolved / total) * 100}%` }}
+        <div className="quiz-step" key={current}>
+          <p className="quiz-step-word">{item.word}</p>
+
+          <form className="quiz-form" onSubmit={onSubmit}>
+            <input
+              ref={inputRef}
+              className="quiz-input"
+              type="text"
+              inputMode="text"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck="false"
+              placeholder="Type the romaji…"
+              aria-label={`Romaji reading for ${item.word}`}
+              readOnly={locked}
+              value={values[current] || ""}
+              onChange={(e) =>
+                setValues((v) => ({ ...v, [current]: e.target.value }))
+              }
             />
-          </div>
-
-          <div className="quiz-dots" aria-label="Jump to a word">
-            {quiz.items.map((it, i) => {
-              const s = states[i];
-              const cls =
-                "quiz-dot" +
-                (i === current ? " quiz-dot-current" : "") +
-                (s === "correct"
-                  ? " quiz-dot-correct"
-                  : s === "revealed"
-                    ? " quiz-dot-revealed"
-                    : "");
-              return (
-                <button
-                  key={it.word}
-                  type="button"
-                  className={cls}
-                  aria-label={`Word ${i + 1}${s ? ` (${s})` : ""}`}
-                  onClick={() => setCurrent(i)}
-                >
-                  {i + 1}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className={`quiz-card quiz-card-${st || "idle"}`}>
-            <div className="quiz-word-row">
-              <span className="quiz-word">{item.word}</span>
-              <span className="quiz-count">
-                {current + 1} / {total}
-              </span>
-            </div>
-
-            {!done ? (
-              <>
-                <div className="quiz-form">
-                  <input
-                    ref={inputRef}
-                    className="quiz-input"
-                    type="text"
-                    inputMode="text"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    spellCheck="false"
-                    placeholder="Type the romaji…"
-                    aria-label={`Romaji reading for ${item.word}`}
-                    value={values[current] || ""}
-                    onChange={(e) =>
-                      setValues((v) => ({ ...v, [current]: e.target.value }))
-                    }
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") check(current);
-                    }}
-                  />
-                  <button
-                    type="button"
-                    className="btn quiz-check"
-                    onClick={() => check(current)}
-                  >
-                    Check
-                  </button>
-                </div>
-                {st === "wrong" ? (
-                  <p className="quiz-feedback quiz-feedback-wrong">
-                    Not quite — try again.{" "}
-                    <button
-                      type="button"
-                      className="quiz-link"
-                      onClick={() => reveal(current)}
-                    >
-                      Show the answer
-                    </button>
-                  </p>
-                ) : null}
-                {hints[current] ? (
-                  <p className="quiz-hint">
-                    💡 Means “{item.meaning}” · starts with “
-                    {item.reading.charAt(0)}”
-                  </p>
-                ) : (
-                  <p className="quiz-hint-row">
-                    <button
-                      type="button"
-                      className="quiz-link"
-                      onClick={() => useHint(current)}
-                    >
-                      💡 Need a hint?
-                    </button>
-                  </p>
-                )}
-              </>
-            ) : (
-              <>
-                <p className="quiz-feedback quiz-feedback-right">
-                  {st === "correct" ? "✓ Correct! " : "Answer: "}
-                  <strong>
-                    {item.word} ({item.reading}) = {item.meaning}
-                  </strong>
-                  <span className="quiz-hook">{item.hook}</span>
-                </p>
-                <div className="quiz-navrow">
-                  {current > 0 ? (
-                    <button
-                      type="button"
-                      className="quiz-link"
-                      onClick={() => setCurrent(current - 1)}
-                    >
-                      ← Previous word
-                    </button>
-                  ) : (
-                    <span />
-                  )}
-                  {resolved < total ? (
-                    <button type="button" className="btn" onClick={goNext}>
-                      Next word →
-                    </button>
-                  ) : null}
-                </div>
-              </>
-            )}
-          </div>
-
-          <div className="quiz-footer">
-            <p className="quiz-score">
-              Score: {score} / {total} · {resolved} of {total} words done
-            </p>
-            <button
-              type="button"
-              className="btn-secondary quiz-reveal-all"
-              onClick={() => setShowAll((s) => !s)}
-            >
-              {showAll
-                ? "Hide the answers"
-                : "I'm done — show all answers & explanations"}
+            <button type="submit" className="btn quiz-check">
+              {locked ? (isLast ? "See my result →" : "Next →") : "Check"}
             </button>
-          </div>
+          </form>
 
-          {answersPanel}
-        </>
+          {locked ? (
+            <p
+              className={
+                result === "correct"
+                  ? "quiz-feedback quiz-feedback-correct"
+                  : "quiz-feedback quiz-feedback-wrong"
+              }
+              aria-live="polite"
+            >
+              {result === "correct" ? (
+                <>
+                  Correct — <strong>{item.reading}</strong>. {item.word}{" "}
+                  means “{item.meaning}”.
+                </>
+              ) : (
+                <>
+                  Not quite — this is <strong>{item.reading}</strong>. It
+                  means “{item.meaning}”.
+                </>
+              )}
+              <span className="quiz-hook">{item.hook}</span>
+            </p>
+          ) : null}
+
+          {current > 0 ? (
+            <div className="quiz-navrow">
+              <button
+                type="button"
+                className="quiz-link"
+                onClick={() => setCurrent(current - 1)}
+              >
+                ← Back
+              </button>
+            </div>
+          ) : null}
+        </div>
       )}
     </div>
   );
