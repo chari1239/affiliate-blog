@@ -14,6 +14,7 @@ import {
 } from "@/lib/progress";
 import { openGreeting } from "@/lib/cheers";
 import CheerBanner from "@/components/cheer-banner";
+import BookmarksSection from "@/components/bookmarks-section";
 import "./my-progress.css";
 
 // A readable name for a recorded quiz: prefer the quiz's own title
@@ -318,6 +319,8 @@ export default function MyProgress({ titles = {} }) {
           </ul>
         </section>
       ) : null}
+
+      <BookmarksSection titles={titles} />
 
       <section>
         <h2 className="my-progress-heading">Lessons</h2>

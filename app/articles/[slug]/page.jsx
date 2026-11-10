@@ -18,6 +18,7 @@ import BackToTop from "@/components/back-to-top";
 import { videos } from "@/lib/video-data";
 import VideoEmbed from "@/components/video-embed";
 import ShareButton from "@/components/share-button";
+import BookmarkButton from "@/components/bookmark-button";
 import NotifyButton from "@/components/notify-button";
 import { learningPath } from "@/lib/learning-path";
 import LearntButton from "@/components/learnt-button";
@@ -382,6 +383,7 @@ export default async function ArticleDetailPage({ params }) {
               {article.publishedAt ? <span>{formatDate(article.publishedAt)}</span> : null}
             </span>
             <span className="article-meta-share">
+              <BookmarkButton slug={article.slug} />
               <ShareButton
                 title={article.title}
                 text={article.title}
