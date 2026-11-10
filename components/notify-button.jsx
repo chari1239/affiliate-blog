@@ -7,8 +7,7 @@ import {
   isIosBrowserOnly,
   isPushSupported,
   registerWorker,
-  subscribe as subscribeToPush,
-  unsubscribe as unsubscribeFromPush
+  subscribe as subscribeToPush
 } from "@/lib/push-client";
 import "./notify-button.css";
 
@@ -51,17 +50,14 @@ function BellIcon() {
 // app, so a browser tab there gets the add-to-Home-Screen hint
 // instead of a button that cannot work.
 // Renders one quiet row; pass className="notify-row-end" to centre
-// it (matching .share-row-end on article pages). With
-// hideWhenSubscribed, a reader who ALREADY has a subscription when
-// the page loads sees nothing at all — subscribers are not asked
-// again. (Someone who subscribes on the spot still gets the
-// "You're subscribed" confirmation and the Turn off button.)
-// vanishWhenSubscribed goes further: ANY subscribed state renders
-// nothing at all, including one created by a tap during this view —
-// no confirmation text, no Turn off. Article pages use it so the
-// end of every article stays clean for subscribers; placements
-// without the prop (the Learn hub) keep the confirmation and the
-// Turn off control.
+// it (matching .share-row-end on article pages). Once a reader is
+// subscribed — whether they arrived that way or subscribed during
+// this view — the button renders NOTHING on every placement: no
+// "You're subscribed" text, no Turn off. (Unsubscribing stays
+// possible via the browser's own site settings.) The
+// hideWhenSubscribed and vanishWhenSubscribed props are still
+// accepted for compatibility with existing call sites; both are
+// now no-ops, since the subscribed state always renders nothing.
 // First-visit courtesy: while the layout's on-open prompt card is
 // still due to ask, this button holds its own ask back so the
 // reader is never asked twice at once; it appears once the prompt
@@ -72,10 +68,6 @@ export default function NotifyButton({ className = "", hideWhenSubscribed = fals
   const [state, setState] = useState("loading");
   const [publicKey, setPublicKey] = useState("");
   const [registration, setRegistration] = useState(null);
-  // True only when setup() found a subscription that already
-  // existed on page load, as opposed to one created by a tap in
-  // this session.
-  const [hadSubscription, setHadSubscription] = useState(false);
   // True while the on-open prompt card is still due to ask on
   // this visit (see promptMayShow above).
   const [promptGate, setPromptGate] = useState(false);
@@ -120,7 +112,6 @@ export default function NotifyButton({ className = "", hideWhenSubscribed = fals
         if (cancelled) return;
         setPublicKey(fetchedKey);
         setRegistration(reg);
-        setHadSubscription(Boolean(existing));
         setState(existing ? "subscribed" : "ready");
       } catch {
         if (!cancelled) setState("unsupported");
@@ -153,17 +144,6 @@ export default function NotifyButton({ className = "", hideWhenSubscribed = fals
     }
   }, [registration, publicKey]);
 
-  const unsubscribe = useCallback(async () => {
-    if (!registration) return;
-    setState("busy");
-    try {
-      await unsubscribeFromPush(registration);
-      setState("ready");
-    } catch {
-      setState("subscribed");
-    }
-  }, [registration]);
-
   if (state === "loading") {
     // Reserve the row's height from the first paint so the page
     // does not grow when the button hydrates in.
@@ -179,11 +159,9 @@ export default function NotifyButton({ className = "", hideWhenSubscribed = fals
     return null;
   }
 
-  if (hideWhenSubscribed && hadSubscription && state === "subscribed") {
-    return null;
-  }
-
-  if (vanishWhenSubscribed && state === "subscribed") {
+  // Subscribed readers see nothing at all — no confirmation text,
+  // no Turn off — on every placement.
+  if (state === "subscribed") {
     return null;
   }
 
@@ -199,13 +177,6 @@ export default function NotifyButton({ className = "", hideWhenSubscribed = fals
           On iPhone: add this site to your Home Screen first, then tap Get
           notified.
         </p>
-      ) : state === "subscribed" ? (
-        <>
-          <p className="notify-note">You&rsquo;re subscribed — new lessons will come to this device.</p>
-          <button type="button" className="notify-link-button" onClick={unsubscribe}>
-            Turn off
-          </button>
-        </>
       ) : (
         <>
           <button
