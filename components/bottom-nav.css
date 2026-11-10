@@ -1,0 +1,71 @@
+/* App-style bottom tab bar (components/bottom-nav.jsx): fixed to
+   the bottom of the screen on phones, where thumbs live. Desktop
+   keeps the header nav, so the bar is display:none from 768px up.
+   --bottom-nav-h is the one place the bar's height is defined:
+   globals.css pads .page-shell by it and notify-prompt.css lifts
+   its card above the bar, both adding the safe area the same way. */
+:root {
+  --bottom-nav-h: 60px;
+}
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 35;
+  background: var(--surface-strong);
+  background: color-mix(in srgb, var(--surface-strong) 92%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  /* The tap targets stay 60px tall; the phone's gesture-bar area
+     below them is filled by the bar itself. */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (min-width: 768px) {
+  .bottom-nav {
+    display: none;
+  }
+}
+
+.bottom-nav-list {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bottom-nav-item {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.bottom-nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: var(--bottom-nav-h);
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav-link.is-active {
+  color: var(--accent);
+}
+
+.bottom-nav-icon {
+  width: 23px;
+  height: 23px;
+  flex: 0 0 auto;
+}
+
+.bottom-nav-label {
+  line-height: 1.1;
+}
