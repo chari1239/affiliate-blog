@@ -28,3 +28,11 @@
 .back-to-top:hover {
   background: var(--accent-dark);
 }
+
+/* On phones the fixed bottom tab bar (60px + safe area) owns the
+   bottom edge — lift the button clear above it. */
+@media (max-width: 767px) {
+  .back-to-top {
+    bottom: calc(60px + env(safe-area-inset-bottom, 0px) + 14px);
+  }
+}

@@ -184,7 +184,7 @@ export default async function HomePage() {
           </div>
           <p className="section-copy section-intro">
             New to the neighbourhood? Our community directory for Ojima — the Koto-ku area
-            where many Indian families in Tokyo settle — gathers 75+ local places on one
+            where many Indian families in Tokyo settle — gathers 125+ places on one
             page: schools, clinics, hospitals, the post office, banks and everyday
             services, each with tap-to-call, a map and one-tap sharing.
           </p>

@@ -43,6 +43,7 @@
 }
 
 .bottom-nav-link {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -58,6 +59,20 @@
 
 .bottom-nav-link.is-active {
   color: var(--accent);
+}
+
+/* Active tab indicator: a short accent bar hugging the top edge
+   of the bar, centred on the current tab. */
+.bottom-nav-link.is-active::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--accent);
 }
 
 .bottom-nav-icon {

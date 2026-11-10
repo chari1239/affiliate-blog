@@ -12,6 +12,25 @@ import {
 } from "@/lib/push-client";
 import "./notify-button.css";
 
+const NOTIFY_PROMPT_KEY = "nd-notify-prompt";
+const NOTIFY_RESOLVED_EVENT = "nd-notify-resolved";
+
+// True while this visit's on-open prompt card (components/
+// notify-prompt.jsx) is still due to ask: the reader has never
+// answered it on this device and this browser could actually show
+// it. Mirrors the prompt's own quick conditions — flag unset, push
+// supported, not an iOS browser tab, permission still "default".
+function promptMayShow() {
+  try {
+    if (window.localStorage.getItem(NOTIFY_PROMPT_KEY)) return false;
+  } catch {
+    return false;
+  }
+  if (!isPushSupported() || isIosBrowserOnly()) return false;
+  if (window.Notification.permission !== "default") return false;
+  return true;
+}
+
 // The bell icon, drawn like the share button's icon (16px, stroke
 // style) so the two quiet rows look like a pair.
 function BellIcon() {
@@ -37,6 +56,10 @@ function BellIcon() {
 // the page loads sees nothing at all — subscribers are not asked
 // again. (Someone who subscribes on the spot still gets the
 // "You're subscribed" confirmation and the Turn off button.)
+// First-visit courtesy: while the layout's on-open prompt card is
+// still due to ask, this button holds its own ask back so the
+// reader is never asked twice at once; it appears once the prompt
+// is answered. Subscribed and blocked states are unaffected.
 export default function NotifyButton({ className = "", hideWhenSubscribed = false }) {
   // states: loading | unsupported | ios-hint | ready | subscribed |
   // denied | busy
@@ -47,9 +70,26 @@ export default function NotifyButton({ className = "", hideWhenSubscribed = fals
   // existed on page load, as opposed to one created by a tap in
   // this session.
   const [hadSubscription, setHadSubscription] = useState(false);
+  // True while the on-open prompt card is still due to ask on
+  // this visit (see promptMayShow above).
+  const [promptGate, setPromptGate] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+
+    if (promptMayShow()) {
+      setPromptGate(true);
+    }
+    const releaseGate = () => {
+      if (!promptMayShow()) setPromptGate(false);
+    };
+    // The prompt dispatches this event when it records an answer
+    // (and when it finds an existing subscription); the storage
+    // listener covers answers recorded in another tab, and the
+    // delayed re-check is a belt-and-braces fallback.
+    window.addEventListener(NOTIFY_RESOLVED_EVENT, releaseGate);
+    window.addEventListener("storage", releaseGate);
+    const gateTimer = window.setTimeout(releaseGate, 3000);
 
     async function setup() {
       // iOS check first: in a plain Safari tab there is no
@@ -84,6 +124,9 @@ export default function NotifyButton({ className = "", hideWhenSubscribed = fals
     setup();
     return () => {
       cancelled = true;
+      window.removeEventListener(NOTIFY_RESOLVED_EVENT, releaseGate);
+      window.removeEventListener("storage", releaseGate);
+      window.clearTimeout(gateTimer);
     };
   }, []);
 
@@ -115,11 +158,27 @@ export default function NotifyButton({ className = "", hideWhenSubscribed = fals
     }
   }, [registration]);
 
-  if (state === "loading" || state === "unsupported") {
+  if (state === "loading") {
+    // Reserve the row's height from the first paint so the page
+    // does not grow when the button hydrates in.
+    return (
+      <div
+        className={`notify-wrap ${className}`.trim()}
+        aria-hidden="true"
+      />
+    );
+  }
+
+  if (state === "unsupported") {
     return null;
   }
 
   if (hideWhenSubscribed && hadSubscription && state === "subscribed") {
+    return null;
+  }
+
+  // The prompt card is asking (or about to) — do not ask twice.
+  if (promptGate && state === "ready") {
     return null;
   }
 
