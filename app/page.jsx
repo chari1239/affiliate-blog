@@ -119,16 +119,15 @@ export default async function HomePage() {
         </aside>
       </section>
 
-      <section className="section">
+      <section className="section section-card">
         <div className="section-heading">
           <div>
             <div className="eyebrow">Learn Japanese</div>
             <h2>Learn Japanese from Zero 🇯🇵</h2>
           </div>
           <p className="section-copy section-intro">
-            Free beginner lessons from the very first hiragana — learn each row step by step, then
-            test yourself with interactive reading quizzes. A new lesson every day at 9 PM Japan
-            time.
+            Learn Japanese from zero — free daily lessons in order, with a reading quiz in every
+            set. No sign-up; your progress is saved on your device.
           </p>
         </div>
 
@@ -176,7 +175,7 @@ export default async function HomePage() {
         ) : null}
       </section>
 
-      <section className="section">
+      <section className="section section-card">
         <div className="section-heading">
           <div>
             <div className="eyebrow">Moving to Japan</div>
@@ -186,7 +185,8 @@ export default async function HomePage() {
             New to the neighbourhood? Our community directory for Ojima — the Koto-ku area
             where many Indian families in Tokyo settle — gathers 125+ places on one
             page: schools, clinics, hospitals, the post office, banks and everyday
-            services, each with tap-to-call, a map and one-tap sharing.
+            services, each with tap-to-call, a map and one-tap sharing. More Japan settlement
+            guides are coming — Ojima is the first.
           </p>
         </div>
 
@@ -197,7 +197,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section section-card">
         <div className="section-heading">
           <div>
             <div className="eyebrow">What we cover</div>
@@ -227,7 +227,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section section-card">
         <div className="section-heading">
           <div>
             <div className="eyebrow">Latest articles</div>

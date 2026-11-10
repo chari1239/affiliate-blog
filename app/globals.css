@@ -516,6 +516,36 @@ img {
   padding: 1.25rem 0 3.25rem;
 }
 
+/* Homepage sections as bordered cards, so section text never sits bare on
+   the page background or runs to the screen edge. */
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+/* Inner cards lift off the panel with the solid surface tone. */
+.section-card .highlight-card,
+.section-card .content-card {
+  background: var(--surface-strong);
+}
+
+@media (max-width: 640px) {
+  .section-card {
+    padding: 1rem;
+  }
+
+  /* Mobile-safe section headings: at 360px wide the section box is ~344px
+     and 1.55rem (~25px) keeps even the longest word (~125px) well inside. */
+  .section h2 {
+    font-size: clamp(1.55rem, 6.8vw, 2.4rem);
+    overflow-wrap: break-word;
+  }
+}
+
 .section-heading {
   display: flex;
   justify-content: space-between;
