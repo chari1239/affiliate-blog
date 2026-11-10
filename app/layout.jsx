@@ -2,6 +2,7 @@ import Script from "next/script";
 import "./globals.css";
 import { SiteShell } from "@/components/site-shell";
 import AppDeviceReporter from "@/components/app-device-reporter";
+import NotifyPrompt from "@/components/notify-prompt";
 import { site } from "@/lib/site";
 
 export const metadata = {
@@ -107,6 +108,10 @@ export default function RootLayout({ children }) {
         {/* Counts this device once if the site is opened as an
             installed web app; renders nothing. */}
         <AppDeviceReporter />
+        {/* Once-per-device card offering lesson notifications;
+            renders nothing once the reader has answered (or is
+            already subscribed). */}
+        <NotifyPrompt />
       </body>
     </html>
   );
