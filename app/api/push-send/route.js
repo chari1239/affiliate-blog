@@ -11,6 +11,12 @@ import { site } from "@/lib/site";
 // the request is rejected with 401 — this endpoint is otherwise
 // public, and without the check anyone could notify all subscribers.
 //
+// The webhook fires on Create AND Update, so it also posts here on
+// every edit/republish of an old article. To keep pushes for genuine
+// launches only, the handler below checks the article's publish
+// timestamp and silently skips anything that is not freshly
+// published (see NEW_ARTICLE_WINDOW_MS).
+//
 // VAPID keys come from the environment (NEXT_PUBLIC_VAPID_PUBLIC_KEY
 // and VAPID_PRIVATE_KEY). Expired subscriptions (the push service
 // answers 404/410) are deleted from Sanity, so the "Push
@@ -19,6 +25,20 @@ import { site } from "@/lib/site";
 const PROJECT_ID = "ebw9h979";
 const DATASET = "production";
 const API_VERSION = "2024-10-01";
+
+// How fresh an article's publish timestamp must be for a webhook
+// call to count as a NEW article rather than an edit. The webhook
+// posts within seconds of a Studio publish, so 30 minutes is ample
+// headroom for a genuine launch while still catching every later
+// republish of the same article.
+//
+// Assumption: in this project's flow the `publishedAt` field is set
+// to the publish moment when an article is first published and is
+// left untouched by later edits, so an old publishedAt on a webhook
+// call means "edit", not "launch". Articles whose payload carries
+// no parseable timestamp at all are treated as edits too (skipped):
+// staying silent is safer than re-notifying every subscriber.
+const NEW_ARTICLE_WINDOW_MS = 30 * 60 * 1000;
 
 async function sanityFetch(token, path, options = {}) {
   const res = await fetch(
@@ -63,6 +83,31 @@ export async function POST(request) {
     );
   }
 
+  // New-articles-only gate: the webhook also fires on edits and
+  // republishes, which must NOT push again. The payload is the
+  // article document, so its `publishedAt` comes with it; fall back
+  // to `_createdAt` when the field is absent. Anything whose publish
+  // time is older than the window — or unparseable/missing entirely
+  // — is treated as an edit: answer 200 (so the webhook does not
+  // retry) and send nothing.
+  const publishedAtRaw =
+    body && typeof body.publishedAt === "string" && body.publishedAt
+      ? body.publishedAt
+      : body && typeof body._createdAt === "string"
+        ? body._createdAt
+        : "";
+  const publishedAtMs = Date.parse(publishedAtRaw);
+  if (
+    !Number.isFinite(publishedAtMs) ||
+    Date.now() - publishedAtMs > NEW_ARTICLE_WINDOW_MS
+  ) {
+    return Response.json({
+      skipped: "edit, not a new article",
+      slug,
+      publishedAt: publishedAtRaw || null
+    });
+  }
+
   const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
   const privateKey = process.env.VAPID_PRIVATE_KEY;
   const token = process.env.SANITY_API_WRITE_TOKEN;
@@ -103,10 +148,14 @@ export async function POST(request) {
     privateKey
   );
 
+  // `slug` rides along so the service worker can tag the
+  // notification with it: a repeat push for the same article then
+  // replaces the earlier notification instead of stacking a new one.
   const payload = JSON.stringify({
     title: "New on Nihon Diaries",
     body: title,
-    url: `${site.url}/articles/${slug}`
+    url: `${site.url}/articles/${slug}`,
+    slug
   });
 
   let sent = 0;
