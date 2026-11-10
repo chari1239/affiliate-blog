@@ -34,3 +34,76 @@
   font-size: 0.85rem;
   font-weight: 700;
 }
+
+.path-progress-actions {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+/* "Next up" pill: solid accent so the eye lands on the one card
+   that is the reader's next action. */
+.path-progress-next {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Whole-card tap target: the card's action link stretches over the
+   entire card, so there is no hunting for a small link. */
+.path-progress-card {
+  position: relative;
+}
+
+.path-progress-card-next {
+  border-color: var(--accent);
+}
+
+.path-progress-card-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+/* Per-card learnt checkbox: sits above the stretched card link so
+   tapping it toggles the learnt state instead of navigating. */
+.path-progress-check {
+  position: relative;
+  z-index: 1;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.path-progress-check-on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Completed cards read as done at a glance: soft background, muted
+   title, and (with the cover hidden in the markup) a tighter card. */
+.path-progress-card.is-done {
+  background: var(--card);
+}
+
+.path-progress-card.is-done h2 {
+  color: var(--muted);
+}
+
+.path-progress-completed {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}

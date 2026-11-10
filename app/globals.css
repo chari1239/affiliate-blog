@@ -1405,6 +1405,13 @@ img {
   line-height: 1.55;
 }
 
+.quiz-finish-cheer {
+  color: var(--ink);
+  font-weight: 600;
+  margin: 0.5rem 0 0;
+  line-height: 1.55;
+}
+
 .quiz-finish-actions {
   display: flex;
   justify-content: center;
@@ -1438,15 +1445,4 @@ img {
 
 .quiz-jump:hover {
   text-decoration: underline;
-}
-
-/* Room for the fixed mobile bottom tab bar (components/bottom-nav):
-   the bar is 60px (--bottom-nav-h) plus the phone's safe area, so
-   pad the page shell by the same amount and page content is never
-   hidden behind it. The shell only wraps non-Studio routes — the
-   Studio renders bare children — so the Studio is unaffected. */
-@media (max-width: 767px) {
-  .page-shell {
-    padding-bottom: calc(var(--bottom-nav-h, 60px) + env(safe-area-inset-bottom, 0px));
-  }
 }
