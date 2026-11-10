@@ -86,3 +86,13 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* On phones the bottom tab bar (components/bottom-nav) owns the
+   bottom edge of the screen, so lift this card above it: bar
+   height + safe area + the usual 1rem gap. Kept after the 640px
+   rule above so it also wins in the 640-767px overlap. */
+@media (max-width: 767px) {
+  .notify-prompt {
+    bottom: calc(var(--bottom-nav-h, 60px) + env(safe-area-inset-bottom, 0px) + 1rem);
+  }
+}
