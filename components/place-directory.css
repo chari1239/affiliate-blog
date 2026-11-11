@@ -110,7 +110,7 @@
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 20px;
-  scroll-margin-top: 264px;
+  scroll-margin-top: 280px;
   min-width: 0;
 }
 
@@ -291,8 +291,8 @@
   position: sticky;
   top: 70px;
   z-index: 5;
-  margin-top: 16px;
-  padding: 8px;
+  margin-top: 10px;
+  padding: 6px;
   /* --surface is 95% translucent, which let scrolled cards ghost
      through the sticky bar; --surface-strong is the solid version. */
   background: var(--surface-strong);
@@ -305,7 +305,7 @@
 
 .directory-search {
   width: 100%;
-  min-height: 40px;
+  min-height: 38px;
   padding: 8px 12px;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -335,8 +335,8 @@
   max-width: 100%;
   min-width: 0;
   gap: 6px;
-  margin-top: 8px;
-  padding-bottom: 4px;
+  margin-top: 6px;
+  padding-bottom: 2px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -348,8 +348,8 @@
 
 .filter-chip {
   flex: 0 0 auto;
-  min-height: 40px;
-  padding: 6px 12px;
+  min-height: 36px;
+  padding: 5px 12px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: #fff;
@@ -371,11 +371,11 @@
    chips, shown only while All or Schools & nursery is active. */
 
 .directory-chips-levels {
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .filter-chip-level {
-  min-height: 40px;
+  min-height: 36px;
   padding: 4px 10px;
   background: transparent;
   color: var(--muted);
@@ -394,7 +394,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .directory-count {
@@ -406,7 +406,7 @@
 .filter-clear {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  min-height: 36px;
   padding: 4px 12px;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -565,12 +565,12 @@
 /* On phones the filter bar must clear the sticky site header.
    The header is one brand row now (the badge and subtitle were
    removed from it), and globals.css tracks its height per
-   breakpoint in --header-h (72px desktop / 80px at ≤767px / 77px
-   at ≤640px, where the 48px menu toggle is the row's tallest item
-   and the padding differs). The bar's sticky top and both scroll
-   margins follow the variable instead of a hard-coded guess —
-   the previous fixed values (84px, then 96px) each drifted out of
-   sync with the real header and let the search box slide under it. */
+   breakpoint in --header-h (70px desktop / 70px at ≤767px / 66px
+   at ≤640px, from rendered measurements — see globals.css for the
+   math). The bar's sticky top and both scroll margins follow the
+   variable instead of a hard-coded guess — the previous fixed
+   values (84px, then 96px) each drifted out of sync with the real
+   header and let the search box slide under it. */
 @media (max-width: 767px) {
   #place-directory {
     scroll-margin-top: var(--header-h);
