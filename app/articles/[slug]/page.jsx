@@ -513,7 +513,7 @@ export default async function ArticleDetailPage({ params }) {
         </section>
       </article>
       <BackToTop
-        {...(article.slug === "living-in-ojima-tokyo-guide"
+        {...(directory
           ? { targetId: "place-directory", label: "Back to filters" }
           : {})}
       />
