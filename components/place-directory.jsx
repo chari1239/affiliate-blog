@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { getOpenStatus, openStatusDetail } from "@/lib/open-status";
 import "./place-directory.css";
 
 // Interactive place directory: each place is a card with Call / Website /
@@ -35,6 +36,27 @@ import "./place-directory.css";
 // diet: "Pure veg" keeps only the entries whose data carries
 // pureVeg: true (restaurants and grocery stores alike — the facet is
 // the verified pureVeg flag, wherever the place is listed).
+//
+// Card design (Variant C, approved from the 2026-11-11 mock): the
+// card's header row — icon tile, name and badges — sits on a very pale
+// warm tint band that changes by section (SECTION_TINTS below; only a
+// handful of tints, all pale), while the card body stays white. The
+// icon tile and the English OK pill turn white on the band so they
+// read as pills on the tint, and the accent colour is kept for the
+// Call button and the badges only.
+//
+// Every card also carries a "More details" pill that opens a bottom
+// sheet (a centred dialog on wide screens) with the place's full
+// details — address, complete hours text, the full note, its
+// specialties or levels as quiet pills, and distance where the data
+// has one — plus the full action set. The sheet's "Suggest a fix"
+// reuses the inline suggestion form above.
+//
+// Entries whose data carries a structured "hoursSpec" (see
+// lib/open-status.js — added only where the hours text is exact) show
+// a calm Open now / Closed pill beside the name, computed against
+// Tokyo time and refreshed every five minutes. Entries without a spec
+// show no badge at all: no badge is better than a wrong one.
 
 
 // Button icons are inline SVGs drawn in the current text colour, so every
@@ -94,6 +116,22 @@ function PencilIcon() {
   return (
     <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+    </svg>
+  );
+}
+
+function ChevronDownIcon() {
+  return (
+    <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M18 6 6 18M6 6l12 12" />
     </svg>
   );
 }
@@ -469,86 +507,274 @@ function EnglishBadge() {
   return <span className="english-badge">English OK</span>;
 }
 
-function PlaceCard({ entry, onSuggest, SectionIcon }) {
+// The pale warm tint behind each card's header band, keyed by section
+// title — few and pale by design, so each section gets a quiet
+// identity without the guide turning colourful. Sections not listed
+// here (dentists, pharmacies, official help, utilities, parks…) share
+// the plain warm-cream default.
+const SECTION_TINTS = {
+  "Clinics & hospitals": "#f9ece1", // pale apricot
+  Restaurants: "#faf2dc", // pale butter
+  "Schools & nursery": "#edf1e2", // pale sage
+  "Groceries & Indian stores": "#f6ecdd", // pale sand
+};
+const SECTION_TINT_DEFAULT = "#f6f0e6"; // warm cream
+
+// Open now / Closed pill beside the card name — a soft green dot when
+// the place is open at the current Tokyo time, a quiet grey dot when
+// it is closed. Rendered only for entries with a structured hoursSpec.
+function OpenBadge({ status }) {
+  if (!status) return null;
+  return (
+    <span className={status.open ? "open-badge open-badge-open" : "open-badge open-badge-closed"}>
+      <span className="open-badge-dot" aria-hidden="true" />
+      {status.open ? "Open now" : "Closed"}
+    </span>
+  );
+}
+
+function PlaceCard({ entry, sectionTitle, status, onSuggest, onDetails, SectionIcon }) {
   const tel = telHref(entry.phone);
 
   return (
     <article className="place-card" id={anchorId(entry.name)}>
-      <div className="place-head">
-        {SectionIcon ? (
-          <span className="place-badge" aria-hidden="true">
-            <SectionIcon />
-          </span>
-        ) : null}
-        <h3 className="place-name">
-          {entry.name}
-          {entry.pureVeg ? <VegMark /> : null}
-          {entry.english ? <EnglishBadge /> : null}
-          {entry.jp ? <span className="place-jp">{entry.jp}</span> : null}
-        </h3>
+      <div
+        className="place-band"
+        style={{ background: SECTION_TINTS[sectionTitle] || SECTION_TINT_DEFAULT }}
+      >
+        <div className="place-head">
+          {SectionIcon ? (
+            <span className="place-badge" aria-hidden="true">
+              <SectionIcon />
+            </span>
+          ) : null}
+          <h3 className="place-name">
+            {entry.name}
+            <OpenBadge status={status} />
+            {entry.pureVeg ? <VegMark /> : null}
+            {entry.english ? <EnglishBadge /> : null}
+            {entry.jp ? <span className="place-jp">{entry.jp}</span> : null}
+          </h3>
+        </div>
       </div>
-      {entry.note ? <p className="place-note">{entry.note}</p> : null}
-      {entry.address ? (
-        <p className="place-address">
-          <PinIcon /> {entry.address}
-        </p>
-      ) : null}
-      {entry.hours ? (
-        <p className="place-hours">
-          <ClockIcon /> {entry.hours}
-        </p>
-      ) : null}
-      <div className="place-actions">
-        {tel ? (
-          <a className="place-btn place-btn-call" href={tel}>
-            <PhoneIcon /> Call
-          </a>
+      <div className="place-body">
+        {entry.note ? <p className="place-note">{entry.note}</p> : null}
+        {entry.address ? (
+          <p className="place-address">
+            <PinIcon /> {entry.address}
+          </p>
         ) : null}
-        {entry.website ? (
-          <a
-            className="place-btn"
-            href={entry.website}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {websiteFavicon(entry.website) ? (
-              <img
-                className="btn-favicon"
-                src={websiteFavicon(entry.website)}
-                alt=""
-                width="16"
-                height="16"
-                loading="lazy"
-              />
-            ) : (
-              <GlobeIcon />
-            )}{" "}
-            Website
-          </a>
+        {entry.hours ? (
+          <p className="place-hours">
+            <ClockIcon /> {entry.hours}
+          </p>
         ) : null}
-        {entry.map ? (
-          <a className="place-btn" href={entry.map} target="_blank" rel="noreferrer">
-            <PinIcon /> Map
-          </a>
-        ) : null}
-        <button
-          type="button"
-          className="place-btn place-btn-share"
-          onClick={() => shareText(entry.name, placeShareText(entry))}
-        >
-          <ShareIcon /> Share
-        </button>
-        {onSuggest ? (
+        <div className="place-actions">
+          {tel ? (
+            <a className="place-btn place-btn-call" href={tel}>
+              <PhoneIcon /> Call
+            </a>
+          ) : null}
+          {entry.website ? (
+            <a
+              className="place-btn"
+              href={entry.website}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {websiteFavicon(entry.website) ? (
+                <img
+                  className="btn-favicon"
+                  src={websiteFavicon(entry.website)}
+                  alt=""
+                  width="16"
+                  height="16"
+                  loading="lazy"
+                />
+              ) : (
+                <GlobeIcon />
+              )}{" "}
+              Website
+            </a>
+          ) : null}
+          {entry.map ? (
+            <a className="place-btn" href={entry.map} target="_blank" rel="noreferrer">
+              <PinIcon /> Map
+            </a>
+          ) : null}
           <button
             type="button"
-            className="place-btn-fix"
-            onClick={() => onSuggest(entry.name)}
+            className="place-btn place-btn-share"
+            onClick={() => shareText(entry.name, placeShareText(entry))}
           >
-            <PencilIcon /> Suggest a fix
+            <ShareIcon /> Share
           </button>
-        ) : null}
+          <button
+            type="button"
+            className="place-btn place-btn-more"
+            onClick={() => onDetails(entry)}
+            aria-haspopup="dialog"
+          >
+            More details <ChevronDownIcon />
+          </button>
+          {onSuggest ? (
+            <button
+              type="button"
+              className="place-btn-fix"
+              onClick={() => onSuggest(entry.name)}
+            >
+              <PencilIcon /> Suggest a fix
+            </button>
+          ) : null}
+        </div>
       </div>
     </article>
+  );
+}
+
+// The "More details" sheet: a bottom sheet on phones, a centred
+// dialog on wide screens. It carries everything the card keeps short —
+// the full note, the complete hours text with the open/closed detail,
+// the address, the place's specialties or levels as quiet pills and
+// its distance — plus the full action set. Escape, a backdrop tap or
+// the Close row dismisses it; the page behind is scroll-locked while
+// it is open, and focus moves to the Close button on open and back to
+// the card's "More details" button on close.
+function PlaceDetailsSheet({ entry, status, onClose, onSuggest }) {
+  const tel = telHref(entry.phone);
+  const closeRef = useRef(null);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    const previouslyFocused = document.activeElement;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+    const onKey = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKey);
+      if (previouslyFocused && typeof previouslyFocused.focus === "function") {
+        previouslyFocused.focus();
+      }
+    };
+  }, [onClose]);
+
+  const detail = openStatusDetail(status);
+  const facetLabels = [
+    ...(entry.specialties || []).map(
+      (value) => CLINIC_SPECIALTIES.find((s) => s.value === value)?.label || value
+    ),
+    ...(entry.levels || []).map(
+      (value) => SCHOOL_LEVELS.find((l) => l.value === value)?.label || value
+    ),
+  ];
+
+  return (
+    <div className="place-sheet-scrim" onClick={onClose}>
+      <div
+        className="place-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-label={entry.name}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="place-sheet-handle" aria-hidden="true" />
+        <h3 className="place-sheet-name">{entry.name}</h3>
+        {entry.jp ? <span className="place-sheet-jp">{entry.jp}</span> : null}
+        <div className="place-sheet-badges">
+          <OpenBadge status={status} />
+          {entry.english ? <EnglishBadge /> : null}
+          {entry.pureVeg ? <VegMark /> : null}
+          {facetLabels.map((label) => (
+            <span className="place-sheet-pill" key={label}>
+              {label}
+            </span>
+          ))}
+          {entry.distanceKm != null ? (
+            <span className="place-sheet-pill">{entry.distanceKm} km away</span>
+          ) : null}
+        </div>
+        {entry.address ? (
+          <div className="place-sheet-field">
+            <p className="place-sheet-label">Address</p>
+            <p className="place-sheet-value">{entry.address}</p>
+          </div>
+        ) : null}
+        {entry.hours ? (
+          <div className="place-sheet-field">
+            <p className="place-sheet-label">Hours</p>
+            <p className="place-sheet-value">
+              {entry.hours}
+              {detail ? <span className="place-sheet-sub">{detail}</span> : null}
+            </p>
+          </div>
+        ) : null}
+        {entry.note ? (
+          <div className="place-sheet-field">
+            <p className="place-sheet-label">About</p>
+            <p className="place-sheet-value">{entry.note}</p>
+          </div>
+        ) : null}
+        <div className="place-sheet-actions">
+          {tel ? (
+            <a className="place-btn place-btn-call" href={tel}>
+              <PhoneIcon /> Call
+            </a>
+          ) : null}
+          {entry.website ? (
+            <a
+              className="place-btn"
+              href={entry.website}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {websiteFavicon(entry.website) ? (
+                <img
+                  className="btn-favicon"
+                  src={websiteFavicon(entry.website)}
+                  alt=""
+                  width="16"
+                  height="16"
+                  loading="lazy"
+                />
+              ) : (
+                <GlobeIcon />
+              )}{" "}
+              Website
+            </a>
+          ) : null}
+          {entry.map ? (
+            <a className="place-btn" href={entry.map} target="_blank" rel="noreferrer">
+              <PinIcon /> Map
+            </a>
+          ) : null}
+          <button
+            type="button"
+            className="place-btn place-btn-share"
+            onClick={() => shareText(entry.name, placeShareText(entry))}
+          >
+            <ShareIcon /> Share
+          </button>
+          {onSuggest ? (
+            <button
+              type="button"
+              className="place-btn-fix"
+              onClick={() => onSuggest(entry.name)}
+            >
+              <PencilIcon /> Suggest a fix
+            </button>
+          ) : null}
+        </div>
+        <div className="place-sheet-closerow">
+          <button type="button" className="place-sheet-close" ref={closeRef} onClick={onClose}>
+            Close <CloseIcon />
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -593,6 +819,22 @@ export default function PlaceDirectory({ directory, articleSlug }) {
   const [activeLevel, setActiveLevel] = useState("All");
   const [activeSpecialty, setActiveSpecialty] = useState("All");
   const [activeVeg, setActiveVeg] = useState("All");
+
+  // Open now / Closed: the current time, set on mount (so the static
+  // HTML never carries a stale badge) and refreshed every five
+  // minutes. Statuses are computed from it in Tokyo time by
+  // lib/open-status.js, whatever timezone the reader is in.
+  const [now, setNow] = useState(null);
+  useEffect(() => {
+    setNow(new Date());
+    const timer = setInterval(() => setNow(new Date()), 5 * 60 * 1000);
+    return () => clearInterval(timer);
+  }, []);
+  const statusFor = (entry) =>
+    now && entry.hoursSpec ? getOpenStatus(entry.hoursSpec, now) : null;
+
+  // The entry whose "More details" sheet is open, if any.
+  const [detailsEntry, setDetailsEntry] = useState(null);
 
   // Suggest-an-update: an inline form (top of the directory) that posts
   // to /api/suggestion. Suggestions are private — they land in the
@@ -925,6 +1167,22 @@ export default function PlaceDirectory({ directory, articleSlug }) {
         </div>
       </div>
 
+      {detailsEntry ? (
+        <PlaceDetailsSheet
+          entry={detailsEntry}
+          status={statusFor(detailsEntry)}
+          onClose={() => setDetailsEntry(null)}
+          onSuggest={
+            articleSlug
+              ? (placeName) => {
+                  setDetailsEntry(null);
+                  openSuggestForPlace(placeName);
+                }
+              : null
+          }
+        />
+      ) : null}
+
       {totalShown === 0 ? (
         <p className="directory-empty">No places match — try another word.</p>
       ) : (
@@ -943,7 +1201,10 @@ export default function PlaceDirectory({ directory, articleSlug }) {
                   <PlaceCard
                     key={entry.name}
                     entry={entry}
+                    sectionTitle={section.title}
+                    status={statusFor(entry)}
                     onSuggest={articleSlug ? openSuggestForPlace : null}
+                    onDetails={setDetailsEntry}
                     SectionIcon={SectionIcon}
                   />
                 ))}
