@@ -18,6 +18,20 @@ import "./articles-browser.css";
 // A Bookmarks chip narrows the list further to the reader's saved
 // articles (device-only, from lib/progress.js), composing with the
 // search text and the category chip as one more filter dimension.
+// Learn Japanese lessons are NOT listed here at all: they live on
+// the /learn-japanese hub, in order, and showing them in both
+// places was pure repetition. The server still passes them in as
+// props for exactly one exception — a lesson the reader bookmarked
+// still shows in the Bookmarks view, so a saved article never
+// dead-ends.
+
+const LEARN_CATEGORY_SLUG = "learn-japanese";
+
+function isLearnArticle(article) {
+  return (article.categories || []).some(
+    (category) => category.slug === LEARN_CATEGORY_SLUG
+  );
+}
 
 // The bookmark glyph for the "Bookmarks" filter chip — the same
 // ribbon as the BookmarkButton, drawn small enough to sit inline
@@ -71,11 +85,16 @@ export default function ArticlesBrowser({ articles }) {
     };
   }, []);
 
-  // One chip per category that actually appears in the data, in
-  // first-seen order.
+  // One chip per category that actually appears in the listed
+  // articles, in first-seen order. Lessons are skipped as a whole,
+  // so no "Learn Japanese" chip appears — the lessons are reached
+  // from the Learn page, not from a category here.
   const categories = useMemo(() => {
     const seen = new Map();
     for (const article of articles) {
+      if (isLearnArticle(article)) {
+        continue;
+      }
       for (const category of article.categories || []) {
         if (category.slug && !seen.has(category.slug)) {
           seen.set(category.slug, category.title);
@@ -90,6 +109,13 @@ export default function ArticlesBrowser({ articles }) {
 
   const visible = (articles || []).filter((article) => {
     if (bookmarksOnly && !bookmarks[article.slug]) {
+      return false;
+    }
+    // Lessons stay out of the list, the search results and the
+    // count — except in the Bookmarks view above, where the first
+    // check has already narrowed the list to bookmarked slugs, so
+    // a bookmarked lesson still reaches its reader.
+    if (isLearnArticle(article) && !bookmarksOnly) {
       return false;
     }
     if (activeCategory !== "all") {
@@ -121,6 +147,16 @@ export default function ArticlesBrowser({ articles }) {
 
   return (
     <>
+      <div className="articles-learn-strip">
+        <p>
+          Learning Japanese? The lessons live on the Learn page, in order, with a quiz in
+          every set.
+        </p>
+        <Link href="/learn-japanese" className="articles-learn-link">
+          Go to Learn Japanese →
+        </Link>
+      </div>
+
       <div className="articles-filters">
         <input
           type="search"
