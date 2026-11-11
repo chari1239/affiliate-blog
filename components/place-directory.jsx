@@ -14,19 +14,27 @@ import "./place-directory.css";
 // name, note and address (plus a few type keywords) — never the phone.
 //
 // Within the schools section, a second, quieter chip row filters by school
-// level (the "level" field in the data): nursery / kindergarten /
-// elementary / junior-high / international. While a level is active only
-// schools of that level are shown; the search text still applies on top.
+// level (the "levels" field in the data — an array, because one school
+// can serve several levels): nursery / kindergarten / elementary /
+// junior-high / international. While a level is active only schools
+// whose levels include it are shown; the search text still applies
+// on top.
 //
 // Within the clinics section, a second, quieter chip row filters by
-// clinic specialty (the "specialty" field in the data): general
+// clinic specialty (the "specialties" field in the data — also an
+// array, one value per department a clinic officially runs): general
 // hospitals / internal medicine / pediatrics / ENT / obstetrics &
 // gynaecology / orthopedics / ophthalmology / dermatology / urology /
 // mental health / other & information. While a specialty is active
-// only clinics of that specialty are shown (clinic entries without a
-// specialty stay visible under "All" only); the search text still
-// applies on top. Clinic cards whose data carries "english": true
-// show an "English OK" pill beside the name.
+// only clinics whose specialties include it are shown (clinic entries
+// without specialties stay visible under "All" only); the search text
+// still applies on top. Clinic cards whose data carries
+// "english": true show an "English OK" pill beside the name.
+//
+// A third sub-row, shown for All / Restaurants, filters food places by
+// diet: "Pure veg" keeps only the entries whose data carries
+// pureVeg: true (restaurants and grocery stores alike — the facet is
+// the verified pureVeg flag, wherever the place is listed).
 
 
 // Button icons are inline SVGs drawn in the current text colour, so every
@@ -572,11 +580,19 @@ const CLINIC_SPECIALTIES = [
   { value: "other", label: "Other & information" },
 ];
 
+const RESTAURANTS_SECTION = "Restaurants";
+
+const VEG_OPTIONS = [
+  { value: "All", label: "All diets" },
+  { value: "pureVeg", label: "Pure veg" },
+];
+
 export default function PlaceDirectory({ directory, articleSlug }) {
   const [query, setQuery] = useState("");
   const [activeSection, setActiveSection] = useState("All");
   const [activeLevel, setActiveLevel] = useState("All");
   const [activeSpecialty, setActiveSpecialty] = useState("All");
+  const [activeVeg, setActiveVeg] = useState("All");
 
   // Suggest-an-update: an inline form (top of the directory) that posts
   // to /api/suggestion. Suggestions are private — they land in the
@@ -648,6 +664,7 @@ export default function PlaceDirectory({ directory, articleSlug }) {
     const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
     const levelActive = activeLevel !== "All";
     const specialtyActive = activeSpecialty !== "All";
+    const vegActive = activeVeg !== "All";
     return sections
       .filter((section) => activeSection === "All" || section.title === activeSection)
       .filter((section) => !levelActive || section.title === SCHOOLS_SECTION)
@@ -656,8 +673,10 @@ export default function PlaceDirectory({ directory, articleSlug }) {
         ...section,
         entries: sortByDistance(
           section.entries.filter((entry) => {
-            if (levelActive && entry.level !== activeLevel) return false;
-            if (specialtyActive && entry.specialty !== activeSpecialty) return false;
+            if (levelActive && !(entry.levels || []).includes(activeLevel)) return false;
+            if (specialtyActive && !(entry.specialties || []).includes(activeSpecialty))
+              return false;
+            if (vegActive && entry.pureVeg !== true) return false;
             if (!tokens.length) return true;
             const text = entrySearchText(section.title, entry);
             return tokens.every((token) => text.includes(token));
@@ -665,7 +684,7 @@ export default function PlaceDirectory({ directory, articleSlug }) {
         ),
       }))
       .filter((section) => section.entries.length > 0);
-  }, [sections, query, activeSection, activeLevel, activeSpecialty]);
+  }, [sections, query, activeSection, activeLevel, activeSpecialty, activeVeg]);
 
   if (!directory?.sections?.length) return null;
 
@@ -674,13 +693,15 @@ export default function PlaceDirectory({ directory, articleSlug }) {
     query.trim() !== "" ||
     activeSection !== "All" ||
     activeLevel !== "All" ||
-    activeSpecialty !== "All";
+    activeSpecialty !== "All" ||
+    activeVeg !== "All";
 
   const clearFilters = () => {
     setQuery("");
     setActiveSection("All");
     setActiveLevel("All");
     setActiveSpecialty("All");
+    setActiveVeg("All");
   };
 
   const pickSection = (title) => {
@@ -691,6 +712,8 @@ export default function PlaceDirectory({ directory, articleSlug }) {
     // Same for the specialty row: it only exists for All / Clinics &
     // hospitals.
     if (title !== "All" && title !== CLINICS_SECTION) setActiveSpecialty("All");
+    // And the diet row only exists for All / Restaurants.
+    if (title !== "All" && title !== RESTAURANTS_SECTION) setActiveVeg("All");
   };
 
   const shareGuide = () => {
@@ -863,6 +886,29 @@ export default function PlaceDirectory({ directory, articleSlug }) {
                 aria-pressed={specialty.value === activeSpecialty}
               >
                 {specialty.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        {activeSection === "All" || activeSection === RESTAURANTS_SECTION ? (
+          <div
+            className="directory-chips directory-chips-levels"
+            role="group"
+            aria-label="Filter restaurants"
+          >
+            {VEG_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                className={
+                  option.value === activeVeg
+                    ? "filter-chip filter-chip-level filter-chip-level-active"
+                    : "filter-chip filter-chip-level"
+                }
+                onClick={() => setActiveVeg(option.value)}
+                aria-pressed={option.value === activeVeg}
+              >
+                {option.label}
               </button>
             ))}
           </div>
