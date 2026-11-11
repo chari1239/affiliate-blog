@@ -30,6 +30,26 @@
   flex: 0 0 auto;
 }
 
+/* Labelled pill variant (variant="pill"): the same chrome stretched
+   into a 42px-high pill — the BookmarkButton circle's height, so
+   the two sit level side by side — with the word "Share" beside the
+   glyph. The label states the action in the reader's words instead
+   of asking them to guess an icon. Used on the /articles cards. */
+.share-button-pill {
+  width: auto;
+  height: 42px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  gap: 0.45rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.share-button-text {
+  line-height: 1;
+  white-space: nowrap;
+}
+
 .share-button-sr-only {
   position: absolute;
   width: 1px;

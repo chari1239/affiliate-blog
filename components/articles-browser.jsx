@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getBookmarks, PROGRESS_EVENT } from "@/lib/progress";
 import BookmarkButton from "@/components/bookmark-button";
+import ShareButton from "@/components/share-button";
 import "./articles-browser.css";
 
 // The /articles list with a search box and category chips on top.
@@ -215,27 +216,39 @@ export default function ArticlesBrowser({ articles }) {
                   />
                 </Link>
               ) : null}
-              <div className="pill-row">
-                {(article.categories || []).map((category) => (
-                  <span key={category.slug || category.title} className="pill">
-                    {category.title}
-                  </span>
-                ))}
-              </div>
-              <h2>{article.title}</h2>
               <div className="article-card-meta">
-                {article.publishedAt ? (
-                  <p className="article-meta">{formatDate(article.publishedAt)}</p>
-                ) : (
-                  <span />
-                )}
+                <div className="article-card-meta-left">
+                  {(article.categories || []).map((category) => (
+                    <span key={category.slug || category.title} className="pill">
+                      {category.title}
+                    </span>
+                  ))}
+                  {article.publishedAt ? (
+                    <span className="article-meta">{formatDate(article.publishedAt)}</span>
+                  ) : null}
+                </div>
                 <BookmarkButton slug={article.slug} />
               </div>
-              <p className="card-copy">{article.excerpt}</p>
-              <div className="hero-actions">
-                <Link href={`/articles/${article.slug}`} className="btn">
-                  Read article
+              <h2>
+                <Link
+                  href={`/articles/${article.slug}`}
+                  className="article-card-title-link"
+                >
+                  {article.title}
                 </Link>
+              </h2>
+              <p className="card-copy">{article.excerpt}</p>
+              <div className="article-card-footer">
+                <span className="article-card-read" aria-hidden="true">
+                  Read article →
+                </span>
+                <ShareButton
+                  title={article.title}
+                  text={article.title}
+                  url={`/articles/${article.slug}`}
+                  label="Share this article"
+                  variant="pill"
+                />
               </div>
             </article>
           ))}
