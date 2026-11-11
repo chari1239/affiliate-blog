@@ -15,7 +15,7 @@
   /* Sticky site-header height (one brand row since the badge and
      subtitle left the header). Sticky offsets that must clear the
      header — the Ojima filter bar — read this instead of guessing. */
-  --header-h: 72px;
+  --header-h: 70px;
 }
 
 * {
@@ -85,7 +85,7 @@ img {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.95rem 1rem;
+  padding: 0.7rem 1rem;
 }
 
 .brand-block {
@@ -152,21 +152,24 @@ img {
   font-size: 0.98rem;
 }
 
-/* --header-h on smaller screens. The header stays one row at every
-   width now, but at <=960px the 48px menu toggle shares the row and
-   becomes its tallest item, and at <=640px the header-inner vertical
-   padding drops from 0.95rem to 0.85rem:
-   - 641-767px: 30px padding + 48px toggle + 1px border = ~79px -> 80px
-   - <=640px:   27px padding + 48px toggle + 1px border = ~76px -> 77px */
+/* --header-h per breakpoint, set from rendered measurements of the
+   real header plus a small safety margin. The header stays one row
+   at every width:
+   - desktop:    22px padding (0.7rem x 2) + 45px nav links (the
+     row's tallest item) + 1px border = ~68px measured -> 70px
+   - 641-767px:  22px padding + 44px menu toggle (2.75rem, the row's
+     tallest item there) + 1px border = ~67px measured -> 70px
+   - <=640px:    19px padding (0.6rem x 2, the phone padding) + 44px
+     toggle + 1px border = ~64px measured -> 66px */
 @media (max-width: 767px) {
   :root {
-    --header-h: 80px;
+    --header-h: 70px;
   }
 }
 
 @media (max-width: 640px) {
   :root {
-    --header-h: 77px;
+    --header-h: 66px;
   }
 }
 
@@ -207,8 +210,8 @@ img {
 
 .nav-toggle {
   display: none;
-  width: 3rem;
-  height: 3rem;
+  width: 2.75rem;
+  height: 2.75rem;
   align-items: center;
   justify-content: center;
   flex-direction: column;
@@ -1193,7 +1196,7 @@ img {
 
   .site-header-inner {
     width: min(calc(100% - 2rem), var(--max-width));
-    padding: 0.85rem 0;
+    padding: 0.6rem 0;
   }
 
   .nav-links {
