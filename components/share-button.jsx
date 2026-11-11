@@ -21,12 +21,22 @@ function ShareIcon() {
 // link when it is not (or when the reader dismisses the share sheet).
 // `url` may be an absolute URL (used as-is) or a site path such as
 // "/articles/my-post", which is made absolute from the current origin
-// at click time. The button itself is icon-only — a circular button
-// with the share glyph; `label` survives as the accessible name
-// (aria-label, tooltip and a visually-hidden span) so call sites
-// still say what is being shared ("Share this article", ...).
-export default function ShareButton({ title, text, url, label = "Share" }) {
-  const handleShare = async () => {
+// at click time. In its default form the button is icon-only — a
+// circular button with the share glyph; `label` survives as the
+// accessible name (aria-label, tooltip and a visually-hidden span)
+// so call sites still say what is being shared ("Share this
+// article", ...). With variant="pill" the word "Share" is rendered
+// next to the glyph — the labelled form used on the /articles cards,
+// where an unlabelled circle was easy to miss. The click is always
+// swallowed (preventDefault + stopPropagation, like the
+// BookmarkButton) so the button can sit inside a card whose whole
+// surface navigates without ever triggering that navigation.
+export default function ShareButton({ title, text, url, label = "Share", variant }) {
+  const handleShare = async (event) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     const absoluteUrl = url
       ? url.startsWith("http")
         ? url
@@ -46,16 +56,22 @@ export default function ShareButton({ title, text, url, label = "Share" }) {
     window.open(`https://wa.me/?text=${encodeURIComponent(waText)}`, "_blank", "noopener");
   };
 
+  const isPill = variant === "pill";
+
   return (
     <button
       type="button"
-      className="share-button"
+      className={isPill ? "share-button share-button-pill" : "share-button"}
       onClick={handleShare}
       aria-label={label}
       title={label}
     >
       <ShareIcon />
-      <span className="share-button-sr-only">{label}</span>
+      {isPill ? (
+        <span className="share-button-text">Share</span>
+      ) : (
+        <span className="share-button-sr-only">{label}</span>
+      )}
     </button>
   );
 }
