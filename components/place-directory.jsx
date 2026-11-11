@@ -17,6 +17,16 @@ import "./place-directory.css";
 // level (the "level" field in the data): nursery / kindergarten /
 // elementary / junior-high / international. While a level is active only
 // schools of that level are shown; the search text still applies on top.
+//
+// Within the clinics section, a second, quieter chip row filters by
+// clinic specialty (the "specialty" field in the data): general
+// hospitals / internal medicine / pediatrics / ENT / obstetrics &
+// gynaecology / orthopedics / ophthalmology / dermatology / urology /
+// mental health / other & information. While a specialty is active
+// only clinics of that specialty are shown (clinic entries without a
+// specialty stay visible under "All" only); the search text still
+// applies on top. Clinic cards whose data carries "english": true
+// show an "English OK" pill beside the name.
 
 
 // Button icons are inline SVGs drawn in the current text colour, so every
@@ -444,6 +454,13 @@ function sortByDistance(entries) {
     .map(({ entry }) => entry);
 }
 
+// "English OK" pill beside the name on cards whose data carries
+// english: true — clinics and hospitals whose own listing says they
+// can handle English-speaking patients.
+function EnglishBadge() {
+  return <span className="english-badge">English OK</span>;
+}
+
 function PlaceCard({ entry, onSuggest, SectionIcon }) {
   const tel = telHref(entry.phone);
 
@@ -458,6 +475,7 @@ function PlaceCard({ entry, onSuggest, SectionIcon }) {
         <h3 className="place-name">
           {entry.name}
           {entry.pureVeg ? <VegMark /> : null}
+          {entry.english ? <EnglishBadge /> : null}
           {entry.jp ? <span className="place-jp">{entry.jp}</span> : null}
         </h3>
       </div>
@@ -537,10 +555,28 @@ const SCHOOL_LEVELS = [
   { value: "international", label: "International" },
 ];
 
+const CLINICS_SECTION = "Clinics & hospitals";
+
+const CLINIC_SPECIALTIES = [
+  { value: "All", label: "All specialties" },
+  { value: "general", label: "General hospitals" },
+  { value: "internal", label: "Internal medicine" },
+  { value: "pediatrics", label: "Pediatrics" },
+  { value: "ent", label: "ENT" },
+  { value: "obgyn", label: "Obstetrics & gynaecology" },
+  { value: "orthopedics", label: "Orthopedics" },
+  { value: "ophthalmology", label: "Ophthalmology" },
+  { value: "dermatology", label: "Dermatology" },
+  { value: "urology", label: "Urology" },
+  { value: "mental-health", label: "Mental health" },
+  { value: "other", label: "Other & information" },
+];
+
 export default function PlaceDirectory({ directory, articleSlug }) {
   const [query, setQuery] = useState("");
   const [activeSection, setActiveSection] = useState("All");
   const [activeLevel, setActiveLevel] = useState("All");
+  const [activeSpecialty, setActiveSpecialty] = useState("All");
 
   // Suggest-an-update: an inline form (top of the directory) that posts
   // to /api/suggestion. Suggestions are private — they land in the
@@ -611,14 +647,17 @@ export default function PlaceDirectory({ directory, articleSlug }) {
   const visible = useMemo(() => {
     const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
     const levelActive = activeLevel !== "All";
+    const specialtyActive = activeSpecialty !== "All";
     return sections
       .filter((section) => activeSection === "All" || section.title === activeSection)
       .filter((section) => !levelActive || section.title === SCHOOLS_SECTION)
+      .filter((section) => !specialtyActive || section.title === CLINICS_SECTION)
       .map((section) => ({
         ...section,
         entries: sortByDistance(
           section.entries.filter((entry) => {
             if (levelActive && entry.level !== activeLevel) return false;
+            if (specialtyActive && entry.specialty !== activeSpecialty) return false;
             if (!tokens.length) return true;
             const text = entrySearchText(section.title, entry);
             return tokens.every((token) => text.includes(token));
@@ -626,18 +665,22 @@ export default function PlaceDirectory({ directory, articleSlug }) {
         ),
       }))
       .filter((section) => section.entries.length > 0);
-  }, [sections, query, activeSection, activeLevel]);
+  }, [sections, query, activeSection, activeLevel, activeSpecialty]);
 
   if (!directory?.sections?.length) return null;
 
   const totalShown = visible.reduce((sum, section) => sum + section.entries.length, 0);
   const isFiltering =
-    query.trim() !== "" || activeSection !== "All" || activeLevel !== "All";
+    query.trim() !== "" ||
+    activeSection !== "All" ||
+    activeLevel !== "All" ||
+    activeSpecialty !== "All";
 
   const clearFilters = () => {
     setQuery("");
     setActiveSection("All");
     setActiveLevel("All");
+    setActiveSpecialty("All");
   };
 
   const pickSection = (title) => {
@@ -645,6 +688,9 @@ export default function PlaceDirectory({ directory, articleSlug }) {
     // The level row only exists for All / Schools & nursery; leaving it
     // active under another category would hide everything, so reset it.
     if (title !== "All" && title !== SCHOOLS_SECTION) setActiveLevel("All");
+    // Same for the specialty row: it only exists for All / Clinics &
+    // hospitals.
+    if (title !== "All" && title !== CLINICS_SECTION) setActiveSpecialty("All");
   };
 
   const shareGuide = () => {
@@ -794,6 +840,29 @@ export default function PlaceDirectory({ directory, articleSlug }) {
                 aria-pressed={level.value === activeLevel}
               >
                 {level.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        {activeSection === "All" || activeSection === CLINICS_SECTION ? (
+          <div
+            className="directory-chips directory-chips-levels"
+            role="group"
+            aria-label="Filter clinics by specialty"
+          >
+            {CLINIC_SPECIALTIES.map((specialty) => (
+              <button
+                key={specialty.value}
+                type="button"
+                className={
+                  specialty.value === activeSpecialty
+                    ? "filter-chip filter-chip-level filter-chip-level-active"
+                    : "filter-chip filter-chip-level"
+                }
+                onClick={() => setActiveSpecialty(specialty.value)}
+                aria-pressed={specialty.value === activeSpecialty}
+              >
+                {specialty.label}
               </button>
             ))}
           </div>
