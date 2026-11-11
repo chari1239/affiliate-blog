@@ -1,6 +1,8 @@
 /* Embedded lesson video — one bordered panel in the same card
-   language as the quiz and the FAQ block, with a responsive 16:9
-   player inside. Mobile-first, built on the site's design tokens.
+   language as the quiz and the FAQ block, with a portrait 9:16
+   player inside: every embedded video is a vertical Short/reel,
+   so the frame matches the video instead of letterboxing it.
+   Mobile-first, built on the site's design tokens.
    Imported by components/video-embed.jsx. */
 
 .article-video {
@@ -22,7 +24,10 @@
 
 .article-video-frame {
   position: relative;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 9 / 16;
+  width: 100%;
+  max-width: 380px;
+  margin-inline: auto;
   overflow: hidden;
   border-radius: 16px;
   background: #000;
