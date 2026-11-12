@@ -115,6 +115,14 @@ const portableTextComponents = {
 // whose text starts with "Affiliate disclosure:" before rendering.
 // This is a rendering filter only; the stored body is never changed,
 // and the coded bottom disclosure below is untouched.
+// The plain text of a Portable Text block: its spans joined.
+function blockText(block) {
+  return (block?.children || [])
+    .map((child) => (typeof child?.text === "string" ? child.text : ""))
+    .join("")
+    .trim();
+}
+
 function stripDisclosureBlocks(body) {
   if (!Array.isArray(body)) {
     return [];
@@ -123,12 +131,47 @@ function stripDisclosureBlocks(body) {
     if (block?._type !== "block") {
       return true;
     }
-    const text = (block.children || [])
-      .map((child) => (typeof child?.text === "string" ? child.text : ""))
-      .join("")
-      .trim();
-    return !text.startsWith("Affiliate disclosure:");
+    return !blockText(block).startsWith("Affiliate disclosure:");
   });
+}
+
+// Lead-quiz articles (the vocabulary sets and the Full Test) already
+// show everything their Sanity body repeats: the quiz itself, the
+// word review cards and the video embed. The one part of the body
+// worth keeping is the letters recap — the "All N letters so far"
+// glance at every letter taught up to that step, which the reader
+// uses as a revision aid. Keep only that section: the H2 whose text
+// mentions "letters so far" plus the letter-row lines directly under
+// it ("Vowels …", "K-row …", …). The intro and explainer paragraphs
+// before it, and the navigation / call-to-action prose after the
+// rows, are dropped. A lead-quiz article with no recap section in
+// its body renders no body at all. This is a rendering filter only;
+// the stored body is never changed.
+function extractLettersRecap(body) {
+  if (!Array.isArray(body)) {
+    return [];
+  }
+  const start = body.findIndex(
+    (block) =>
+      block?._type === "block" &&
+      block?.style === "h2" &&
+      /letters so far/i.test(blockText(block))
+  );
+  if (start === -1) {
+    return [];
+  }
+  const recap = [body[start]];
+  for (let index = start + 1; index < body.length; index += 1) {
+    const block = body[index];
+    if (
+      block?._type !== "block" ||
+      !/^(Vowels|[A-Z]-row)\b/.test(blockText(block))
+    ) {
+      break;
+    }
+    recap.push(block);
+  }
+  return recap;
 }
 
 // Schema.org type per directory section, for the ItemList below.
@@ -323,11 +366,22 @@ export default async function ArticleDetailPage({ params }) {
   // PortableText body: for those articles the Sanity body is exactly
   // the intro copy the boxes carry, so rendering both would print the
   // same words twice. The stored body is left untouched in Sanity.
+  // Lead-quiz articles render only the body's letters recap (see
+  // extractLettersRecap above) — or no body at all when the article
+  // has no recap section.
+  const bodyBlocks = stripDisclosureBlocks(article.body);
+  const recapBlocks = quiz?.lead ? extractLettersRecap(bodyBlocks) : null;
   const bodySection = guideIntros[article.slug] ? (
     <GuideIntro intro={guideIntros[article.slug]} />
+  ) : quiz?.lead ? (
+    recapBlocks.length ? (
+      <section className="article-body">
+        <PortableText value={recapBlocks} components={portableTextComponents} />
+      </section>
+    ) : null
   ) : (
     <section className="article-body">
-      <PortableText value={stripDisclosureBlocks(article.body)} components={portableTextComponents} />
+      <PortableText value={bodyBlocks} components={portableTextComponents} />
     </section>
   );
 
