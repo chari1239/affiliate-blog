@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { getLearnerName, recordQuizResult } from "@/lib/progress";
 import { quizCheer } from "@/lib/cheers";
+import { quizHosts } from "@/lib/quiz-host-data";
 
 // Fire-and-forget anonymous counting (per quiz, keyed by article slug).
 // The /api/quiz-event route turns these into counters; failures are
@@ -47,6 +48,38 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
   const finishedRef = useRef(false);
   const inputRef = useRef(null);
 
+  // Optional host character (lib/quiz-host-data.js, keyed by slug).
+  // Most quizzes have no host and behave exactly as before.
+  const host = quizSlug ? quizHosts[quizSlug] : undefined;
+  const quizRef = useRef(null);
+  const audioRef = useRef(null);
+  const welcomePlayedRef = useRef(false);
+  const wordPlayedRef = useRef(new Set());
+
+  // One shared player for all host clips: starting a clip stops the
+  // previous one, so welcome, word readings and thanks never overlap.
+  function stopHostAudio() {
+    if (audioRef.current) {
+      try {
+        audioRef.current.pause();
+      } catch {}
+      audioRef.current = null;
+    }
+  }
+
+  function playHostAudio(url) {
+    if (!url) return;
+    stopHostAudio();
+    try {
+      const clip = new Audio(url);
+      audioRef.current = clip;
+      clip.play().catch(() => {});
+    } catch {}
+  }
+
+  // Never leave a host clip playing after the quiz unmounts.
+  useEffect(() => stopHostAudio, []);
+
   const total = quiz.items.length;
   const score = quiz.items.filter((_, i) => results[i] === "correct").length;
   const answered = Object.keys(results).length;
@@ -67,6 +100,38 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
       inputRef.current.focus({ preventScroll: true });
     }
   }, [current, phase, results]);
+
+  // Host welcome voice: browsers block audio before the learner's
+  // first gesture, so the clip is attempted once, on the first
+  // pointer or key press inside the quiz. The "Hear Bholu" button on
+  // the banner is the guaranteed path to the same clip.
+  useEffect(() => {
+    if (!host || !quizRef.current) return;
+    const el = quizRef.current;
+    const tryPlay = () => {
+      if (welcomePlayedRef.current) return;
+      welcomePlayedRef.current = true;
+      playHostAudio(host.welcomeAudio);
+    };
+    el.addEventListener("pointerdown", tryPlay);
+    el.addEventListener("keydown", tryPlay);
+    return () => {
+      el.removeEventListener("pointerdown", tryPlay);
+      el.removeEventListener("keydown", tryPlay);
+    };
+  }, [host]);
+
+  // Host word audio: once a word is checked (the revealed state), the
+  // host reads it aloud — once per word per run. Never before the
+  // check: it is a reading test, and the clip would give it away.
+  const wordAudioUrl =
+    host && item ? host.wordAudio?.[item.word] : undefined;
+  useEffect(() => {
+    if (!host || phase !== "questions" || !locked || !wordAudioUrl) return;
+    if (wordPlayedRef.current.has(current)) return;
+    wordPlayedRef.current.add(current);
+    playHostAudio(wordAudioUrl);
+  }, [host, phase, locked, current, wordAudioUrl]);
 
   function check(i) {
     const v = (values[i] || "").trim().toLowerCase();
@@ -95,6 +160,9 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
     setFinishCheer(quizCheer(finalScore, total, getLearnerName()));
     setSavedToProgress(true);
     setPhase("results");
+    // The host says thank you as the results screen appears (by now
+    // the learner has interacted plenty, so the clip may play).
+    if (host) playHostAudio(host.thanksAudio);
   }
 
   // Stepping forward from a locked word. The last word leads to the
@@ -130,6 +198,9 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
   }
 
   function retake() {
+    stopHostAudio();
+    welcomePlayedRef.current = false;
+    wordPlayedRef.current = new Set();
     setValues({});
     setResults({});
     setCurrent(0);
@@ -197,13 +268,43 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
     </div>
   );
 
+  // The host greets the learner until the first answer is checked.
+  const showWelcome = Boolean(host) && phase !== "results" && answered === 0;
+
   return (
-    <div className="quiz">
+    <div className="quiz" ref={quizRef}>
       <h2 className="quiz-title">{quiz.title}</h2>
       <p className="quiz-intro">{quiz.intro}</p>
       <p className="quiz-meta">
         🎯 {total} words · about {minutes} min · type the romaji reading
       </p>
+
+      {showWelcome ? (
+        <div className="quiz-host-welcome">
+          <img
+            className="quiz-host-img"
+            src={`${host.welcomeImage}?w=240&auto=format`}
+            alt={`${host.name}, the quiz host, waving hello`}
+            width={84}
+            height={84}
+            loading="lazy"
+          />
+          <div className="quiz-host-bubble">
+            <span className="quiz-host-name">{host.name}</span>
+            <p className="quiz-host-text">{host.welcomeText}</p>
+            <button
+              type="button"
+              className="quiz-host-hear"
+              onClick={() => {
+                welcomePlayedRef.current = true;
+                playHostAudio(host.welcomeAudio);
+              }}
+            >
+              🔊 Hear {host.name}
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       {header}
 
@@ -215,6 +316,22 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
           </p>
           {finishCheer ? (
             <p className="quiz-finish-cheer">{finishCheer}</p>
+          ) : null}
+          {host ? (
+            <div className="quiz-host-thanks">
+              <img
+                className="quiz-host-img"
+                src={`${host.thanksImage}?w=240&auto=format`}
+                alt={`${host.name} celebrating`}
+                width={84}
+                height={84}
+                loading="lazy"
+              />
+              <p className="quiz-host-text">
+                <span className="quiz-host-name">{host.name}</span>
+                {host.thanksText}
+              </p>
+            </div>
           ) : null}
           {savedToProgress ? (
             <p className="quiz-finish-loop">
@@ -335,6 +452,18 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
               )}
               <span className="quiz-hook">{item.hook}</span>
             </p>
+          ) : null}
+
+          {locked && wordAudioUrl ? (
+            <div className="quiz-hear-row">
+              <button
+                type="button"
+                className="quiz-host-hear"
+                onClick={() => playHostAudio(wordAudioUrl)}
+              >
+                🔊 Hear {host.name} say it
+              </button>
+            </div>
           ) : null}
 
           {current > 0 ? (
