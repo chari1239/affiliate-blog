@@ -1651,6 +1651,62 @@ img {
   margin-top: 1.1rem;
 }
 
+/* Learn Japanese hub duo band (components/learn-duo-band.jsx): Hari
+   & Bholu greet the learner at the top of /learn-japanese and Bholu
+   cheers their on-device progress. Same pale warm tint and shape as
+   the quiz host bands above; the fixed-size picture holds the band's
+   height steady while the greeting swaps with progress. */
+
+.learn-duo-band {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: #f9ece1;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.1rem;
+  min-height: 140px;
+}
+
+.learn-duo-img {
+  width: 112px;
+  height: 112px;
+  border-radius: 16px;
+  object-fit: cover;
+  object-position: 50% 18%;
+  flex: none;
+  background: var(--surface);
+}
+
+.learn-duo-bubble {
+  min-width: 0;
+}
+
+.learn-duo-name {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+  margin-bottom: 0.15rem;
+}
+
+.learn-duo-text {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* On phones the greeting wraps to more lines in the start-of-path
+   state than in the progress states; reserving that taller height
+   keeps the swap on mount from shifting the page below. */
+@media (max-width: 767px) {
+  .learn-duo-band {
+    min-height: 170px;
+  }
+}
+
 /* Quiz pages: flatten the intro card so the page reads as one clean flow */
 .article-shell:has(.article-quiz) .article-body {
   background: transparent;
