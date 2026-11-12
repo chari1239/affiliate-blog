@@ -40,3 +40,45 @@
   height: 100%;
   border: 0;
 }
+
+/* Full screen: the iframe is the element that goes full screen, and
+   it must fill the whole viewport — none of the inline frame's
+   constraints (max-width, aspect ratio, rounded corners) may leak
+   into the full-screen state, whatever engine is rendering it. The
+   matching wrapper rules cover engines that full-screen the frame
+   box instead of the iframe itself. What remains letterboxed after
+   this is the player's own fit of a 9:16 video on a taller screen,
+   which no embed code can remove — the app link under the panel is
+   the route to true full screen. */
+.article-video-frame iframe:fullscreen,
+.article-video-frame iframe:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+.article-video-frame:fullscreen,
+.article-video-frame:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  aspect-ratio: auto;
+  border-radius: 0;
+  background: #000;
+}
+
+/* One-tap route to the same Short in the YouTube app, for viewers
+   whose browser can't full-screen an embedded player (some in-app
+   browsers) or who simply prefer the app. */
+.article-video-open {
+  margin: 12px 0 0;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.article-video-open a {
+  color: var(--accent-dark);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

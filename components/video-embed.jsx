@@ -7,6 +7,14 @@ import "./video-embed.css";
 // so readers can watch the lesson without leaving the page. The
 // youtube-nocookie host keeps the embed privacy-friendly, and lazy
 // loading keeps it from slowing the article down.
+//
+// Full screen: the iframe itself is the element that goes full
+// screen, and the allow list names the fullscreen feature explicitly
+// so every browser and in-app web view grants it the same way. Some
+// in-app browsers still can't full-screen an embedded player at all,
+// so the panel also carries an "Open in the YouTube app" link — one
+// tap to the same Short in the app, which always plays true full
+// screen.
 export default function VideoEmbed({ videoId, title }) {
   if (!videoId) {
     return null;
@@ -20,11 +28,20 @@ export default function VideoEmbed({ videoId, title }) {
           src={`https://www.youtube-nocookie.com/embed/${videoId}`}
           title={title ? `Watch the video: ${title}` : "Watch the lesson on YouTube"}
           loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture; web-share"
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         />
       </div>
+      <p className="article-video-open">
+        <a
+          href={`https://www.youtube.com/shorts/${videoId}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Open in the YouTube app for true full screen ↗
+        </a>
+      </p>
     </section>
   );
 }
