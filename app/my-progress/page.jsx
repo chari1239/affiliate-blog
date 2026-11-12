@@ -2,6 +2,7 @@ import { getArticles } from "@/lib/sanity/fetchers";
 import { learningPath } from "@/lib/learning-path";
 import { site } from "@/lib/site";
 import MyProgress from "@/components/my-progress";
+import ProgressDuoBand from "@/components/progress-duo-band";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +52,8 @@ export default async function MyProgressPage() {
           nothing is sent anywhere.
         </p>
       </header>
+
+      <ProgressDuoBand />
 
       <MyProgress titles={titles} />
     </main>
