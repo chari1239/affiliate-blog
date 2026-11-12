@@ -2,6 +2,7 @@ import Link from "next/link";
 import { site } from "@/lib/site";
 import { getArticles } from "@/lib/sanity/fetchers";
 import NotifyButton from "@/components/notify-button";
+import BholuHomeStrip from "@/components/bholu-home-strip";
 
 export const metadata = {
   title: {
@@ -143,6 +144,8 @@ export default async function HomePage() {
             set. No sign-up; your progress is saved on your device.
           </p>
         </div>
+
+        <BholuHomeStrip />
 
         <div className="hero-actions">
           <Link href="/learn-japanese" className="btn">

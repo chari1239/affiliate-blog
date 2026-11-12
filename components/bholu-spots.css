@@ -1,0 +1,78 @@
+/* Bholu's spot appearances: the 404 page (components/bholu-lost.jsx)
+   and the homepage Learn section strip (components/bholu-home-strip.jsx).
+   Kept in this one file — imported by both components — so these PRs
+   never have to touch app/globals.css. Same pale warm tint (#f9ece1)
+   and 18px radius as the quiz host and Learn hub duo bands. */
+
+.bholu-spot-name {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+  margin-bottom: 0.15rem;
+}
+
+.bholu-spot-text {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ---- 404 page ---- */
+
+.bholu-lost-card {
+  margin: 1.25rem 0 0;
+  max-width: 460px;
+  background: #f9ece1;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 0.85rem;
+}
+
+.bholu-lost-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.bholu-lost-quote {
+  padding: 0.7rem 0.25rem 0.1rem;
+}
+
+/* ---- Homepage Learn section ---- */
+
+.bholu-home-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: #f9ece1;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 0.75rem 0.9rem;
+  margin-bottom: 1.1rem;
+  max-width: 560px;
+}
+
+.bholu-home-img {
+  width: 96px;
+  height: 96px;
+  border-radius: 16px;
+  object-fit: cover;
+  object-position: 50% 18%;
+  flex: none;
+  background: var(--surface);
+}
+
+.bholu-home-bubble {
+  min-width: 0;
+}
+
+@media (max-width: 767px) {
+  .bholu-home-img {
+    width: 84px;
+    height: 84px;
+  }
+}
