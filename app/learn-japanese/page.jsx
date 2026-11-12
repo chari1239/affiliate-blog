@@ -6,6 +6,7 @@ import { site } from "@/lib/site";
 import ShareButton from "@/components/share-button";
 import NotifyButton from "@/components/notify-button";
 import PathProgress from "@/components/path-progress";
+import LearnDuoBand from "@/components/learn-duo-band";
 import "./learn-japanese.css";
 
 export const dynamic = "force-dynamic";
@@ -139,6 +140,8 @@ export default async function LearnJapanesePage() {
           </p>
         </section>
       ) : null}
+
+      {!!steps.length ? <LearnDuoBand steps={stepProps} /> : null}
 
       {!!steps.length ? <PathProgress steps={stepProps} /> : null}
 
