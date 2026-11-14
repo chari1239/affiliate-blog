@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { quizzes } from "@/lib/quiz-data";
 import { sendEventEmail } from "@/lib/notify";
 
@@ -18,6 +19,47 @@ const PROJECT_ID = "ebw9h979";
 const DATASET = "production";
 const API_VERSION = "2024-10-01";
 
+// Quiz reminders: stamp a push subscription with its last quiz
+// activity (lastQuizAt / lastQuizSlug), which /api/push-remind reads
+// to decide who gets a "come back" nudge. The document id is the
+// same deterministic hash /api/push-subscribe uses. This is a patch
+// only — a patch never creates a document, so an endpoint with no
+// stored subscription simply errors inside Sanity and nothing is
+// written. Fire-and-forget by design: it is never awaited, and every
+// failure is swallowed, so it cannot change this route's response.
+function stampQuizActivity(token, endpoint, slug) {
+  try {
+    const id = `pushSub.${createHash("sha256")
+      .update(endpoint)
+      .digest("hex")}`;
+    fetch(
+      `https://${PROJECT_ID}.api.sanity.io/v${API_VERSION}/data/mutate/${DATASET}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          mutations: [
+            {
+              patch: {
+                id,
+                set: {
+                  lastQuizAt: new Date().toISOString(),
+                  lastQuizSlug: slug
+                }
+              }
+            }
+          ]
+        })
+      }
+    ).catch(() => {});
+  } catch {
+    // Reminder bookkeeping must never surface an error either.
+  }
+}
+
 export async function POST(request) {
   const done = () => new Response(null, { status: 204 });
 
@@ -28,7 +70,7 @@ export async function POST(request) {
     return done();
   }
 
-  const { slug, type, correct, score, index } = body || {};
+  const { slug, type, correct, score, index, pushEndpoint } = body || {};
   // Only count quizzes we actually ship (whitelist from quiz-data).
   if (!slug || !quizzes[slug]) return done();
 
@@ -125,6 +167,17 @@ export async function POST(request) {
     );
   } catch {
     // Counting must never surface an error to the reader.
+  }
+
+  // Quiz reminders: when the client attached its own push endpoint
+  // to this finish, stamp that subscription's last-activity fields
+  // (fire-and-forget — see stampQuizActivity).
+  if (
+    finishInfo &&
+    typeof pushEndpoint === "string" &&
+    pushEndpoint.startsWith("https://")
+  ) {
+    stampQuizActivity(token, pushEndpoint, slug);
   }
 
   // Owner notification: a finished quiz also emails the owner (via
