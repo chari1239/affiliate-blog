@@ -16,18 +16,19 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: {
-    absolute: "Japanese Reading Quizzes — Practise Hiragana | Nihon Diaries by Hari"
+    absolute: "Hiragana Practice — Free Japanese Reading Quizzes | Nihon Diaries"
   },
   description:
-    "Free Japanese reading quizzes for beginners. Type the romaji for each hiragana word — one word at a time, with your progress saved on your device.",
+    "Free hiragana practice for beginners: read real Japanese words and type the romaji, one word at a time. Every quiz matches a free lesson, and your progress is saved on your device.",
   alternates: {
     canonical: "/quiz"
   },
   openGraph: {
     type: "website",
-    title: "Japanese Reading Quizzes — Practise Hiragana | Nihon Diaries by Hari",
+    siteName: site.shortName,
+    title: "Hiragana Practice — Free Japanese Reading Quizzes | Nihon Diaries",
     description:
-      "Free Japanese reading quizzes for beginners. Type the romaji for each hiragana word — one word at a time, with your progress saved on your device.",
+      "Free hiragana practice for beginners: read real Japanese words and type the romaji, one word at a time. Every quiz matches a free lesson, and your progress is saved on your device.",
     url: `${site.url}/quiz`
   }
 };
@@ -87,10 +88,11 @@ export default async function QuizHubPage() {
 
   return (
     <main className="page-frame">
-      <h1 className="page-title">Reading quizzes</h1>
+      <h1 className="page-title">Hiragana practice quizzes</h1>
       <p className="quiz-hub-intro">
         Practise reading hiragana — one word at a time. Every quiz uses only
-        the letters taught up to that lesson.
+        the letters taught up to that lesson, and each one matches a free
+        lesson on the learning path.
       </p>
 
       {latestQuiz ? (

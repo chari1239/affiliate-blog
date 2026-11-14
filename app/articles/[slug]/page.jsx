@@ -53,6 +53,7 @@ export async function generateMetadata({ params }) {
     },
     openGraph: {
       type: "article",
+      siteName: site.shortName,
       title,
       description,
       url: `${site.url}/articles/${article.slug}`,

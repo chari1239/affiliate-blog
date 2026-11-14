@@ -19,6 +19,7 @@ export const metadata = {
   },
   openGraph: {
     type: "website",
+    siteName: site.shortName,
     title: "My Progress | Nihon Diaries by Hari",
     description:
       "Your Japanese lesson checklist and quiz results, saved only on this device — no account, nothing sent anywhere.",

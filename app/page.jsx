@@ -13,6 +13,7 @@ export const metadata = {
     canonical: "/"
   },
   openGraph: {
+    siteName: site.shortName,
     title: "Nihon Diaries by Hari — Learn Japanese & Life in Japan, Through an Indian Lens",
     description: site.description,
     url: site.url
@@ -24,7 +25,7 @@ const focusAreas = [
     title: "Learn Japanese",
     copy: "Free lessons from zero, in order — with reading quizzes and daily practice.",
     href: "/learn-japanese",
-    action: "See all lessons →"
+    action: "Learn Japanese from zero →"
   },
   {
     title: "Moving to Japan",
@@ -149,7 +150,7 @@ export default async function HomePage() {
 
         <div className="hero-actions">
           <Link href="/learn-japanese" className="btn">
-            See all lessons & quizzes
+            Learn Japanese from zero — see all lessons & quizzes
           </Link>
         </div>
 

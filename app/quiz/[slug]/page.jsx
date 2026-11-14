@@ -35,7 +35,7 @@ export async function generateMetadata({ params }) {
   }
   return {
     title: {
-      absolute: `${quiz.title} — Reading Quiz | Nihon Diaries by Hari`
+      absolute: `${quiz.title} — Reading Quiz | Nihon Diaries`
     },
     description: metaDescription(quiz),
     alternates: {
