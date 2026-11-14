@@ -11,7 +11,7 @@ export const metadata = {
   metadataBase: new URL(site.url),
   title: {
     default: site.name,
-    template: `%s | ${site.name}`
+    template: `%s | ${site.shortName}`
   },
   description: site.description,
   alternates: {
@@ -70,7 +70,13 @@ const structuredData = {
       "@type": "WebSite",
       "@id": `${site.url}/#website`,
       url: site.url,
-      name: site.name,
+      // The site name Google shows above search results is taken from
+      // this WebSite block (reinforced by og:site_name, which every
+      // page-level openGraph must also set — Next.js replaces, not
+      // merges, openGraph). Keep name = the short brand "Nihon
+      // Diaries"; the longer display name is the alternateName.
+      name: site.shortName,
+      alternateName: site.name,
       description: site.description,
       inLanguage: "en",
       publisher: { "@id": `${site.url}/#organization` }
