@@ -36,8 +36,10 @@ const API_VERSION = "2024-10-01";
 // to the publish moment when an article is first published and is
 // left untouched by later edits, so an old publishedAt on a webhook
 // call means "edit", not "launch". Articles whose payload carries
-// no parseable timestamp at all are treated as edits too (skipped):
-// staying silent is safer than re-notifying every subscriber.
+// no parseable timestamp at all — and whose document cannot be
+// fetched from Sanity either (see the fallback in POST) — are
+// treated as edits too (skipped): staying silent is safer than
+// re-notifying every subscriber.
 const NEW_ARTICLE_WINDOW_MS = 30 * 60 * 1000;
 
 async function sanityFetch(token, path, options = {}) {
@@ -56,6 +58,24 @@ async function sanityFetch(token, path, options = {}) {
     throw new Error(`Sanity request failed: ${res.status}`);
   }
   return res;
+}
+
+// Fallback for the new-article gate: read an article's timestamps
+// straight from Sanity by document id. Returns the document (or
+// null when there is no such article); throws on a failed request,
+// like every sanityFetch caller expects.
+async function fetchArticleTimestamps(token, id) {
+  const query = encodeURIComponent(
+    `*[_id == $id][0]{ publishedAt, _createdAt }`
+  );
+  const res = await sanityFetch(
+    token,
+    `/data/query/${DATASET}?query=${query}&$id=${encodeURIComponent(
+      JSON.stringify(id)
+    )}`
+  );
+  const json = await res.json();
+  return json && json.result ? json.result : null;
 }
 
 export async function POST(request) {
@@ -90,13 +110,47 @@ export async function POST(request) {
   // time is older than the window — or unparseable/missing entirely
   // — is treated as an edit: answer 200 (so the webhook does not
   // retry) and send nothing.
-  const publishedAtRaw =
+  let publishedAtRaw =
     body && typeof body.publishedAt === "string" && body.publishedAt
       ? body.publishedAt
       : body && typeof body._createdAt === "string"
         ? body._createdAt
         : "";
-  const publishedAtMs = Date.parse(publishedAtRaw);
+  let publishedAtMs = Date.parse(publishedAtRaw);
+
+  // The webhook's projection decides which document fields actually
+  // arrive in the payload, so a projection that omits the timestamps
+  // would make EVERY call look timestamp-less — and the gate above
+  // would silently skip every genuine launch. When the payload
+  // carries no parseable timestamp, fetch the article from Sanity
+  // by its _id and apply the same gate to the fetched values. If
+  // the fetch fails or finds nothing, keep the skip behaviour.
+  if (
+    !Number.isFinite(publishedAtMs) &&
+    body &&
+    typeof body._id === "string" &&
+    body._id
+  ) {
+    const readToken = process.env.SANITY_API_WRITE_TOKEN;
+    if (readToken) {
+      try {
+        const article = await fetchArticleTimestamps(readToken, body._id);
+        if (article) {
+          publishedAtRaw =
+            typeof article.publishedAt === "string" && article.publishedAt
+              ? article.publishedAt
+              : typeof article._createdAt === "string"
+                ? article._createdAt
+                : "";
+          publishedAtMs = Date.parse(publishedAtRaw);
+        }
+      } catch {
+        // No timestamps could be fetched — the gate below skips
+        // this call, exactly as it did before the fallback existed.
+      }
+    }
+  }
+
   if (
     !Number.isFinite(publishedAtMs) ||
     Date.now() - publishedAtMs > NEW_ARTICLE_WINDOW_MS

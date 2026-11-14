@@ -9,8 +9,7 @@ import { quizHosts } from "@/lib/quiz-host-data";
 // Fire-and-forget anonymous counting (per quiz, keyed by article slug).
 // The /api/quiz-event route turns these into counters; failures are
 // swallowed so counting can never disturb the reader.
-function sendQuizEvent(slug, payload) {
-  if (!slug) return;
+function postQuizEvent(slug, payload) {
   try {
     fetch("/api/quiz-event", {
       method: "POST",
@@ -19,6 +18,42 @@ function sendQuizEvent(slug, payload) {
       keepalive: true
     }).catch(() => {});
   } catch {}
+}
+
+function sendQuizEvent(slug, payload) {
+  if (!slug) return;
+  // Quiz reminders: on a "finish" event, also attach this device's
+  // own push endpoint when it has one, so /api/quiz-event can stamp
+  // the subscription's lastQuizAt and /api/push-remind can later
+  // nudge devices that have gone quiet. The endpoint only ever
+  // identifies the reader's OWN subscription — the same value the
+  // notify button already sent to /api/push-subscribe. The lookup is
+  // best-effort and non-blocking: without a subscription (or if
+  // anything fails) the event goes out exactly as before.
+  if (payload && payload.type === "finish") {
+    let lookupStarted = false;
+    try {
+      if ("serviceWorker" in navigator) {
+        lookupStarted = true;
+        navigator.serviceWorker
+          .getRegistration()
+          .then((registration) =>
+            registration ? registration.pushManager.getSubscription() : null
+          )
+          .then((subscription) => {
+            postQuizEvent(
+              slug,
+              subscription && subscription.endpoint
+                ? { ...payload, pushEndpoint: subscription.endpoint }
+                : payload
+            );
+          })
+          .catch(() => postQuizEvent(slug, payload));
+      }
+    } catch {}
+    if (lookupStarted) return;
+  }
+  postQuizEvent(slug, payload);
 }
 
 // Interactive reading quiz as a one-word-at-a-time stepper. A slim
