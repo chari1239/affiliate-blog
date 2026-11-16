@@ -1,6 +1,6 @@
 "use client";
 
-import { levelForXp } from "@/lib/game";
+import { displayStreak, levelForXp } from "@/lib/game";
 import { BADGES } from "@/lib/badges";
 import "./game-card.css";
 
@@ -18,6 +18,7 @@ export default function GameCard({ progress }) {
   const badgeCount = progress.game
     ? Object.keys(progress.game.badges || {}).length
     : 0;
+  const streak = progress.game ? displayStreak(progress.game) : 0;
   const info = levelForXp(xp);
   const span = info.next ? info.next.xp - info.floorXp : 0;
   const percent = info.next
@@ -56,6 +57,15 @@ export default function GameCard({ progress }) {
           See your badges
         </a>
       </p>
+      {streak > 0 ? (
+        <p className="game-card-streak">
+          🔥 {streak}-day streak — one small step every day!
+        </p>
+      ) : xp > 0 ? (
+        <p className="game-card-streak">
+          Learn something today to start a new streak.
+        </p>
+      ) : null}
     </section>
   );
 }

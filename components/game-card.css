@@ -70,6 +70,12 @@
   white-space: nowrap;
 }
 
+.game-card-streak {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .game-card-bar-fill {
     transition: none;
