@@ -1,6 +1,7 @@
 "use client";
 
 import { levelForXp } from "@/lib/game";
+import { BADGES } from "@/lib/badges";
 import "./game-card.css";
 
 // The Learn hub's game card: the reader's level, an XP bar to the
@@ -14,6 +15,9 @@ export default function GameCard({ progress }) {
     return null;
   }
   const xp = progress.game ? progress.game.xp : 0;
+  const badgeCount = progress.game
+    ? Object.keys(progress.game.badges || {}).length
+    : 0;
   const info = levelForXp(xp);
   const span = info.next ? info.next.xp - info.floorXp : 0;
   const percent = info.next
@@ -45,6 +49,12 @@ export default function GameCard({ progress }) {
         {info.next
           ? `${info.xpToNext} XP to Level ${info.next.level} — ${info.next.name}. Finish a lesson or a quiz to earn XP.`
           : "Top level — Nihon Explorer! Keep your streak going to stay sharp."}
+      </p>
+      <p className="game-card-badges">
+        {badgeCount} of {BADGES.length} badges earned ·{" "}
+        <a className="game-card-badges-link" href="#your-badges">
+          See your badges
+        </a>
       </p>
     </section>
   );

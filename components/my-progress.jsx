@@ -14,6 +14,8 @@ import {
 } from "@/lib/progress";
 import { openGreeting } from "@/lib/cheers";
 import CheerBanner from "@/components/cheer-banner";
+import CelebrationCard from "@/components/celebration-card";
+import BadgeShelf from "@/components/badge-shelf";
 import BookmarksSection from "@/components/bookmarks-section";
 import "./my-progress.css";
 
@@ -165,6 +167,8 @@ export default function MyProgress({ titles = {} }) {
     <div className="my-progress">
       <CheerBanner />
 
+      <CelebrationCard />
+
       {progress ? (
         <section aria-label="Your name">
           {learnerName && !editingName ? (
@@ -291,6 +295,8 @@ export default function MyProgress({ titles = {} }) {
         </div>
       </section>
       ) : null}
+
+      <BadgeShelf progress={progress} />
 
       {quizEntries.length ? (
         <section>

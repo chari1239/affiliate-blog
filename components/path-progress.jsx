@@ -12,6 +12,8 @@ import {
 import { quizzes } from "@/lib/quiz-data";
 import CheerBanner from "@/components/cheer-banner";
 import GameCard from "@/components/game-card";
+import CelebrationCard from "@/components/celebration-card";
+import BadgeShelf from "@/components/badge-shelf";
 import "./path-progress.css";
 
 // The card's action, in the learner's own words, by the step's
@@ -90,6 +92,8 @@ export default function PathProgress({ steps }) {
       <CheerBanner />
 
       <GameCard progress={progress} />
+
+      <CelebrationCard />
 
       <div className="path-progress-strip">
         <span>
@@ -197,6 +201,8 @@ export default function PathProgress({ steps }) {
           );
         })}
       </section>
+
+      <BadgeShelf progress={progress} />
     </>
   );
 }
