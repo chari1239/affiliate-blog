@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getLearnerName, recordQuizResult } from "@/lib/progress";
 import { quizCheer } from "@/lib/cheers";
 import { quizHosts } from "@/lib/quiz-host-data";
+import CelebrationCard from "@/components/celebration-card";
 
 // Fire-and-forget anonymous counting (per quiz, keyed by article slug).
 // The /api/quiz-event route turns these into counters; failures are
@@ -368,6 +369,7 @@ export default function ReadingQuiz({ quiz, quizSlug }) {
               </p>
             </div>
           ) : null}
+          <CelebrationCard />
           {savedToProgress ? (
             <p className="quiz-finish-loop">
               Saved to your progress on this device ·{" "}

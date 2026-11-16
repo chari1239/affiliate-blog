@@ -1,0 +1,63 @@
+/* "Your badges" — the trophy shelf: a simple grid of tiles.
+   Earned badges are warm and checked; locked ones are greyed and
+   carry their unlock action as the caption. */
+
+.badge-shelf {
+  margin-top: 2rem;
+}
+
+.badge-shelf-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+}
+
+.badge-shelf-count {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent-dark);
+}
+
+.badge-shelf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.badge-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-strong);
+}
+
+.badge-tile-earned {
+  border-color: var(--accent);
+  box-shadow: var(--shadow);
+}
+
+.badge-tile-locked {
+  opacity: 0.62;
+}
+
+.badge-tile-mark {
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--accent-dark);
+}
+
+.badge-tile-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.badge-tile-meta {
+  font-size: 0.82rem;
+}
