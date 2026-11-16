@@ -11,6 +11,7 @@ import {
 } from "@/lib/progress";
 import { quizzes } from "@/lib/quiz-data";
 import CheerBanner from "@/components/cheer-banner";
+import GameCard from "@/components/game-card";
 import "./path-progress.css";
 
 // The card's action, in the learner's own words, by the step's
@@ -87,6 +88,8 @@ export default function PathProgress({ steps }) {
   return (
     <>
       <CheerBanner />
+
+      <GameCard progress={progress} />
 
       <div className="path-progress-strip">
         <span>

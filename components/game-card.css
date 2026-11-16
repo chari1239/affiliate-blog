@@ -1,0 +1,65 @@
+/* The Learn hub's game card: level, XP bar to the next level, and
+   the one-line "how to earn" note. Sits above the progress strip in
+   the same card shell family (surface, line, radius, shadow). */
+
+.game-card {
+  margin-bottom: 1rem;
+  padding: 14px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+}
+
+.game-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+}
+
+.game-card-level {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+}
+
+.game-card-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.game-card-xp {
+  margin-left: auto;
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+
+.game-card-bar {
+  margin-top: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  overflow: hidden;
+}
+
+.game-card-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.game-card-next {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-card-bar-fill {
+    transition: none;
+  }
+}

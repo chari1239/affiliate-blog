@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReadingQuiz from "@/components/reading-quiz";
+import LevelChip from "@/components/level-chip";
 import { quizzes } from "@/lib/quiz-data";
 import { site } from "@/lib/site";
 import "../quiz.css";
@@ -60,6 +61,10 @@ export default async function StandaloneQuizPage({ params }) {
       </p>
       <h1 className="page-title">{quiz.title}</h1>
       {quiz.intro ? <p className="quiz-standalone-intro">{quiz.intro}</p> : null}
+
+      <p>
+        <LevelChip />
+      </p>
 
       <ReadingQuiz quiz={quiz} quizSlug={slug} />
 

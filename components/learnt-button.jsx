@@ -8,6 +8,7 @@ import {
   markLesson,
   PROGRESS_EVENT
 } from "@/lib/progress";
+import LevelChip from "@/components/level-chip";
 import "./learnt-button.css";
 
 // The check icon, drawn like the notify button's bell (16px, stroke
@@ -79,6 +80,7 @@ export default function LearntButton({ slug }) {
       <Link href="/my-progress" className="learnt-progress-link">
         My progress →
       </Link>
+      <LevelChip />
     </div>
   );
 }
