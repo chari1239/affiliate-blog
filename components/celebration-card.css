@@ -1,0 +1,81 @@
+/* Bholu's celebration card: a warm pop-in that appears after a
+   badge unlock, a level-up, or a streak save. One tap dismisses it
+   forever (per unlock). CSS-only animation, off entirely for
+   readers who prefer reduced motion. */
+
+.celebration-card {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  padding: 14px;
+  background: var(--surface-strong);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  animation: celebration-pop 0.35s ease;
+}
+
+@keyframes celebration-pop {
+  from {
+    transform: scale(0.97);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celebration-card {
+    animation: none;
+  }
+}
+
+.celebration-card-img {
+  flex: 0 0 auto;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.celebration-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.celebration-card-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+}
+
+.celebration-card-heading {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.celebration-card-line {
+  margin: 2px 0 8px;
+  font-size: 0.94rem;
+}
+
+.celebration-card-name {
+  font-weight: 700;
+  margin-right: 0.4em;
+}
+
+.celebration-card-button {
+  align-self: flex-start;
+  flex: 0 0 auto;
+  width: auto;
+  padding: 8px 16px;
+  font-size: 0.94rem;
+}

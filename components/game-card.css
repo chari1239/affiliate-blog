@@ -58,6 +58,18 @@
   font-size: 0.9rem;
 }
 
+.game-card-badges {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.game-card-badges-link {
+  color: var(--accent-dark);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .game-card-bar-fill {
     transition: none;
